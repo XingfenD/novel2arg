@@ -18,6 +18,7 @@ Tell your agent:
 
 ## Contents
 
-- `SKILL.md` — six-step workflow: novel deconstruction → world container selection → GDD → scaffolding → implementation → self-check
+- `SKILL.md` — paradigm constraints, rationalizations, red flags, and the workflow router
+- `workflow/` — eight step files: novel deconstruction → world container selection → GDD → reachability chain analysis → puzzle design audit → scaffolding → implementation → self-check
 - `references/design-paradigms.md` — six-dimension design paradigm (flow / puzzles / copy / typography / conflict / interaction) + 13-type puzzle taxonomy
 - `references/project-structure.md` — multi-file front-end project structure + Alpine.js component reference implementations (search engine, password gates, staging, progress)

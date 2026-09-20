@@ -8,13 +8,17 @@ description: Use when adapting a mystery/suspense novel into an interactive web 
 ## Overview
 
 Adapt a mystery/suspense novel into a multi-page static puzzle game disguised as a real website (ARG-lite).
-Success criterion: the player feels they are infiltrating a real website and uncovering material they are not supposed to see, rather than playing a game.
+Success criterion: the player feels they are infiltrating a real website and uncovering material meant to stay private.
 
-Three constraints (violating any one departs from this paradigm):
+Four constraints (violating any one departs from this paradigm):
 
-1. **The site is the world**: each narrative location is a standalone HTML page — a document the player can open and select text in independently. The URL bar is a narrative device; long-form copy lives in real page text, not in canvas.
+1. **The site is the world**: each narrative location is a standalone HTML page — a document the player can open and select text in independently. The URL bar is a narrative device; long-form copy lives in real page text and canvas carries none.
 2. **Two-layer narrative**: a surface layer (mundane, warm, realistic) and a secret layer (dark truth), with separate skins and copy per layer; the conflict is revealed through five escalating stages.
-3. **Puzzles are character inference**: every password/keyword must be derivable from a character's life traces (birthday, initials, license plate, in-group slang). Random strings are prohibited.
+3. **Puzzles are character inference**: every password and keyword derives from a character's life traces (birthday, initials, license plate, in-group slang). Random strings are prohibited. The input UI names the field and stops there — `placeholder`, labels, help text, and empty states read `工号` / `站内搜索…`. Feedback stays oblique (`密码错误 🎂`). A gate page may post the account format, as real intranets do; the password derivation stays off the page.
+4. **Diegetic neutrality**: every page is written for its in-world audience.
+   - Public pages (staff roster, department page, menu, news list) publish what that organization publishes. A roster entry carries name, title, tenure, duties.
+   - Navigation is the site's own information architecture: nav bar, index and listing pages, sitemap, footer. A link exists because that organization would put it there.
+   - Formal documents (announcement, notice, contract, certificate, official reply, medical record) carry real-world format: issuing body, document number, date, addressee, body, signature and seal, distribution list. Player-facing instruction, hint, and commentary stay out of them.
 
 **Prohibited forms of Constraint 1** (any one constitutes a structural departure):
 
@@ -28,11 +32,20 @@ Three constraints (violating any one departs from this paradigm):
 
 | Rationalization | Counter |
 |---|---|
-| "We're short on time — one HTML file is enough." | Cut content volume (fewer pages/puzzles), not structure. A single file falls outside the paradigm. |
-| "Don't start over; the engine layer is frozen." | A generic game framework scaffold is not a fake website. Migrate the content layer as-is and replace the engine with multi-page + search/gate. |
+| "We're short on time — one HTML file is enough." | Cut content volume (fewer pages and puzzles); structure stays. A single file falls outside the paradigm. |
+| "Don't start over; the engine layer is frozen." | A generic game framework scaffold is not a fake website. Migrate the content layer as-is and replace the engine with multi-page plus search/gate. |
 | "Well-known puzzle games use this architecture." | Popularity does not imply fit for this paradigm. Those games optimize mechanical puzzle feel; this paradigm optimizes fake-website immersion. The two architectures are not interchangeable. |
 | "A single file is easier to distribute." | Static hosting (GitHub Pages) costs nothing; publish `src/` directly. |
 | "Generate passwords randomly now; fix them later." | Password-as-character-inference is the puzzle quality itself; there is no "later." |
+| "A hint in the placeholder helps stuck players." | The disguise is the product. A hint turns a real website into game UI; stuck players get an oblique failure hint. |
+| "Real intranets post the initial-password rule." | Real ones do; this one carries the puzzle. Account format is fine, password derivation stays off the page. |
+| "The roster has to say why this character matters." | A real roster says what they do. The player assembles relevance from the secret layer. |
+| "One extra link saves the player a search." | Every link the organization would keep off its own site is a visible seam. Clues ride nav bars, index pages, and search. |
+| "The document can carry one line of guidance." | A real announcement carries none. Guidance lives on the entry ritual page. |
+| "Plain copy reads badly." | Plain copy reads like a real website. Decoration reads like a game. |
+| "This page has no way in; I'll add a link in the body." | Add it to a listing the site would really keep, or make it search-only. workflow/04-reachability.md lists the four orphan fixes. |
+| "The puzzle is already built; cutting it wastes work." | Step 5 asks what the guarded page gives the player. Atmosphere moves to the atmosphere list. |
+| "Auditing before scaffolding is overhead." | Both audits cost less than re-writing pages. They gate step 6 for that reason. |
 
 ## Red Flags — stop and revise the GDD
 
@@ -40,6 +53,12 @@ Three constraints (violating any one departs from this paradigm):
 - Canvas scene rendering, an inventory, or a puzzle registry engine appears
 - Passwords are random strings with no derivable source in page copy
 - Only one visual theme exists
+- A public page mentions the plot
+- A page carries a link absent from the reachability table
+- An input's `placeholder`, label, or help text carries the answer or restates it
+- An announcement or contract reads as game copy
+- Guidance text uses metaphor, personification, or adjectives piled for effect
+- Site copy uses contrast frames (是…不是… / 是…而是… / 不能…只能…)
 - "Let's get a demo running first"
 
 ## When not to use
@@ -50,49 +69,22 @@ Three constraints (violating any one departs from this paradigm):
 
 ## Workflow
 
-Execute the steps in order; complete each step before starting the next.
+Eight steps in order. Each step body lives in `workflow/`; this section routes.
 
-### 1. Deconstruct the novel
-
-Extract five tables: **character network** (per character: surface identity / secret identity / life traces), **timeline** (story order vs. player discovery order; the two must differ), **evidence document inventory** (documents that can be realistically mocked: diaries, medical records, contracts, bank statements, chat logs, court rulings), **surface/secret contrast matrix** (the secret-layer reversal for each surface entity), and **twist ordering** (in player discovery order, marking the central twist page).
-
-### 2. Select the world container (guided routing)
-
-**Unless the user has already specified a format, guide the user through the choice**: present the four containers below plus your recommendation based on the novel's traits (listed first, marked "(recommended)"). If a question tool is available, ask once and wait for the user's decision; otherwise proceed with the recommendation and mark the GDD cover page "container is a recommendation pending confirmation."
-
-| Container | Player fantasy | Central interaction | Routing conditions (novel traits) |
+| Step | File | Deliverable | Dispatch |
 |---|---|---|---|
-| **A Fake official website** | "I'm hacking into an organization's website." | Site-wide search box: keyword → hash lookup → hidden page | A single organization is the stage (restaurant / company / school / church); the secret hides in pages that should not be public; a missing-person or cover-up investigation |
-| **B Fake computer desktop** | "I've obtained someone else's computer." | Desktop icons + Spotlight search + simulated app pages (chat / email / cloud drive / calendar) | A viewpoint character can plausibly access someone's device; clues are scattered across multiple "apps"; progression depends on dense password/2FA gates |
-| **C Simulated internet** | "I'm doing internet archaeology on a vanished person." | Multiple independent "websites" (forum / blog / Wayback Machine / intranet) cross-linked, with hand-typed URLs | A long time span (years of diaries / yearly blogs); clues spread across platforms; requires breaking the fourth wall (real social media / external links) |
-| **D Archive system** | "I'm opening a sealed case file." | Query form (multiple fields: name / ID / date) → archive list → detail pages, unlocked by clearance level | The novel is primarily document-driven (case files / medical records / interrogation transcripts / household registry); cold bureaucratic narration; the investigator is a police officer / journalist / lawyer |
+| 1 Deconstruct the novel | workflow/01-deconstruct.md | five tables | subagent |
+| 2 Select the world container | workflow/02-container.md | GDD cover-page record | orchestrator (asks the user) |
+| 3 Write the GDD | workflow/03-gdd.md | `docs/gdd.md`, eight sections | subagent |
+| 4 Reachability chain analysis 触达链分析 | workflow/04-reachability.md | `docs/reachability.md` | subagent |
+| 5 Puzzle design audit 谜题设计分析 | workflow/05-puzzle-audit.md | `docs/puzzle-audit.md` with dispositions | subagent |
+| 6 Scaffold | workflow/06-scaffold.md | file tree, every page skeletoned | subagent |
+| 7 Implementation | workflow/07-implementation.md | finished site | one subagent per phase |
+| 8 Self-check | workflow/08-self-check.md | `docs/self-check.md`, pass/fail per item | subagent |
 
-Routing order: (1) What is the novel's primary information carrier? Chat logs + files → B; documents and archives → D; website pages → A; cross-platform fragments → C. (2) Can the player's narrative role plausibly access that container? If not → add an entry ritual page explaining how it was obtained (borrowed / inherited / hacked / officially requested). (3) Mixing is allowed: the primary container sets the tone, and one secondary container may be nested (e.g., a fake company site inside B's computer; a hospital intranet built as a type-D archive system inside C). Nesting depth is one level maximum.
+Steps 4 and 5 are gates. A GDD that fails either returns to step 3 before scaffolding starts.
 
-After selection, record on the GDD cover page: primary container, central interaction implementation (A/B: search engine in references/project-structure.md §4; C: cross-site hard links + obfuscated directory names; D: §5 `gate.js` multi-field gate + archive list page), secondary container and its nesting location.
-
-### 3. Write the GDD (Game Design Document)
-
-Must include: **numbered page map** (each page gets an `NN/total` progress number + unlock source), **gate inventory** (each gate follows the "credential triad": account on page A, password clue on page B, gate on page C), **puzzle allocation table** (select 5–10 gates/puzzles from the 13 types in references/design-paradigms.md §2; sensory puzzles must declare hardware requirements in advance), **dual-ending plan** (ending copy reuses knowledge from documents the player has just read), and **extra atmosphere page list** (explicitly marked non-progression).
-
-### 4. Scaffold
-
-Create the multi-file project strictly according to references/project-structure.md. Minimum structure = entry ritual page + surface page directory + secret page directory + three skin CSS files + vendored Alpine runtime + `components.js` (search / gate / staging / progress components) + keyword hash build script + dual ending pages. Pages remain separate documents with real navigation; Alpine manages in-page component lifecycle (`init()` / `destroy()`) only, never routing or scene switching.
-
-### 5. Implementation order
-
-Surface skin and realistic document pages → search engine and password gates (first complete one shortest playable path) → secret pages and reskinning → staging modules (countdown blackout / typewriter / scroll reveal) → endings and fourth-wall close → entry ritual page (rules, hardware requirements, and honor agreement last, since they must reflect the actual gameplay).
-
-### 6. Self-check (all items must pass)
-
-- **Structure check**: `find . -name "*.html" | wc -l` should be 10+; the deliverable is a multi-HTML file tree, not a single-shell app
-- **Alpine lifecycle**: every page loads the vendored runtime and `components.js`; interactive elements mount via `x-data`; timers/observers are released in `destroy()`; the console shows zero Alpine errors and zero 404s
-- **Solvability walkthrough**: play from the entry page through the GDD page map manually; every keyword/password must be traceable to prior page copy
-- **Dead-link check**: `grep -o 'href="[^"]*"' -r . | sort -u` verified against the file tree
-- **Spoiler prevention**: the keyword table is hashed (not reversible from source); filenames are non-spoiling (passwords must not appear in filenames unless "URL as prop" is intentional)
-- **Complete feedback**: search misses / wrong passwords return narrative-hinting copy; no bare `alert("error")`
-- **Persistent top bar**: the header (or top menu bar) stays fixed to the viewport on long pages; body text scrolls beneath it
-- **Mobile**: core interactions work at phone width; sensory puzzle hardware requirements are declared on the entry page
+**Dispatch contract.** The orchestrator writes the prompt, reads the returned artifact, then dispatches the next step. It performs step 2 itself and delegates the rest. Every prompt carries: the novel text path, file paths of prior artifacts, that step's deliverable definition copied from its workflow file, both reference file paths, and the closing line "return the artifact plus unresolved questions; route questions back through the orchestrator." Subagents hold no conversation with the user.
 
 ## Common Mistakes (observed in baseline tests; avoid each)
 
@@ -106,8 +98,17 @@ Surface skin and realistic document pages → search engine and password gates (
 | No progress feedback | `NN/total` in each page footer; secret pages use anomalous numbering such as `ex/total` |
 | A single ending, or an ending that is a score | A two-option moral dilemma ending + a fourth-wall close + a sequel hook |
 | Keywords stored in plaintext JSON | Build script hashes them into a table, preventing "read the source to win" |
+| Plot stated on a public page ("head chef — and the man who vanished in 2019") | Public pages publish what that organization publishes; the player assembles the plot from the secret layer |
+| Links planted to chain clue → clue | Clue delivery rides the site's own IA: nav bar, index and listing pages, sitemap, search |
+| Orphan pages nobody can reach | Step 4 audits the graph before scaffolding; step 8 re-walks it after |
+| The answer in a `placeholder` or help text | Field names only; oblique failure hints carry the feedback |
+| A gate kept because it is already written | Step 5 necessity question; a blank justification means 删除 |
+| Announcements written as game hints | Real document format: issuer, number, date, addressee, body, seal, distribution list |
+| Guidance copy decorated with metaphor and personification | Plain declarative sentences |
+| Contrast frames in site copy (是…不是… / 是…而是…) | One positive clause per sentence; references/design-paradigms.md §3.14 |
+| Orchestrator writes the pages itself | One subagent per workflow step; the orchestrator dispatches and reviews |
 
 ## References
 
-- **references/design-paradigms.md**: six-dimension design paradigm (flow / puzzles / copy / typography / conflict / interaction) + 13-type puzzle taxonomy. Required reading when writing the GDD.
-- **references/project-structure.md**: multi-file front-end project structure + reference implementations for the search engine / password gates / skins / staging modules. Required reading when scaffolding.
+- **references/design-paradigms.md**: six-dimension design paradigm (flow / puzzles / copy / typography / conflict / interaction) + 13-type puzzle taxonomy. Required reading at step 3.
+- **references/project-structure.md**: multi-file front-end project structure + reference implementations for the search engine / password gates / skins / staging modules. Required reading at step 6.

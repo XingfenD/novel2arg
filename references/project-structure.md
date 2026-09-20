@@ -79,7 +79,7 @@ The above is the standard structure for container A (fake official website). Oth
 </html>
 ```
 
-Rules: **persistent top bar** — every page's header (same for container B's top menu bar) is fixed to the top of the viewport and does not leave view on long pages (base.css gives `position: sticky; top: 0` + an opaque background site-wide; secret/ pages included); every page loads the same two scripts in the same order (`components.js` before the Alpine runtime) and carries no inline behavior wiring — behavior lives in `x-data` components; secret/ page footers may use anomalous numbers such as `ex/36` or `?/36`; the `[This content has been deleted]` placeholder is a valid narrative element.
+Rules: **persistent top bar** — every page's header (same for container B's top menu bar) is fixed to the top of the viewport and does not leave view on long pages (base.css gives `position: sticky; top: 0` + an opaque background site-wide; secret/ pages included); the header carries that organization's own nav links (nav bar / index / sitemap), which together with the search box and the footer's own links are the only cross-page links a public page carries; every `<input>` placeholder names its field (`Search...`, `Employee ID`); every page loads the same two scripts in the same order (`components.js` before the Alpine runtime) and carries no inline behavior wiring — behavior lives in `x-data` components; secret/ page footers may use anomalous numbers such as `ex/36` or `?/36`; the `[This content has been deleted]` placeholder is a valid narrative element.
 
 ## 3. Keyword Hash Build (tools/build-keywords.mjs)
 
@@ -177,14 +177,14 @@ Alpine.data('gate', () => ({
     const el = this.$el;
     const ok = hash(this.user) === el.dataset.userHash && hash(this.pass) === el.dataset.passHash;
     if (ok) return void (location.href = el.dataset.next);
-    this.error = el.dataset.failHint;      // inline red text, never a bare alert
+    this.error = el.dataset.failHint;      // inline red text; a bare alert breaks the facade
     el.animate([{ transform: 'translateX(0)' }, { transform: 'translateX(-5px)' },
                 { transform: 'translateX(5px)' }, { transform: 'translateX(0)' }], 300);
   },
 }));
 ```
 
-`hash()` is the shared helper from §4. When designing a gate, enforce the **credential triad**: the account is hidden on page A, the password clue on page B (requiring inference: zodiac year → 1977, child-photo date → 20201125), and the gate on page C. Multi-field gates (four-tuple / two-factor) = multiple hash attributes in parallel. Hashing only prevents plaintext from being visible at a glance in the source; it is not real encryption — the honor agreement is stated on the entry page.
+`hash()` is the shared helper from §4. When designing a gate, enforce the **credential triad**: the account is hidden on page A, the password clue on page B (requiring inference: zodiac year → 1977, child-photo date → 20201125), and the gate on page C. Multi-field gates (four-tuple / two-factor) = multiple hash attributes in parallel. Hashing keeps plaintext out of casual view in the source. The honor agreement on the entry page carries the rest.
 
 ## 6. Staging Components (Lifecycle-Managed)
 
@@ -282,6 +282,10 @@ node tools/build-keywords.mjs          # regenerate the hash table
 node tools/check-links.mjs             # walk all href/src against the file tree; report dead links
 grep -rn "keywords.src" --include=*.html .   # confirm no page references the plaintext table
 grep -rL "alpine.min.js" --include=*.html .  # list pages missing the vendored Alpine runtime
+grep -rn "placeholder=" --include=*.html .    # every value names its field; none states or restates an answer
+# Register check: read each pages/surface/ and pages/platform/ page as a document of that organization —
+#   no line addresses the player, mentions the plot, or hints at a credential
+# Link provenance: every <a> under pages/ resolves to nav / index / sitemap / footer / related document
 # Manual walkthrough: play through index.html following the GDD page map; record the source page for every credential
 # Console check: the entry page and one secret page show zero errors and zero 404s (Alpine runtime included)
 ```
