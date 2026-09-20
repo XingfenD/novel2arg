@@ -39,7 +39,13 @@
 └── README.md                     # 运行方式 + GDD 链接 + 玩家须知
 ```
 
-多站"伪互联网"容器：每个站一个顶层目录（或一个 GitHub 仓库），共用同一套 assets 约定，跨站用绝对 URL 硬链接；乱码目录名 = 天然防剧透锁。
+上面是容器 A（假官网）的标准结构。其余容器只替换"中枢"部分，pages/assets/data 约定不变：
+
+**容器 B 假电脑桌面**：`search.html` 换成 `desk.html`（桌面：图标网格 + Dock + 顶部菜单栏）；`pages/surface/` 改为 `pages/apps/`（每"应用"一页：wechat.html、mailbox.html、wangpan.html…，各自复制桌面壁纸与菜单栏制造"同一台电脑弹窗"感）；中枢是 desk.html 内联的明文 `FILE_DATABASE`（关键词→应用页映射，见 §4 末 Spotlight 变体）；游戏内时间在所有页面冻结为同一天。
+
+**容器 C 伪互联网**：每个"网站"一个顶层目录（或一个 GitHub 仓库），共用同一套 assets 约定，跨站用绝对 URL 硬链接；乱码目录名 = 天然防剧透锁。需要 `sites/` 下并列：forum/、blog-2009/…blog-2015/、archive-machine/（假时光机：URL 白名单校验，gate.js 即可）、intranet/ 等。
+
+**容器 D 档案系统**：`search.html` 换成 `query.html`（多字段检索表单：姓名/编号/日期，用 gate.js 的多字段门做校验）→ `pages/results.html`（档案列表：编号+密级+标题，无权限条目显示 `[权限不足]` 占位）→ `pages/archive/`（每卷宗一页，权限分级=不同密码门）。皮肤走"政务内网"风：定宽 850px、灰蓝 #003366、宋体、页脚"技术支持：信息科"；里层=绝密卷宗换 secret.css。
 
 ## 2. 页面骨架模板（每页统一）
 
