@@ -6,7 +6,7 @@
 ## 安装
 
 ```bash
-git clone https://github.com/XingfenD/mystery-web-game-skill.git \
+git clone https://github.com/XingfenD/novel2arg.git \
   ~/.config/opencode/skills/mystery-web-game
 ```
 
