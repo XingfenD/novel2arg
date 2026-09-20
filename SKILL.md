@@ -1,106 +1,113 @@
 ---
 name: novel2arg
-description: Use when adapting a mystery/suspense novel into an interactive web puzzle game, or when the user mentions 网页解密游戏, 网页解谜, ARG, 交互式小说改编, 解谜网站, 悬疑小说改游戏, web puzzle game generation. Also use when such a project drifts toward a single-file SPA, canvas scene engine, inventory-based adventure UI, generic puzzle framework, or random passwords, even when told to "keep it simple" or that an engine was already scaffolded.
+description: Use when adapting a mystery/suspense novel into an interactive web puzzle game (ARG-lite), or when the user asks for a web puzzle site, an interactive novel adaptation, a puzzle website, or a mystery-novel game adaptation. Also use when such a project drifts toward a single-file SPA, canvas scene engine, inventory-based adventure UI, generic puzzle framework, or random passwords, even when told to "keep it simple" or that an engine was already scaffolded.
 ---
 
-# novel2arg：悬疑小说 → 交互式网页解密游戏
+# novel2arg: Mystery Novel → Interactive Web Puzzle Game
 
 ## Overview
 
-把悬疑小说改编成"伪装成真实网站"的多页面静态解谜游戏（ARG-lite）。
-核心原则一句话：**玩家不是"玩一个游戏"，而是"黑进一个真实网站，翻出不该看的东西"。**
+Adapt a mystery/suspense novel into a multi-page static puzzle game disguised as a real website (ARG-lite).
+Success criterion: the player feels they are infiltrating a real website and uncovering material they are not supposed to see, rather than playing a game.
 
-三大约束（**违背字面即违背本范式**，违反任何一条即偏离）：
+Three constraints (violating any one departs from this paradigm):
 
-1. **网页即世界**：每个叙事地点 = 一个独立 HTML 页面——一份可独立打开、可选中复制的"文档"。URL 栏是叙事道具，长篇文案进真实网页文本（不进 canvas）。
-2. **双层叙事**：表层（平庸、温馨、拟真）与里层（黑暗真相）两套皮肤、两套文案，冲突分五级递进揭示。
-3. **解谜 = 理解人物**：所有密码/关键词必须是角色生活痕迹的推理结果（生日、姓名缩写、车牌、黑话），禁止随机串。
+1. **The site is the world**: each narrative location is a standalone HTML page — a document the player can open and select text in independently. The URL bar is a narrative device; long-form copy lives in real page text, not in canvas.
+2. **Two-layer narrative**: a surface layer (mundane, warm, realistic) and a secret layer (dark truth), with separate skins and copy per layer; the conflict is revealed through five escalating stages.
+3. **Puzzles are character inference**: every password/keyword must be derivable from a character's life traces (birthday, initials, license plate, in-group slang). Random strings are prohibited.
 
-**约束 1 的禁止形态**（出现任一即结构性偏离）：
+**Prohibited forms of Constraint 1** (any one constitutes a structural departure):
 
-- 单 `index.html` 壳 + JS 场景切换的通用冒险引擎；canvas 场景渲染、热点地图
-- 物品栏 / 证物栏 / 玩家笔记本等"游戏框架 UI"
-- 统一解谜框架引擎（`register(type, panel)` 式谜题登记机）
-- 构建脚本把多页面打包回单文件 dist
+- A single `index.html` shell with JS scene switching (a generic adventure engine); canvas scene rendering; hotspot maps
+- Inventory / evidence tray / player notebook "game framework UI"
+- A unified puzzle framework engine (a `register(type, panel)`-style puzzle registry)
+- A build step that bundles the multi-page site back into a single-file dist
+- Alpine.js (or any utility library) driving a single-page shell, `x-show` scene switching, or a puzzle registry engine — Alpine manages in-page component lifecycle only
 
-## Rationalizations（基线实测辩解，逐字 → 反制）
+## Rationalizations (observed in baseline tests; rationalization → counter)
 
-| 辩解 | 现实 |
+| Rationalization | Counter |
 |---|---|
-| "赶时间，一个 html 文件搞定" | 砍内容量（更少页/谜题），不砍结构。单文件=范式外。 |
-| "别推倒重来，引擎层冻结" | 通用游戏框架脚手架≠伪网站。内容层照迁，引擎换成多页面+search/gate。 |
-| "知名解谜游戏都是这个架构" | 知名度≠适配本范式。知名密室优化"机关手感"，本范式优化"伪网站沉浸"，两类架构不能互抄。 |
-| "打包成单文件方便分发" | 静态托管（GitHub Pages）零成本，src/ 直接发布即可。 |
-| "密码先随便生成，后补" | 密码=人设推理就是谜题质量本身，没有"后补"。 |
+| "We're short on time — one HTML file is enough." | Cut content volume (fewer pages/puzzles), not structure. A single file falls outside the paradigm. |
+| "Don't start over; the engine layer is frozen." | A generic game framework scaffold is not a fake website. Migrate the content layer as-is and replace the engine with multi-page + search/gate. |
+| "Well-known puzzle games use this architecture." | Popularity does not imply fit for this paradigm. Those games optimize mechanical puzzle feel; this paradigm optimizes fake-website immersion. The two architectures are not interchangeable. |
+| "A single file is easier to distribute." | Static hosting (GitHub Pages) costs nothing; publish `src/` directly. |
+| "Generate passwords randomly now; fix them later." | Password-as-character-inference is the puzzle quality itself; there is no "later." |
 
-## Red Flags — 出现即停，回 GDD 修正
+## Red Flags — stop and revise the GDD
 
-- 目录里只有一个 HTML
-- 出现 canvas 场景渲染、物品栏、谜题登记引擎
-- 密码是随机串，页面文案里找不到推导出处
-- 只有一套视觉主题
-- "先 demo 跑起来再说"
+- Only one HTML file exists in the project
+- Canvas scene rendering, an inventory, or a puzzle registry engine appears
+- Passwords are random strings with no derivable source in page copy
+- Only one visual theme exists
+- "Let's get a demo running first"
 
-## 何时不使用
+## When not to use
 
-- 非悬疑/恐怖内核（"表层平庸 vs 里层黑暗"依赖反差题材）
-- 非网页交付（Unity / 手游 / 视觉小说引擎）
-- 无解谜的纯互动小说（不需要谜题体系）
+- Non-mystery, non-horror premises (the "mundane surface vs. dark secret layer" contrast is a prerequisite)
+- Non-web delivery (Unity / mobile game / visual novel engine)
+- Pure interactive fiction without puzzles (no puzzle system required)
 
 ## Workflow
 
-按顺序执行，每步完成后再进入下一步：
+Execute the steps in order; complete each step before starting the next.
 
-### 1. 小说拆解
-从小说中提取五张表：**人物关系网**（每人：表面身份/里层身份/生活痕迹）、**时间线**（故事时间 vs 玩家揭示顺序，二者必须不同）、**证据文档清单**（可拟真的文书：日记/病历/合同/流水/聊天记录/判决书）、**表里冲突对照**（每个表层实体的里层反差）、**反转点排序**（按玩家揭示顺序，标出中枢反转页）。
+### 1. Deconstruct the novel
 
-### 2. 选世界容器（引导式路由）
+Extract five tables: **character network** (per character: surface identity / secret identity / life traces), **timeline** (story order vs. player discovery order; the two must differ), **evidence document inventory** (documents that can be realistically mocked: diaries, medical records, contracts, bank statements, chat logs, court rulings), **surface/secret contrast matrix** (the secret-layer reversal for each surface entity), and **twist ordering** (in player discovery order, marking the central twist page).
 
-**除非用户已明确指定形式，否则必须引导用户选择**：给出下表四种容器 + 你基于小说特征的推荐项（放第一位，标注"(推荐)"）。有 question 工具则一次提问，用户拍板后再继续；没有则按推荐项继续，并在 GDD 首页标注"容器为推荐值，待确认"。
+### 2. Select the world container (guided routing)
 
-| 容器 | 玩家幻想 | 中枢交互 | 路由条件（小说特征） |
+**Unless the user has already specified a format, guide the user through the choice**: present the four containers below plus your recommendation based on the novel's traits (listed first, marked "(recommended)"). If a question tool is available, ask once and wait for the user's decision; otherwise proceed with the recommendation and mark the GDD cover page "container is a recommendation pending confirmation."
+
+| Container | Player fantasy | Central interaction | Routing conditions (novel traits) |
 |---|---|---|---|
-| **A 假官网** | "我在黑进一个机构的网站" | 全站搜索框：关键词→哈希查表→隐藏页 | 单一机构是舞台（餐馆/公司/学校/教会）；秘密藏在"不该公开的页面"里；失踪/黑幕调查 |
-| **B 假电脑桌面** | "我拿到了一台别人的电脑" | 桌面图标 + Spotlight 搜索 + 模拟应用页（微信/邮箱/网盘/日历） | 视角人物能合法接触某人的设备；线索分散在多个"应用"里；需要密码门/双因子门密集推进 |
-| **C 伪互联网** | "我在互联网上考古一个消失的人" | 多个独立"网站"（论坛/博客/时光机/内网）互相链接，URL 手输 | 时间跨度大（多年日记/逐年博客）；线索散布在不同平台；需要打破第四面墙（真实社媒/外链） |
-| **D 档案系统** | "我翻开了尘封的卷宗" | 检索表单（多字段：姓名/编号/日期）→ 档案列表 → 详情页，权限分级解锁 | 小说本身以文书为主体（卷宗/病历/审讯记录/户籍）；冷公文叙事；调查者身份是警察/记者/律师 |
+| **A Fake official website** | "I'm hacking into an organization's website." | Site-wide search box: keyword → hash lookup → hidden page | A single organization is the stage (restaurant / company / school / church); the secret hides in pages that should not be public; a missing-person or cover-up investigation |
+| **B Fake computer desktop** | "I've obtained someone else's computer." | Desktop icons + Spotlight search + simulated app pages (chat / email / cloud drive / calendar) | A viewpoint character can plausibly access someone's device; clues are scattered across multiple "apps"; progression depends on dense password/2FA gates |
+| **C Simulated internet** | "I'm doing internet archaeology on a vanished person." | Multiple independent "websites" (forum / blog / Wayback Machine / intranet) cross-linked, with hand-typed URLs | A long time span (years of diaries / yearly blogs); clues spread across platforms; requires breaking the fourth wall (real social media / external links) |
+| **D Archive system** | "I'm opening a sealed case file." | Query form (multiple fields: name / ID / date) → archive list → detail pages, unlocked by clearance level | The novel is primarily document-driven (case files / medical records / interrogation transcripts / household registry); cold bureaucratic narration; the investigator is a police officer / journalist / lawyer |
 
-路由判断顺序：①小说的主要信息载体是什么？聊天记录+文件→B；文书档案→D；网站页面→A；跨平台碎片→C。②玩家的叙事身份能否合法接触到该容器？不能→加"入口仪式页"交代获取方式（借用/继承/黑入/公务调阅）。③可混合：主容器定基调，允许嵌套一个副容器（如 B 电脑里内嵌 A 假官网、C 里的医院内网做成 D 档案系统），嵌套不超过一层。
+Routing order: (1) What is the novel's primary information carrier? Chat logs + files → B; documents and archives → D; website pages → A; cross-platform fragments → C. (2) Can the player's narrative role plausibly access that container? If not → add an entry ritual page explaining how it was obtained (borrowed / inherited / hacked / officially requested). (3) Mixing is allowed: the primary container sets the tone, and one secondary container may be nested (e.g., a fake company site inside B's computer; a hospital intranet built as a type-D archive system inside C). Nesting depth is one level maximum.
 
-选定后在 GDD 首页写明：主容器、中枢交互实现（A/B 用 references/project-structure.md §4 搜索引擎；C 用跨站硬链接+乱码目录名；D 用 §5 gate.js 多字段门 + 档案列表页）、副容器及嵌套位置。
+After selection, record on the GDD cover page: primary container, central interaction implementation (A/B: search engine in references/project-structure.md §4; C: cross-site hard links + obfuscated directory names; D: §5 `gate.js` multi-field gate + archive list page), secondary container and its nesting location.
 
-### 3. 写 GDD（游戏设计文档）
-必须包含：**编号页面图**（每页 `NN/总数` 进度编号 + 解锁来源）、**门清单**（每道门用"凭证三要素"设计：账号在 A 页、密码线索在 B 页、门在 C 页）、**谜题分配表**（从 references/design-paradigms.md §2 的 13 类中选型，5-10 道门/谜题，感官谜题需提前声明硬件要求）、**双结局方案**（选项文案复用玩家刚读到的文件知识）、**extra 氛围页清单**（显式声明不参与推进）。
+### 3. Write the GDD (Game Design Document)
 
-### 4. 脚手架
-严格按 references/project-structure.md 创建多文件项目。最小结构 = 入口仪式页 + 表层页目录 + 秘密页目录 + 三套皮肤 CSS + 搜索/门引擎 JS + 哈希关键词表构建脚本 + 双结局页。
+Must include: **numbered page map** (each page gets an `NN/total` progress number + unlock source), **gate inventory** (each gate follows the "credential triad": account on page A, password clue on page B, gate on page C), **puzzle allocation table** (select 5–10 gates/puzzles from the 13 types in references/design-paradigms.md §2; sensory puzzles must declare hardware requirements in advance), **dual-ending plan** (ending copy reuses knowledge from documents the player has just read), and **extra atmosphere page list** (explicitly marked non-progression).
 
-### 5. 实现顺序
-表层皮肤与拟真文档页 → 搜索引擎与密码门（先通一条最短通关链）→ 秘密页与换肤 → 演出模块（倒计时黑屏/打字机/滚动揭示）→ 结局与第四面墙收束 → 入口仪式页（规则、硬件要求、君子协定最后写，因为要反映实际玩法）。
+### 4. Scaffold
 
-### 6. 自检（全部通过才算完成）
-- **结构自检**：`find . -name "*.html" | wc -l` 应为 10+；产物是多 HTML 文件树，不是单壳应用
-- **可解性走查**：从入口页开始按 GDD 页面图人肉通关一遍，每个关键词/密码都能在前面页面文案中找到出处
-- **死链检查**：`grep -o 'href="[^"]*"' -r . | sort -u` 对照文件树逐一核对
-- **防剧透**：关键词表已哈希（源码不可反推）；无剧透性文件名（密码不入文件名，除非刻意做"URL即道具"）
-- **反馈完备**：搜索未命中/密码错误的提示文案带叙事暗示，无裸 alert("错误")
-- **顶栏常驻**：长页面向下滚动时顶栏（header / 顶部菜单栏）不移出视口，正文从其下方滚过
-- **移动端**：核心交互在手机宽度可用；感官谜题的硬件要求在入口页声明
+Create the multi-file project strictly according to references/project-structure.md. Minimum structure = entry ritual page + surface page directory + secret page directory + three skin CSS files + vendored Alpine runtime + `components.js` (search / gate / staging / progress components) + keyword hash build script + dual ending pages. Pages remain separate documents with real navigation; Alpine manages in-page component lifecycle (`init()` / `destroy()`) only, never routing or scene switching.
 
-## Common Mistakes（基线测试实测缺陷，逐条规避）
+### 5. Implementation order
 
-| 错误 | 正确 |
+Surface skin and realistic document pages → search engine and password gates (first complete one shortest playable path) → secret pages and reskinning → staging modules (countdown blackout / typewriter / scroll reveal) → endings and fourth-wall close → entry ritual page (rules, hardware requirements, and honor agreement last, since they must reflect the actual gameplay).
+
+### 6. Self-check (all items must pass)
+
+- **Structure check**: `find . -name "*.html" | wc -l` should be 10+; the deliverable is a multi-HTML file tree, not a single-shell app
+- **Alpine lifecycle**: every page loads the vendored runtime and `components.js`; interactive elements mount via `x-data`; timers/observers are released in `destroy()`; the console shows zero Alpine errors and zero 404s
+- **Solvability walkthrough**: play from the entry page through the GDD page map manually; every keyword/password must be traceable to prior page copy
+- **Dead-link check**: `grep -o 'href="[^"]*"' -r . | sort -u` verified against the file tree
+- **Spoiler prevention**: the keyword table is hashed (not reversible from source); filenames are non-spoiling (passwords must not appear in filenames unless "URL as prop" is intentional)
+- **Complete feedback**: search misses / wrong passwords return narrative-hinting copy; no bare `alert("error")`
+- **Persistent top bar**: the header (or top menu bar) stays fixed to the viewport on long pages; body text scrolls beneath it
+- **Mobile**: core interactions work at phone width; sensory puzzle hardware requirements are declared on the entry page
+
+## Common Mistakes (observed in baseline tests; avoid each)
+
+| Mistake | Correct approach |
 |---|---|
-| 做成 SPA 冒险引擎（canvas 场景、物品栏、通用谜题框架） | 多页面伪网站；每个页面是一份可独立打开的"文档" |
-| 谜题与人物脱节（抽象机关、随机密码） | 密码=人设推理；找密码=理解一个角色 |
-| 恐怖靠形容词和 jump scare 文案 | 靠公文腔台账、重复（同一句话抄21遍）、缺席（无人回复的帖子、[已删除]） |
-| 单一视觉主题 | 明暗双皮肤；进里层瞬间整页换肤 |
-| 只有故事时间线 | 反转点按玩家揭示顺序重排；中枢反转页一页放出多个支线钩子 |
-| 无进度反馈 | 每页页脚 `NN/总数`；里层页用 `ex/总数` 等异常编号 |
-| 单结局或结局=评分 | 二选一道德困境结局 + 打破第四面墙收束 + 续作钩子 |
-| 关键词明文存 JSON | 构建脚本哈希成表，防"看源码通关" |
+| Building a SPA adventure engine (canvas scenes, inventory, generic puzzle framework) | Multi-page fake website; each page is an independently openable "document" |
+| Puzzles detached from characters (abstract mechanisms, random passwords) | Password = character inference; finding the password = understanding a character |
+| Horror delivered through adjectives and jump-scare copy | Horror delivered through bureaucratic ledgers, repetition (one sentence copied 21 times), absence (unanswered posts, `[deleted]`) |
+| A single visual theme | Light/dark dual skins; instant full-page reskin on entering the secret layer |
+| Story chronology only | Twist points reordered by player discovery; the central twist page releases multiple side hooks in one page |
+| No progress feedback | `NN/total` in each page footer; secret pages use anomalous numbering such as `ex/total` |
+| A single ending, or an ending that is a score | A two-option moral dilemma ending + a fourth-wall close + a sequel hook |
+| Keywords stored in plaintext JSON | Build script hashes them into a table, preventing "read the source to win" |
 
 ## References
 
-- **references/design-paradigms.md**：六维设计范式（流程/谜题/文案/排版/冲突/交互）+ 13 类谜题分类学，写 GDD 时必读
-- **references/project-structure.md**：前端多文件项目结构 + 搜索引擎/密码门/皮肤/演出模块的参考实现，脚手架时必读
+- **references/design-paradigms.md**: six-dimension design paradigm (flow / puzzles / copy / typography / conflict / interaction) + 13-type puzzle taxonomy. Required reading when writing the GDD.
+- **references/project-structure.md**: multi-file front-end project structure + reference implementations for the search engine / password gates / skins / staging modules. Required reading when scaffolding.

@@ -1,83 +1,91 @@
-# 前端项目结构（多文件伪网站，禁止单 index.html）
+# Front-End Project Structure (Multi-Page Fake Website; a Single index.html Is Prohibited)
 
-> 零依赖纯静态：HTML + CSS + 原生 JS，唯一构建脚本是关键词哈希器（node，可选）。任意静态托管可跑（GitHub Pages 优先）。
+> Pure static, no build step: HTML + CSS + Alpine.js v3 core (vendored locally; no plugins, no runtime CDN). The only tool is the keyword hasher (Node, optional). Runs on any static host (GitHub Pages preferred).
 
-## 1. 目录结构
+## 1. Directory Structure
 
 ```
 <game-name>/
-├── index.html                    # 入口仪式页：免责声明+角色赋予+规则+开始按钮
-├── search.html                   # 搜索结果页（假官网容器的中枢；桌面/伪互联网容器改为 desk.html 或各站互链）
+├── index.html                    # Entry ritual page: disclaimer + role assignment + rules + start button
+├── search.html                   # Search results page (hub for container A; for desktop / simulated-internet containers, replace with desk.html or cross-site links)
 ├── pages/
-│   ├── surface/                  # 表层页（亮色皮肤，伪装用）
+│   ├── surface/                  # Surface pages (light skin, for the facade)
 │   │   ├── home.html  menu.html  news.html ...
-│   ├── platform/                 # 中层功能页（登录/帖子/系统页，可选）
+│   ├── platform/                 # Mid-layer functional pages (login / posts / system pages; optional)
 │   │   ├── login.html  posts-01.html ...
-│   ├── secret/                   # 里层页（暗色皮肤；文件名不可剧透，用编号或乱码）
+│   ├── secret/                   # Secret pages (dark skin; filenames must not spoil — use numbers or scrambled names)
 │   │   ├── s19-record.html  s23-diary.html ...
 │   └── endings/
 │       ├── ending-a.html  ending-b.html
 ├── assets/
 │   ├── css/
-│   │   ├── base.css              # 共享：排版骨架、文档拟真四件套、进度页脚
-│   │   ├── surface.css           # 表层皮肤（亮色/温馨/拟真）
-│   │   ├── secret.css            # 里层皮肤（近黑+血红+手写体+留白揭示）
-│   │   └── forbidden.css         # 禁忌态（搜索命中禁词时整页突变）
+│   │   ├── base.css              # Shared: layout skeleton, document realism kit, progress footer, x-cloak
+│   │   ├── surface.css           # Surface skin (light / warm / realistic)
+│   │   ├── secret.css            # Secret skin (near-black + blood red + handwriting + whitespace reveals)
+│   │   └── forbidden.css         # Forbidden state (full-page shift when a forbidden keyword is searched)
 │   ├── js/
-│   │   ├── search.js             # 搜索引擎：哈希查表+三态反馈
-│   │   ├── gate.js               # 密码门/多字段凭证门通用逻辑
-│   │   ├── staging.js            # 演出：倒计时黑屏、打字机、滚动揭示
-│   │   └── progress.js           # 可选：localStorage 收集度存档
-│   ├── img/  audio/  docs/       # 图片、音频谜题、可下载伪文档(pdf/xlsx)
+│   │   ├── components.js         # Alpine components (search / gate / staging / progress), registered on alpine:init
+│   │   └── vendor/
+│   │       └── alpine.min.js     # Alpine v3 core, pinned (vendored once; never edited; no plugins)
+│   ├── img/  audio/  docs/       # Images, audio puzzles, downloadable mock documents (pdf/xlsx)
 ├── data/
-│   ├── keywords.src.json         # 明文关键词表（仅开发期存在，构建后不进部署目录）
-│   ├── keywords.json             # 哈希表（部署产物，防看源码通关）
-│   └── forbidden.json            # 禁词表（哈希+禁忌态文案）
+│   ├── keywords.src.json         # Plaintext keyword table (development only; excluded from the deploy directory after build)
+│   ├── keywords.json             # Hash table (deploy artifact; prevents winning by reading source)
+│   └── forbidden.json            # Forbidden word table (hashes + forbidden-state copy)
 ├── tools/
-│   ├── build-keywords.mjs        # 明文→sha256+base64 哈希表
-│   └── check-links.mjs           # 死链检查
-└── README.md                     # 运行方式 + GDD 链接 + 玩家须知
+│   ├── build-keywords.mjs        # Plaintext → sha256+base64 hash table
+│   └── check-links.mjs           # Dead-link checker
+└── README.md                     # How to run + GDD link + player notes
 ```
 
-上面是容器 A（假官网）的标准结构。其余容器只替换"中枢"部分，pages/assets/data 约定不变：
+Vendor the Alpine runtime once at scaffold time (the pinned version is in the URL; the file is then committed with the game):
 
-**容器 B 假电脑桌面**：`search.html` 换成 `desk.html`（桌面：图标网格 + Dock + 顶部菜单栏）；`pages/surface/` 改为 `pages/apps/`（每"应用"一页：wechat.html、mailbox.html、wangpan.html…，各自复制桌面壁纸与菜单栏制造"同一台电脑弹窗"感）；中枢是 desk.html 内联的明文 `FILE_DATABASE`（关键词→应用页映射，见 §4 末 Spotlight 变体）；游戏内时间在所有页面冻结为同一天。
+```bash
+mkdir -p assets/js/vendor
+curl -o assets/js/vendor/alpine.min.js https://cdn.jsdelivr.net/npm/alpinejs@3.17.3/dist/cdn.min.js
+```
 
-**容器 C 伪互联网**：每个"网站"一个顶层目录（或一个 GitHub 仓库），共用同一套 assets 约定，跨站用绝对 URL 硬链接；乱码目录名 = 天然防剧透锁。需要 `sites/` 下并列：forum/、blog-2009/…blog-2015/、archive-machine/（假时光机：URL 白名单校验，gate.js 即可）、intranet/ 等。
+The above is the standard structure for container A (fake official website). Other containers replace only the "hub" part; the pages/assets/data conventions stay the same:
 
-**容器 D 档案系统**：`search.html` 换成 `query.html`（多字段检索表单：姓名/编号/日期，用 gate.js 的多字段门做校验）→ `pages/results.html`（档案列表：编号+密级+标题，无权限条目显示 `[权限不足]` 占位）→ `pages/archive/`（每卷宗一页，权限分级=不同密码门）。皮肤走"政务内网"风：定宽 850px、灰蓝 #003366、宋体、页脚"技术支持：信息科"；里层=绝密卷宗换 secret.css。
+**Container B — fake computer desktop**: replace `search.html` with `desk.html` (desktop: icon grid + Dock + top menu bar); change `pages/surface/` to `pages/apps/` (one page per "app": chat.html, mailbox.html, cloud-drive.html…, each replicating the desktop wallpaper and menu bar to create the "same computer, popup window" feel); the hub is a plaintext `FILE_DATABASE` inlined in desk.html (keyword → app page mapping; see the Spotlight variant at the end of §4); in-game time is frozen to the same day on every page.
 
-## 2. 页面骨架模板（每页统一）
+**Container C — simulated internet**: each "website" gets a top-level directory (or its own GitHub repo), sharing the same assets conventions; cross-site navigation uses absolute URL hard links; scrambled directory names serve as a natural anti-spoiler lock. Requires parallel entries under `sites/`: forum/, blog-2009/…blog-2015/, archive-machine/ (fake Wayback Machine: URL whitelist validation, the `gate` component suffices), intranet/, etc.
+
+**Container D — archive system**: replace `search.html` with `query.html` (multi-field query form: name / ID / date, validated by the `gate` component with multiple hash attributes) → `pages/results.html` (archive list: ID + classification + title; unauthorized entries show `[Access denied]`) → `pages/archive/` (one page per case file; clearance levels = different password gates). Skin: government-intranet style — fixed 850px width, gray-blue #003366, serif type, footer "Technical support: Information Systems Division"; the secret layer is classified files switching to secret.css.
+
+## 2. Page Skeleton Template (uniform across pages)
 
 ```html
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>〈表层标题〉</title>
+  <title>&lt;Surface page title&gt;</title>
   <link rel="stylesheet" href="../../assets/css/base.css">
-  <link rel="stylesheet" href="../../assets/css/surface.css"><!-- secret/ 页换成 secret.css -->
+  <link rel="stylesheet" href="../../assets/css/surface.css"><!-- secret/ pages link secret.css instead -->
+  <script defer src="../../assets/js/components.js"></script><!-- registers Alpine components on alpine:init; runs before the Alpine runtime -->
+  <script defer src="../../assets/js/vendor/alpine.min.js"></script><!-- vendored Alpine v3 core; auto-starts and fires alpine:init -->
 </head>
-<body data-page="14" data-total="36"><!-- 进度编号 -->
-  <header><!-- 全站常驻同一搜索表单（表层世界拒绝你：正门入口 onclick 弹"暂停开放" -->
+<body data-page="14" data-total="36"><!-- progress number -->
+  <header><!-- site-wide persistent search form (the surface world rejects you: front-door onclick pops "Temporarily closed") -->
     <form id="search-form" action="/search.html" method="get">
-      <input type="text" name="q" placeholder="搜索内容..."><button type="submit">搜索</button>
+      <input type="text" name="q" placeholder="Search..."><button type="submit">Search</button>
     </form>
   </header>
-  <main><!-- 本页正文：一份"文档"。文案里埋下一页的关键词（专有名词加粗/入表格） --></main>
-  <footer><small>© …… <span class="progress">14/36</span></small></footer>
-  <!-- secret 页可加彩蛋：隐形链接、黑底选字、手抄红字（见 design-paradigms §4.5） -->
+  <main><!-- page body: one "document". Bury keywords for the next page in the copy (bold proper nouns / place them in tables) --></main>
+  <footer><small>© ... <span class="progress">14/36</span></small></footer>
+  <!-- secret pages may add easter eggs: invisible links, black-on-black selectable text, hand-copied red text (see design-paradigms §4.5) -->
 </body>
 </html>
 ```
 
-规则：**顶栏常驻**——每页 header（容器 B 的顶部菜单栏同理）固定视口顶部，长页面向下滚动时不移出视野（base.css 统一给 `position: sticky; top: 0` + 不透明背景，secret/ 页同）；secret/ 页页脚编号可用 `ex/36`、`?/36` 异常值；`[此内容已被删除]` 占位符是合法叙事元素。
+Rules: **persistent top bar** — every page's header (same for container B's top menu bar) is fixed to the top of the viewport and does not leave view on long pages (base.css gives `position: sticky; top: 0` + an opaque background site-wide; secret/ pages included); every page loads the same two scripts in the same order (`components.js` before the Alpine runtime) and carries no inline behavior wiring — behavior lives in `x-data` components; secret/ page footers may use anomalous numbers such as `ex/36` or `?/36`; the `[This content has been deleted]` placeholder is a valid narrative element.
 
-## 3. 关键词哈希构建（tools/build-keywords.mjs）
+## 3. Keyword Hash Build (tools/build-keywords.mjs)
 
 ```js
-// 明文表 keywords.src.json: {"顾铭": ["secret/s23-file.html|顾铭的记录"], "花生糕|年糕": [...]}
-// key 支持 | 分隔同义别名；value 为 "url|标题"。用法: node tools/build-keywords.mjs
+// Plaintext table keywords.src.json: {"Margaret Holt": ["secret/s23-file.html|Margaret Holt's Record"], "walnut cake|pastry": [...]}
+// Keys support | separated synonym aliases; values are "url|title". Usage: node tools/build-keywords.mjs
 import { createHash } from 'node:crypto';
 import { readFileSync, writeFileSync } from 'node:fs';
 const src = JSON.parse(readFileSync('data/keywords.src.json', 'utf8'));
@@ -91,103 +99,189 @@ for (const [keys, results] of Object.entries(src))
 writeFileSync('data/keywords.json', JSON.stringify(out, null, 1));
 ```
 
-部署时**不要把 keywords.src.json 带上**（.gitignore 或构建后删除）。
+At deployment, **do not ship keywords.src.json** (add it to .gitignore or delete it after the build).
 
-## 4. 搜索引擎（assets/js/search.js）——三态反馈
+## 4. Search Engine (`search` Component) — Three-State Feedback
 
-```js
-// 与构建脚本同构：md5 用内联实现或 blueimp-md5 单文件；也可换 sha256(WebCrypto异步)
-document.addEventListener('DOMContentLoaded', async () => {
-  const q = new URLSearchParams(location.search).get('q')?.trim().toLowerCase();
-  const box = document.getElementById('results');
-  if (!q) return (box.textContent = '请输入搜索关键字。');
-  const enc = btoa(String.fromCharCode(...window.md5(q).match(/../g).map(h => parseInt(h, 16))));
-  const forbidden = await (await fetch('data/forbidden.json')).json();
-  const hit = Object.values(forbidden).find(f => f.keywords.includes(enc));
-  if (hit) {  // 态3：禁忌模式——整页换肤四重信号（背景/标题/logo/页脚）
-    document.body.classList.add('body-forbidden');
-    document.querySelector('.progress').textContent = 'ex/36';
-    box.innerHTML = `<span class="${hit.hidden ? 'hidden-text' : 'visible-text'}">${hit.text}</span>`;
-    return;   // .hidden-text{color:#000;background:#000} ::selection{color:#f00} → 划选才显形
-  }
-  const map = await (await fetch('data/keywords.json')).json();
-  const results = map[enc] ?? [];
-  box.innerHTML = results.length          // 态1：命中——新标签打开，保留"正常世界"
-    ? `<p>共有 <b>${results.length}</b> 项结果：</p>` +
-      results.map(r => `<a href="${r.url}" target="_blank">${r.title}</a>`).join('')
-    : `<p>抱歉，没有找到与"<b>${q}</b>"相关的结果。</p>`;  // 态2：未命中——维持假面，不泄露游戏
-});
-```
-
-桌面容器的 Spotlight 变体：明文 `FILE_DATABASE = {关键词: {file,label,color}}`，`onkeyup` 精确匹配，结果条目颜色=危险度分类。
-
-## 5. 密码门（assets/js/gate.js）
+Registered in `components.js`; mounted by search.html as `<main x-data="search">`.
 
 ```js
-// 用法: <form data-gate data-user-hash="…" data-pass-hash="…" data-next="../secret/s22.html"
-//             data-fail-hint="登录失败：密码错误🎂">   ← 失败提示必须带叙事暗示
-export function bindGate(form) {
-  form.addEventListener('submit', async e => {
-    e.preventDefault();
-    const [u, p] = [form.user.value, form.pass.value];
-    const ok = hash(u) === form.dataset.userHash && hash(p) === form.dataset.passHash;
-    if (ok) location.href = form.dataset.next;
-    else {
-      const msg = form.querySelector('.gate-error');
-      msg.textContent = form.dataset.failHint;       // 内联红字，不用裸 alert
-      form.animate([{ transform: 'translateX(0)' }, { transform: 'translateX(-5px)' },
-                    { transform: 'translateX(5px)' }, { transform: 'translateX(0)' }], 300);
+// Shared hash helper — must mirror tools/build-keywords.mjs exactly (same trim/lowercase normalization,
+// same md5 + base64 output). md5 comes from an implementation inlined above this helper or from a vendored
+// vendor/md5.min.js loaded before components.js; switching both sides to async WebCrypto sha256 is also an option.
+const hash = w => btoa(String.fromCharCode(...window.md5(w.trim().toLowerCase()).match(/../g).map(h => parseInt(h, 16))));
+
+Alpine.data('search', () => ({
+  q: '',
+  state: 'empty',            // empty | forbidden | hit | miss
+  results: [],
+  forbidden: null,
+
+  async init() {             // Alpine lifecycle: runs before the component renders
+    this.q = new URLSearchParams(location.search).get('q')?.trim().toLowerCase() ?? '';
+    if (!this.q) return;
+    const enc = hash(this.q);
+
+    const forbiddenTable = await (await fetch('data/forbidden.json')).json();
+    const hit = Object.values(forbiddenTable).find(f => f.keywords.includes(enc));
+    if (hit) {               // State 3: forbidden — full-page reskin (background/title/logo/footer)
+      this.forbidden = hit;
+      this.state = 'forbidden';
+      document.body.classList.add('body-forbidden');
+      document.querySelector('.progress').textContent = 'ex/36';
+      return;
     }
-  });
-}
+
+    const map = await (await fetch('data/keywords.json')).json();
+    this.results = map[enc] ?? [];
+    this.state = this.results.length ? 'hit' : 'miss';
+  },
+}));
 ```
 
-设计门时执行**凭证三要素**：账号藏在 A 页、密码线索藏在 B 页（需推理：本命年→1977、晒娃日期→20201125）、门在 C 页。多字段门（四元组/双因子）= 多个 hash 属性并列。哈希仅防"扫一眼源码就看见明文"，不做真加密——君子协定写在入口页。
+```html
+<!-- search.html -->
+<main id="results" x-data="search" x-cloak>
+  <template x-if="state === 'forbidden'">
+    <span :class="forbidden.hidden ? 'hidden-text' : 'visible-text'" x-text="forbidden.text"></span>
+    <!-- .hidden-text{color:#000;background:#000} ::selection{color:#f00} → visible only when selected -->
+  </template>
+  <template x-if="state === 'hit'">
+    <div>
+      <p><b x-text="results.length"></b> results found:</p>
+      <template x-for="r in results" :key="r.url">
+        <a :href="r.url" target="_blank" x-text="r.title"></a><!-- new tab preserves the "normal world" -->
+      </template>
+    </div>
+  </template>
+  <template x-if="state === 'miss'"><p>Sorry, no results for "<b x-text="q"></b>".</p></template>
+  <template x-if="state === 'empty'"><p>Enter a search keyword.</p></template>
+</main>
+```
 
-## 6. 演出模块（assets/js/staging.js）
+Desktop-container Spotlight variant: a `desk` component keeps a plaintext `FILE_DATABASE = {keyword: {file, label, color}}`, matches on `@keyup` against `x-model` state, and renders each result with its danger-classification color.
+
+## 5. Password Gate (`gate` Component)
 
 ```js
-export const countdownBlackout = (ms, text, then) => {  // "被系统发现"：解锁后延时黑屏
-  const el = Object.assign(document.createElement('div'), { className: 'blackout' });
-  document.body.append(el);
-  setTimeout(() => { el.textContent = text; el.classList.add('show-text'); }, ms);
-  if (then) setTimeout(then, ms + 5000);
-};
-export const typewriterRewrite = (el, newText, speed = 60) => { /* 逐字删除原文再重打，仪式感 */ };
-export const revealOnScroll = sel => { /* IntersectionObserver 给 .reveal 加 .shown，控制阅读节奏 */ };
+// Usage:
+// <form x-data="gate" @submit.prevent="submit" data-user-hash="…" data-pass-hash="…"
+//       data-next="../secret/s22.html" data-fail-hint="Login failed: wrong password 🎂">
+//   <input name="user" x-model="user"> <input name="pass" type="password" x-model="pass">
+//   <p class="gate-error" x-show="error" x-text="error"></p>
+//   <button type="submit">Sign in</button>
+// </form>                                   ← failure hints must carry narrative clues
+Alpine.data('gate', () => ({
+  user: '', pass: '', error: '',
+  submit() {
+    const el = this.$el;
+    const ok = hash(this.user) === el.dataset.userHash && hash(this.pass) === el.dataset.passHash;
+    if (ok) return void (location.href = el.dataset.next);
+    this.error = el.dataset.failHint;      // inline red text, never a bare alert
+    el.animate([{ transform: 'translateX(0)' }, { transform: 'translateX(-5px)' },
+                { transform: 'translateX(5px)' }, { transform: 'translateX(0)' }], 300);
+  },
+}));
 ```
 
-## 7. 皮肤切换（base.css 约定）
+`hash()` is the shared helper from §4. When designing a gate, enforce the **credential triad**: the account is hidden on page A, the password clue on page B (requiring inference: zodiac year → 1977, child-photo date → 20201125), and the gate on page C. Multi-field gates (four-tuple / two-factor) = multiple hash attributes in parallel. Hashing only prevents plaintext from being visible at a glance in the source; it is not real encryption — the honor agreement is stated on the entry page.
+
+## 6. Staging Components (Lifecycle-Managed)
+
+All timers and observers are registered in `init()` and released in `destroy()`, so staged effects survive or die with their component.
+
+```js
+// "The system has noticed you": delayed blackout after unlock; optional `next` navigates on 5s later
+Alpine.data('blackout', (delay = 3000, text = '', next = null) => ({
+  visible: false, text, showTimer: null, exitTimer: null,
+  init() {
+    this.showTimer = setTimeout(() => {
+      this.visible = true;
+      if (next) this.exitTimer = setTimeout(() => (location.href = next), 5000);
+    }, delay);
+  },
+  destroy() { clearTimeout(this.showTimer); clearTimeout(this.exitTimer); },
+}));
+// <div class="blackout" x-data="blackout(4000, 'The system has noticed you')" x-show="visible" x-transition x-cloak x-text="text"></div>
+
+// Delete the element's original text character by character, then retype newText — ceremonial effect
+Alpine.data('typewriter', (newText, speed = 60) => ({
+  output: '', timer: null,
+  init() {
+    const original = this.$el.textContent;
+    let i = original.length;
+    this.output = original;
+    this.timer = setInterval(() => {
+      this.output = original.slice(0, --i);
+      if (i > 0) return;
+      clearInterval(this.timer);
+      let j = 0;
+      this.timer = setInterval(() => {
+        this.output = newText.slice(0, ++j);
+        if (j >= newText.length) clearInterval(this.timer);
+      }, speed);
+    }, speed);
+  },
+  destroy() { clearInterval(this.timer); },
+}));
+// <p x-data="typewriter('Access granted. Do not look back.')" x-text="output"></p>
+
+// Scroll reveal: IntersectionObserver owned by the component, controlling reading pace
+Alpine.data('reveal', () => ({
+  shown: false, observer: null,
+  init() {
+    this.observer = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting) return;
+      this.shown = true;
+      this.observer.disconnect();
+    });
+    this.observer.observe(this.$el);
+  },
+  destroy() { this.observer?.disconnect(); },
+}));
+// <div class="reveal" :class="{ shown }" x-data="reveal">…</div>  .reveal{opacity:0;transition:opacity .6s}.reveal.shown{opacity:1}
+```
+
+## 7. Skin Switching (base.css Conventions)
 
 ```css
-/* 顶栏：常驻视口顶部，不随页面滚动；背景必须不透明，避免正文透出 */
+/* Top bar: fixed to the viewport top, does not scroll with the page; background must be opaque so body text does not show through */
 header { position:sticky; top:0; z-index:10; background:inherit; }
-/* 表层 */ body { background:#f9ebde; color:#555; }  a { color:#d15c20; }
-/* 里层：secret/ 页直接 link secret.css */
+[x-cloak] { display:none !important; }                           /* hide Alpine components until they initialize */
+/* Surface */ body { background:#f9ebde; color:#555; }  a { color:#d15c20; }
+/* Secret: secret/ pages link secret.css directly */
 body.secret { background:#1a1a1c; color:#9e9e9e; } body.secret h2 { color:#db1400; }
-.handwrite { font-family:'LongCang',cursive; color:#d20a0a; }  /* 手抄红字 */
-.spacer { height:180px; }                                        /* 留白即节奏 */
+.handwrite { font-family:'Caveat',cursive; color:#d20a0a; }      /* hand-copied red text */
+.spacer { height:180px; }                                        /* whitespace as pacing */
 .hidden-text { background:#000; color:#000; user-select:text; }
-.hidden-text::selection { color:#f00; background:#333; }         /* 黑底选字显形 */
-.blurred { filter:blur(6px); user-select:none; }                 /* 打码即线索 */
+.hidden-text::selection { color:#f00; background:#333; }         /* black-on-black text revealed by selection */
+.blurred { filter:blur(6px); user-select:none; }                 /* redaction is itself a clue */
 ```
 
-## 8. 可选：收集度存档（assets/js/progress.js）
+## 8. Optional: Collection Progress (`progress` Component)
 
 ```js
-// 本范式默认无存档（进度在玩家脑中）。若要加：只记"访问过的页编号"，门保持单向不记录
-const seen = JSON.parse(localStorage.getItem('seen') ?? '[]');
-const n = document.body.dataset.page;
-if (n && !seen.includes(n)) seen.push(n);
-localStorage.setItem('seen', JSON.stringify(seen));
-// 入口页可显示 收集度 seen.length + '/36'
+// This paradigm has no save by default (progress lives in the player's head). If added: record only visited
+// page numbers; gates stay one-way and untracked. Mount on the shared footer so it runs on every page.
+Alpine.data('progress', () => ({
+  seen: [],
+  init() {
+    this.seen = JSON.parse(localStorage.getItem('seen') ?? '[]');
+    const n = document.body.dataset.page;
+    if (n && !this.seen.includes(n)) this.seen.push(n);
+    localStorage.setItem('seen', JSON.stringify(this.seen));
+  },
+}));
+// <footer x-data="progress"><small>© ... <span x-text="seen.length"></span>/36</small></footer>
 ```
 
-## 9. 部署前自检
+## 9. Pre-Deployment Self-Check
 
 ```bash
-node tools/build-keywords.mjs          # 重新生成哈希表
-node tools/check-links.mjs             # 遍历所有 href/src 对照文件树，报死链
-grep -rn "keywords.src" --include=*.html .   # 确认明文表没被页面引用
-# 人肉走查：按 GDD 页面图从 index.html 通关一遍，记录每个凭证的出处页
+node tools/build-keywords.mjs          # regenerate the hash table
+node tools/check-links.mjs             # walk all href/src against the file tree; report dead links
+grep -rn "keywords.src" --include=*.html .   # confirm no page references the plaintext table
+grep -rL "alpine.min.js" --include=*.html .  # list pages missing the vendored Alpine runtime
+# Manual walkthrough: play through index.html following the GDD page map; record the source page for every credential
+# Console check: the entry page and one secret page show zero errors and zero 404s (Alpine runtime included)
 ```

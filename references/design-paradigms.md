@@ -1,78 +1,78 @@
-# 网页解密游戏六维设计范式（处方版）
+# Six-Dimension Design Paradigm for Web Puzzle Games (Prescriptive)
 
-> 本文件与 SKILL.md、project-structure.md 配套使用：写 GDD 时对照检查。
+> Companion to SKILL.md and project-structure.md: use as a checklist when writing the GDD.
 
-## 1. 流程设计
+## 1. Flow Design
 
-- **总公式**：入口仪式页 → 伪装容器 → 核心循环（阅读→提取专有名词→搜索/输入→解锁隐藏页）→ 表层裂缝 → 里层五级升级 → 中枢反转页 → 终局演出 → 二选一结局 → 第四面墙收束+续作钩子。
-- **入口仪式页**与游戏本体分离：免责声明 + 角色赋予（"你叫X，你的弟弟失踪了"/"你只扮演你自己"）+ 规则约束（搜索限制/戴耳机/别F12 的君子协定）+ 开始按钮。
-- **唯一导航中枢**：一个搜索框或一条链接链撑起全部探索；关键词只能从页面文案里"抄"，天然形成页面引用图。搜索用精确匹配（可配同义词别名），逼玩家精读。
-- **五幕节奏**：①安全区教学（表层3-8页教核心循环，第一页就要能搜到东西）②第一道裂缝（无人回复的呼救帖/已删除文件夹/停更的公告）③里层揭开（登录后整站换皮）④中枢反转页（一页放出4-5个支线钩子）⑤终局仪式+选择。
-- **进度编号**：每页页脚静态 `NN/总数`；里层彩蛋页用 `ex/总数`、`?/总数` 等异常编号作"你踩到里世界了"的元信号。编号只暗示理想顺序，不做顺序锁；真正的 gating 是密码门。
-- **extra 氛围页**在入口规则里显式声明"不影响推进"，防玩家在死胡同耗尽耐心。
-- **双结局**：选项文案复用玩家刚在文件里学到的知识（仪式的两种变体/问卷的两种回答）——最终谜题=你是否读懂了故事。结局后放作者真实社交账号，从沉浸跌回现实。
+- **Master formula**: entry ritual page → disguised container → core loop (read → extract proper nouns → search/enter → unlock hidden page) → surface crack → five-stage escalation into the secret layer → central twist page → finale staging → two-way ending choice → fourth-wall close + sequel hook.
+- **Entry ritual page** is separate from the game proper: disclaimer + role assignment ("You are X; your brother has gone missing" / "You play yourself") + rules (search limits / wear headphones / no-F12 honor agreement) + start button.
+- **Single navigation hub**: one search box or one link chain carries all exploration; keywords can only be "copied" from page copy, which naturally forms a page reference graph. Search uses exact matching (synonym aliases allowed) to force close reading.
+- **Five-act pacing**: (1) safe-zone tutorial (3–8 surface pages teaching the core loop; the first page must return search results) (2) first crack (an unanswered distress post / a deleted folder / a discontinued announcement) (3) secret layer revealed (full-site reskin after login) (4) central twist page (4–5 side hooks released in one page) (5) finale ritual + choice.
+- **Progress numbering**: static `NN/total` in each page footer; secret easter-egg pages use anomalous numbers such as `ex/total` or `?/total` as a meta-signal that the player has crossed into the other side. Numbers only suggest the ideal order; they do not lock progression. The actual gating is password gates.
+- **Extra atmosphere pages** are explicitly declared "non-progression" in the entry rules, preventing players from exhausting their patience in dead ends.
+- **Dual endings**: ending options reuse knowledge the player has just learned from documents (two variants of the ritual / two answers on the questionnaire) — the final puzzle is whether the player understood the story. After the ending, link the author's real social account, dropping the player from immersion back to reality.
 
-## 2. 谜题分类学（13 类，选 5-10 个组队）
+## 2. Puzzle Taxonomy (13 types; choose 5–10 as a set)
 
-**铁律：密码=人设推理。** 每个凭证都是角色生活痕迹（本命年生日、孩子生日、姓名缩写、车牌、工号），玩家找密码的过程=理解一个人物的过程。
+**Iron rule: a password is character inference.** Every credential is a character's life trace (birth year derived from a zodiac year, child's birthday, initials, license plate, employee ID). The process of finding a password is the process of understanding a character.
 
-| 类型 | 机制要点 |
+| Type | Mechanism |
 |---|---|
-| A 关键词检索门 | 明文词→哈希查表→隐藏页；同义词多别名容错；一词多结果 |
-| B 凭证跨页投递 | **三要素：账号在A页、密码线索在B页、门在C页**，最小拼图单位 |
-| C 密码藏URL | 文件名/路径即凭证（`passwordisXXX.html`），地址栏变叙事道具；慎用，会泄底 |
-| D 经典密码学 | Polybius方阵、摩尔斯（音频点划1:3）、书密码（页-行）；谜面在页面，答案校验在前端 |
-| E 感官谜题 | 双声道分离（入口页必须声明戴耳机）、点击计数、手电筒遮罩（radial-gradient+鼠标跟随） |
-| F 视觉隐藏 | 黑底黑字划选显形（`::selection`变色）、CSS blur打码（打码本身即线索）、同色隐形链接、图中藏字 |
-| G 文档矛盾推理 | 让文档互相打架：合规结论vs红字明细、事由vs行程终点、表彰词vs后续身份、多页同一日期互锁；不写"这里有鬼" |
-| H 登录凭证组合 | 多字段验证（院区+姓名+科室+床号）、URL白名单（假时光机只认一个域名） |
-| I 知识检索教学 | 答错提示"去浏览器搜一搜"，教玩家用外部搜索引擎（ARG核心技能） |
-| J 情感/叙事谜题 | 心理问卷、分支对话，无对错只有选择；终局可直接问玩家现实时间 |
-| K 禁词触发器 | 特定词触发整页恐怖态换肤，搜索框变成俄罗斯轮盘 |
-| L 演出型 | 解锁后倒计时黑屏（"被系统发现了"）、打字机删字重打、滚动到底弹出伪导航"现在出发" |
-| M 元游戏彩蛋 | ex页收集（作者页自曝总数）、隐形链接奖励DOM检查者、外链真实网站打破虚实 |
+| A Keyword search gate | Literal term → hash lookup → hidden page; synonym/alias tolerance; one keyword can return multiple results |
+| B Cross-page credential delivery | **Three elements: account on page A, password clue on page B, gate on page C** — the minimum puzzle unit |
+| C Password hidden in URL | Filename/path is the credential (`passwordisXXX.html`); the address bar becomes a narrative prop; use sparingly — it spoils the reveal |
+| D Classical cryptography | Polybius square, Morse (audio dots/dashes at 1:3), book cipher (page-line); the puzzle is presented on the page, verified client-side |
+| E Sensory puzzles | Stereo channel separation (headphone requirement must be declared on the entry page), click counting, flashlight mask (radial-gradient + cursor tracking) |
+| F Visual concealment | Black-on-black text revealed by selection (`::selection` color change), CSS blur redaction (the redaction itself is a clue), same-color invisible links, text hidden inside images |
+| G Document contradiction inference | Make documents contradict each other: a compliance conclusion vs. red-flagged line items, stated purpose vs. itinerary endpoint, commendation text vs. later identity, multiple pages interlocked by the same date; never write "something is off here" |
+| H Credential combination login | Multi-field validation (campus + name + department + bed number), URL whitelist (the fake Wayback Machine accepts only one domain) |
+| I Knowledge-search tutorial | On a wrong answer, prompt "search the web for it" — teaches players to use an external search engine (a core ARG skill) |
+| J Emotional/narrative puzzles | Psychological questionnaires, branching dialogue; no right or wrong, only choices; the finale may ask the player for the real-world time |
+| K Forbidden-word trigger | A specific word triggers a full-page horror reskin; the search box becomes Russian roulette |
+| L Staging type | Post-unlock countdown blackout ("the system has noticed you"), typewriter deletion and retyping, scroll-to-bottom pseudo-navigation ("depart now") |
+| M Meta-game easter eggs | `ex` page collection (the author page reveals the total), invisible links rewarding DOM inspectors, external links to real sites that break the fiction/reality boundary |
 
-**难度曲线靠文案暗示，不靠技术加密**。前端谜题必然可绕过：用君子协定（"无需F12"）+ 哈希关键词表（防看JSON通关）+ 不可枚举的文件名即可。
+**Difficulty is paced by copy hints, not technical encryption.** Client-side puzzles are always bypassable; mitigate with an honor agreement ("no F12 needed") + a hashed keyword table (blocks winning by reading source) + non-enumerable filenames.
 
-## 3. 文案设计
+## 3. Copy Design
 
-1. **表层极致平庸**：温馨、官僚、营销腔，平庸即伪装。
-2. **里层零形容词冷文书**：杀人写成台账（姓名|日期|备注：派X确认完毕），悲剧写成病历（主诉/现病史/剂量）。恐怖感来自公文腔，不来自感叹号。
-3. **重复=执念可视化**：同一句话手抄21遍、佛号67遍成墙、流水表同一名字出现10次。
-4. **黑话词典**：里层有自己的术语系统（敬献=献祭、香客=猎物），玩家学会黑话=深入里层，词汇表本身就是隐形进度条。
-5. **双措辞反差**：同一事实两套说法，各写一遍放在表/里两层，反转由玩家自己拼出。
-6. **生活流承载谜题**：密码素材必须首先是真实生活痕迹（朋友圈晒娃日期=密码，微信"本命年"=年份推理）。
-7. **缺席比在场恐怖**：停在"您好，请问还在吗？"的帖子、`[This content has been deleted]`、定时邮件死人开关（"如果它触发了，说明你已经取代了我的位置"）。
-8. **拟真噪音**：垃圾邮件、报错JSON、"XX_Final_真不改了.pdf"、灌水回帖"顶"——无用信息堆出真人质感。
-9. **失败提示也是文案位**：`密码错误🎂`（暗示生日）、`- Use it wisely`（互文前文签名），禁止裸"错误"。
-10. **谶语压缩主题**：一句16字对偶讲完全书因果律，放在最深处。
+1. **Surface layer: aggressively mundane** — warm, bureaucratic, or marketing register; mundanity is the disguise.
+2. **Secret layer: zero adjectives, cold documents** — a murder recorded as a ledger (name | date | note: confirmed by X); a tragedy recorded as a medical chart (chief complaint / history / dosage). Horror comes from the bureaucratic register, not from exclamation marks.
+3. **Repetition visualizes obsession** — one sentence hand-copied 21 times; 67 repetitions of a prayer forming a wall; one name appearing 10 times in transaction records.
+4. **Jargon lexicon**: the secret layer has its own terminology (offering = sacrifice, pilgrim = prey). Learning the jargon means descending into the secret layer; the lexicon itself functions as a hidden progress bar.
+5. **Dual-phrasing contrast**: the same fact stated two ways, one per layer; the player assembles the reveal.
+6. **Everyday life carries the puzzles**: password material must first be a genuine life trace (a child-photo post date = password; a "my zodiac year" message = birth-year inference).
+7. **Absence is more frightening than presence**: a thread frozen at "Hi, are you still there?"; `[This content has been deleted]`; a dead-man's-switch scheduled email ("if this fired, you have already taken my place").
+8. **Simulated noise**: spam mail, error JSON, `report_FINAL_v2_actually_final.pdf`, low-effort replies ("bump") — useless information builds a human texture.
+9. **Failure messages are copy slots**: `Wrong password 🎂` (hints birthday), `- Use it wisely` (echoes a signature earlier); a bare "error" is prohibited.
+10. **A compact epigram states the theme**: one epigrammatic couplet summing up the novel's causal logic, placed at the deepest point.
 
-## 4. 排版设计
+## 4. Typography Design
 
-1. **明暗双皮肤=叙事分层**：表层亮色拟真，里层近黑+血红强调色；进入里层的瞬间整页换肤（背景/标题/logo/页脚四重信号）。
-2. **CSS 分域**：`surface.css` / `platform.css` / `secret.css` 三套皮肤按目录挂载，互不污染。
-3. **叙事调色板**：同一容器（如博客）底色随剧情褪色（嫩绿→粉→灰→惨红），用背景色写人物弧光。
-4. **文档拟真四件套**：A4尺寸（794×1123px）+衬宋体+红头红章（`border:3px double #cc0000; rotate(-10deg); opacity:.8`叠印）+首行缩进2em；手写签名=斜体+负字距+墨水蓝；复印件加旋转大字水印。
-5. **留白即节奏**：`height:180px` 的 spacer 强制滚动后才出现关键红字——滚动=翻页=揭示；inview 渐显让阅读速度由玩家控制。
-6. **拟物细节**：毛玻璃 `backdrop-filter:blur()`、mac 交通灯圆点、Dock 弹性放大 `cubic-bezier(0.34,1.56,0.64,1)`、复古站用渐变按钮+inset阴影+访客计数器+宋体。
-7. **搜索结果隐性分类**：结果条目颜色即危险度（红=危险/蓝=公务/紫=私人），不说明。
-8. **微动效营造诡异**：8秒一周期轻微 shake、虚线边框"像撕裂的纸"、`blur(5px)`→解锁后解模糊。
+1. **Light/dark dual skins = narrative layering**: the surface is bright and realistic; the secret layer is near-black with blood-red accents; crossing into the secret layer reskins the whole page instantly (four signals: background, title, logo, footer).
+2. **CSS domains**: `surface.css` / `platform.css` / `secret.css` mounted per directory, with no cross-pollution.
+3. **Narrative palette**: the base color of the same container (e.g., a blog) fades as the plot progresses (fresh green → pink → gray → dull red); background color traces the character arc.
+4. **Document realism kit**: A4 size (794×1123 px) + serif body + red letterhead and red stamp (`border:3px double #cc0000; rotate(-10deg); opacity:.8` overlay) + 2em first-line indent; handwritten signature = italic + negative letter-spacing + ink blue; photocopies get a rotated large watermark.
+5. **Whitespace is pacing**: a `height:180px` spacer forces scrolling before the key red text appears — scroll = page turn = reveal; inview fade-ins let the player control reading speed.
+6. **Skeuomorphic details**: frosted glass `backdrop-filter:blur()`, macOS traffic-light dots, Dock magnify easing `cubic-bezier(0.34,1.56,0.64,1)`; retro sites use gradient buttons + inset shadows + a visitor counter + serif type.
+7. **Implicit result classification**: result item color encodes danger level (red = danger / blue = official / purple = private), unexplained.
+8. **Micro-animations create unease**: an 8-second-cycle slight shake; dashed borders that look like torn paper; `blur(5px)` → unblurred after unlock.
 
-## 5. 冲突设计
+## 5. Conflict Design
 
-1. **双层世界对照表**：GDD 里为每个表层实体写里层身份（慈善家=拆迁商、模范员工=资金通道经办人），并指定"桥接道具"（一份合同/一张同框照/一条流水）负责缝合两层。
-2. **五级升级**：服务之名（裂缝藏细节）→ 系统之恶（换皮后的管理界面/删除痕迹）→ 人性之灰（加害者=被拯救过的人，"爱vs爱的代价"）→ 玩家之罪（终局两个选项都脏手或都残缺）→ 循环指向玩家（"下一个404，会是你吗"）。
-3. **反转点按玩家揭示顺序排布**，不按故事时间顺序。
-4. **动机文档压轴**：诊断书/日记放在倒数几页，把"打倒怪物"翻成"理解怪物"。
-5. **页面即角色**（最高级装置）：让整个网站在世界观内是某个角色亲手做的（凶手设计的官网/失踪者留下的最后任务）——玩家浏览的行为本身就是剧情。
+1. **Two-layer world matrix**: in the GDD, assign each surface entity a secret identity (philanthropist = demolition developer; model employee = money-laundering conduit) and specify a "bridging prop" (a contract / a photo together / a transaction record) that stitches the two layers.
+2. **Five-stage escalation**: (1) in the name of service (cracks hide details) → (2) systemic evil (the post-reskin admin interface / deletion traces) → (3) human gray (the perpetrator was once saved; "love vs. the cost of love") → (4) the player's guilt (both finale options leave dirty hands or loss) → (5) the cycle points at the player ("will the next 404 be you?").
+3. **Twist points are ordered by player discovery**, not by story chronology.
+4. **Motive documents come last**: the diagnosis / diary sits in the final pages, reframing "defeat the monster" as "understand the monster."
+5. **The page is a character** (highest-order device): the entire site is built in-world by a character (the killer's own official website / the final task left by a missing person) — the act of browsing is itself plot.
 
-## 6. 交互设计
+## 6. Interaction Design
 
-1. **搜索反馈三态**：命中=链接列表（`target="_blank"` 新标签打开，保留"正常世界"标签页=双重现实感）；未命中=温和道歉维持假面；禁词=整页主题突变。
-2. **假交互堵正路**：正门入口弹"暂停开放"、注册按钮永远 alert——被拒绝本身是引导，逼玩家找搜索暗道。
-3. **只读的证据现场**：设置页"已锁定"但明文回显密码、假分页 `javascript:void(0)`、[deleted]占位——不可用状态也在叙事。
-4. **成功反馈分级**：淡出overlay/改document.title/解模糊/跳转，各门不同避免疲劳。
-5. **等待即演出**：把加载做成剧情节拍（解锁后15秒倒计时黑屏、20秒逐字删文重打）。
-6. **感官强制**：交互方式本身是谜题前提（必须戴耳机、必须移动鼠标照明），在入口页声明。
-7. **第四面墙旋钮**：关键凭证可指向站外（作者真实社媒）、终局问玩家现实时间、"."字符外链真实新闻——按胆量调节沉浸深度。
-8. **遥测（可选）**：搜索词上报+PV统计，用真实卡点数据迭代难度。
+1. **Three-state search feedback**: hit = link list (`target="_blank"`, opened in a new tab, preserving the "normal world" tab = dual reality); miss = a gentle apology maintaining the facade; forbidden word = full-page theme shift.
+2. **Fake interactions block the direct path**: the front-door entrance pops "Temporarily closed"; the register button always alerts — rejection itself is guidance, forcing the player to find the search route.
+3. **Read-only evidence scenes**: a settings page marked "locked" yet echoing the password in plaintext; fake pagination `javascript:void(0)`; `[deleted]` placeholders — unusable states are still narrative.
+4. **Graded success feedback**: fade overlay / change `document.title` / unblur / redirect; vary per gate to avoid fatigue.
+5. **Waiting is staging**: turn loading into a story beat (a 15-second countdown blackout after unlock; a 20-second character-by-character deletion and retyping).
+6. **Enforced sensory mode**: the interaction method itself is a puzzle premise (headphones required, mouse movement required to light the scene); declare it on the entry page.
+7. **Fourth-wall dial**: key credentials may point off-site (the author's real social account); the finale may ask the player for the real-world time; a "." character may link to real news — tune immersion depth by risk tolerance.
+8. **Telemetry (optional)**: report search terms + page-view counts; iterate difficulty using real friction data.
