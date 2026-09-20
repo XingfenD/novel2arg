@@ -172,10 +172,10 @@ body.secret { background:#1a1a1c; color:#9e9e9e; } body.secret h2 { color:#db140
 .blurred { filter:blur(6px); user-select:none; }                 /* 打码即线索 */
 ```
 
-## 8. 可选：收集度存档（assets/js/progress.js)
+## 8. 可选：收集度存档（assets/js/progress.js）
 
 ```js
-// 三原作均无存档（进度在玩家脑中）。若要加：只记"访问过的页编号"，门保持单向不记录
+// 本范式默认无存档（进度在玩家脑中）。若要加：只记"访问过的页编号"，门保持单向不记录
 const seen = JSON.parse(localStorage.getItem('seen') ?? '[]');
 const n = document.body.dataset.page;
 if (n && !seen.includes(n)) seen.push(n);
