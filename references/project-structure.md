@@ -71,7 +71,7 @@
 </html>
 ```
 
-规则：secret/ 页页脚编号可用 `ex/36`、`?/36` 异常值；`[此内容已被删除]` 占位符是合法叙事元素。
+规则：**顶栏常驻**——每页 header（容器 B 的顶部菜单栏同理）固定视口顶部，长页面向下滚动时不移出视野（base.css 统一给 `position: sticky; top: 0` + 不透明背景，secret/ 页同）；secret/ 页页脚编号可用 `ex/36`、`?/36` 异常值；`[此内容已被删除]` 占位符是合法叙事元素。
 
 ## 3. 关键词哈希构建（tools/build-keywords.mjs）
 
@@ -160,6 +160,8 @@ export const revealOnScroll = sel => { /* IntersectionObserver 给 .reveal 加 .
 ## 7. 皮肤切换（base.css 约定）
 
 ```css
+/* 顶栏：常驻视口顶部，不随页面滚动；背景必须不透明，避免正文透出 */
+header { position:sticky; top:0; z-index:10; background:inherit; }
 /* 表层 */ body { background:#f9ebde; color:#555; }  a { color:#d15c20; }
 /* 里层：secret/ 页直接 link secret.css */
 body.secret { background:#1a1a1c; color:#9e9e9e; } body.secret h2 { color:#db1400; }

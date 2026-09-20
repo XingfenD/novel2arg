@@ -4,18 +4,11 @@
 
 ## 安装
 
-克隆到所用运行时的 skills 目录（目录名即 skill 名）：
+把仓库链接发给你的 agent（Claude Code / opencode / Codex 等），说一句：
 
-```bash
-git clone https://github.com/XingfenD/novel2arg.git \
-  <skills-dir>/novel2arg
-```
+> 安装这个 skill：https://github.com/XingfenD/novel2arg
 
-常见运行时目录：
-
-- Claude Code：`~/.claude/skills/`
-- opencode：`~/.config/opencode/skills/`
-- Codex / Copilot CLI / Gemini CLI：`~/.agents/skills/`
+agent 会自己把仓库放到对应的 skills 目录。
 
 ## 使用
 

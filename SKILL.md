@@ -84,6 +84,7 @@ description: Use when adapting a mystery/suspense novel into an interactive web 
 - **死链检查**：`grep -o 'href="[^"]*"' -r . | sort -u` 对照文件树逐一核对
 - **防剧透**：关键词表已哈希（源码不可反推）；无剧透性文件名（密码不入文件名，除非刻意做"URL即道具"）
 - **反馈完备**：搜索未命中/密码错误的提示文案带叙事暗示，无裸 alert("错误")
+- **顶栏常驻**：长页面向下滚动时顶栏（header / 顶部菜单栏）不移出视口，正文从其下方滚过
 - **移动端**：核心交互在手机宽度可用；感官谜题的硬件要求在入口页声明
 
 ## Common Mistakes（基线测试实测缺陷，逐条规避）
