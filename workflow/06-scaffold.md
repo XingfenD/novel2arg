@@ -1,6 +1,6 @@
 # Step 6 — Scaffold
 
-**Input:** `docs/gdd.md`, `docs/reachability.md`, `docs/puzzle-audit.md`. **Output:** the file tree. Required reading first: references/structure/base.md plus the chosen container's form doc (references/structure/form-website.md for A, references/structure/form-system.md for B/C/D).
+**Input:** `docs/gdd.md`, `docs/reachability.md`, `docs/puzzle-audit.md`. **Output:** the file tree. Required reading first: references/paradigm.md (prohibited forms), references/structure/base.md, plus the chosen container's form doc (references/structure/form-website.md for A, references/structure/form-system.md for B/C/D).
 
 Create the multi-file project strictly per references/structure/base.md §1, using the page skeleton in §2 for every page.
 

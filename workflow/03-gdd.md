@@ -1,6 +1,6 @@
 # Step 3 — Write the GDD
 
-**Input:** `docs/deconstruction.md` plus the container record. **Output:** `docs/gdd.md`. Required reading first: references/design-paradigms.md.
+**Input:** `docs/deconstruction.md` plus the container record. **Output:** `docs/gdd.md`. Required reading first: references/paradigm.md and references/design-paradigms.md.
 
 The GDD carries eight sections.
 

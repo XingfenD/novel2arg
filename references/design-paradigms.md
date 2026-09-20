@@ -1,6 +1,6 @@
 # Six-Dimension Design Paradigm for Web Puzzle Games (Prescriptive)
 
-> Companion to SKILL.md and references/structure/base.md: use as a checklist when writing the GDD.
+> Companion to references/paradigm.md and references/structure/base.md: use as a checklist when writing the GDD.
 
 ## 1. Flow Design
 
