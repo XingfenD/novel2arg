@@ -19,6 +19,7 @@ Four constraints (violating any one departs from this paradigm):
    - Public pages (staff roster, department page, menu, news list) publish what that organization publishes. A roster entry carries name, title, tenure, duties.
    - Navigation is the site's own information architecture: nav bar, index and listing pages, sitemap, footer. A link exists because that organization would put it there.
    - Formal documents (announcement, notice, contract, certificate, official reply, medical record) carry real-world format: issuing body, document number, date, addressee, body, signature and seal, distribution list. Player-facing instruction, hint, and commentary stay out of them.
+   - Search follows publication rules: a search surface queries only the index of the layer it is served on. A surface-level result never points under `pages/secret/`; a result marked classified shows `[Access denied]` or resolves to its clearance gate, never to the document; result titles are catalog entries (issuing body + document type + number/date), not plot summaries.
 
 **Prohibited forms of Constraint 1** (any one constitutes a structural departure):
 
@@ -46,6 +47,7 @@ Four constraints (violating any one departs from this paradigm):
 | "This page has no way in; I'll add a link in the body." | Add it to a listing the site would really keep, or make it search-only. workflow/04-reachability.md lists the four orphan fixes. |
 | "The puzzle is already built; cutting it wastes work." | Step 5 asks what the guarded page gives the player. Atmosphere moves to the atmosphere list. |
 | "Auditing before scaffolding is overhead." | Both audits cost less than re-writing pages. They gate step 6 for that reason. |
+| "Search is the hub; it should index everything." | The hub is layer-scoped: surface search returns what the organization publishes, the secret index opens after the reskin. One flat index turns the search box into a walkthrough. |
 
 ## Red Flags — stop and revise the GDD
 
@@ -55,6 +57,7 @@ Four constraints (violating any one departs from this paradigm):
 - Only one visual theme exists
 - A public page mentions the plot
 - A page carries a link absent from the reachability table
+- A surface-layer search returns a `secret/` page, or a result marked classified opens without a gate
 - An input's `placeholder`, label, or help text carries the answer or restates it
 - An announcement or contract reads as game copy
 - Guidance text uses metaphor, personification, or adjectives piled for effect
@@ -102,6 +105,9 @@ Steps 4 and 5 are gates. A GDD that fails either returns to step 3 before scaffo
 | Keywords stored in plaintext JSON | Build script hashes them into a table, preventing "read the source to win" |
 | Plot stated on a public page ("head chef — and the man who vanished in 2019") | Public pages publish what that organization publishes; the player assembles the plot from the secret layer |
 | Links planted to chain clue → clue | Clue delivery rides the site's own IA: nav bar, index and listing pages, sitemap, search |
+| One flat keyword index spanning both layers | Index per layer: surface search returns what the organization publishes, the secret index opens after the reskin |
+| Result titles that summarize the plot ("…完整版", "四名家长信息") | Catalog entries as the archive would print them: issuing body + document type + number/date |
+| A 机密 badge with no gate behind it | Every classified result shows `[Access denied]` or resolves to a clearance gate |
 | Orphan pages nobody can reach | Step 4 audits the graph before scaffolding; step 8 re-walks it after |
 | The answer in a `placeholder` or help text | Field names only; oblique failure hints carry the feedback |
 | A gate kept because it is already written | Step 5 necessity question; a blank justification means 删除 |

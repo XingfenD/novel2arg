@@ -6,7 +6,7 @@
 
 - **Master formula**: entry ritual page → disguised container → core loop (read → extract proper nouns → search/enter → unlock hidden page) → surface crack → five-stage escalation into the secret layer → central twist page → finale staging → two-way ending choice → fourth-wall close + sequel hook.
 - **Entry ritual page** is separate from the game proper: disclaimer + role assignment ("You are X; your brother has gone missing" / "You play yourself") + rules (search limits / wear headphones / no-F12 honor agreement) + start button.
-- **Single navigation hub**: one search box carries hidden-page discovery, layered on the site's own navigation (nav bar, index/listing pages, sitemap); keywords can only be "copied" from page copy, which naturally forms a page reference graph. A link exists because that organization would publish it; the reachability audit in workflow/04-reachability.md checks every one. Search uses exact matching (synonym aliases allowed) to force close reading.
+- **Single navigation hub**: one search box carries hidden-page discovery, layered on the site's own navigation (nav bar, index/listing pages, sitemap); keywords can only be "copied" from page copy, which naturally forms a page reference graph. A link exists because that organization would publish it; the reachability audit in workflow/04-reachability.md checks every one. Search uses exact matching (synonym aliases allowed) to force close reading. Search is layer-scoped: the surface box queries the surface index, the post-reskin search queries the secret index; a surface keyword routes to a platform page or a gate, never straight into a deep document. Result titles are catalog entries, not plot summaries.
 - **Five-act pacing**: (1) safe-zone tutorial (3–8 surface pages teaching the core loop; the first page must return search results) (2) first crack (an unanswered distress post / a deleted folder / a discontinued announcement) (3) secret layer revealed (full-site reskin after login) (4) central twist page (4–5 side hooks released in one page) (5) finale ritual + choice.
 - **Progress numbering**: static `NN/total` in each page footer; secret easter-egg pages use anomalous numbers such as `ex/total` or `?/total` as a meta-signal that the player has crossed into the other side. Numbers only suggest the ideal order; they do not lock progression. The actual gating is password gates.
 - **Extra atmosphere pages** are explicitly declared "non-progression" in the entry rules, preventing players from exhausting their patience in dead ends.
@@ -18,7 +18,7 @@
 
 | Type | Mechanism |
 |---|---|
-| A Keyword search gate | Literal term → hash lookup → hidden page; synonym/alias tolerance; one keyword can return multiple results |
+| A Keyword search gate | Literal term → hash lookup → hidden page; synonym/alias tolerance; one keyword can return multiple results. The hit stays inside the layer whose search surface ran the query; a hit marked classified lands on its clearance gate |
 | B Cross-page credential delivery | **Three elements: account on page A, password clue on page B, gate on page C** — the minimum puzzle unit |
 | C Password hidden in URL | Filename/path is the credential (`passwordisXXX.html`); the address bar becomes a narrative prop; use sparingly — it spoils the reveal |
 | D Classical cryptography | Polybius square, Morse (audio dots/dashes at 1:3), book cipher (page-line); the puzzle is presented on the page, verified client-side |

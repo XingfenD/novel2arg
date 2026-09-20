@@ -29,11 +29,13 @@
 │   │       └── alpine.min.js     # Alpine v3 core, pinned (vendored once; never edited; no plugins)
 │   ├── img/  audio/  docs/       # Images, audio puzzles, downloadable mock documents (pdf/xlsx)
 ├── data/
-│   ├── keywords.src.json         # Plaintext keyword table (development only; excluded from the deploy directory after build)
-│   ├── keywords.json             # Hash table (deploy artifact; prevents winning by reading source)
+│   ├── keywords.surface.src.json # Plaintext surface index (development only; excluded from the deploy directory after build)
+│   ├── keywords.secret.src.json  # Plaintext secret index (development only; excluded from the deploy directory after build)
+│   ├── keywords.surface.json     # Surface hash table — must contain no pages/secret/ URL (deploy artifact)
+│   ├── keywords.secret.json      # Secret hash table, fetched only by secret-layer pages (deploy artifact)
 │   └── forbidden.json            # Forbidden word table (hashes + forbidden-state copy)
 ├── tools/
-│   ├── build-keywords.mjs        # Plaintext → sha256+base64 hash table
+│   ├── build-keywords.mjs        # Plaintext → md5+base64 hash table
 │   └── check-links.mjs           # Dead-link checker
 └── README.md                     # How to run + GDD link + player notes
 ```
@@ -83,27 +85,33 @@ Rules: **persistent top bar** — every page's header (same for container B's to
 
 ## 3. Keyword Hash Build (tools/build-keywords.mjs)
 
+One plaintext source per layer, hashed to one table per layer. The surface table is fetched by surface/platform pages and **must never contain a `pages/secret/` URL**; the secret table is fetched only by secret-layer pages. A `title` is the catalog entry the archive would print (issuing body + document type + number/date) — never a summary of the document's content.
+
 ```js
-// Plaintext table keywords.src.json: {"Margaret Holt": ["secret/s23-file.html|Margaret Holt's Record"], "walnut cake|pastry": [...]}
+// Plaintext tables, one per layer:
+// keywords.surface.src.json: {"前台|营业时间": ["surface/news.html|焰溪镇供销社 营业时间公告"], "walnut cake|pastry": [...]}
+// keywords.secret.src.json:  {"Margaret Holt": ["secret/s23-file.html|刑事侦查卷宗 087-J-03 · 询问笔录"]}
 // Keys support | separated synonym aliases; values are "url|title". Usage: node tools/build-keywords.mjs
 import { createHash } from 'node:crypto';
 import { readFileSync, writeFileSync } from 'node:fs';
-const src = JSON.parse(readFileSync('data/keywords.src.json', 'utf8'));
 const hash = w => createHash('md5').update(w.trim().toLowerCase()).digest('base64');
-const out = {};
-for (const [keys, results] of Object.entries(src))
-  for (const k of keys.split('|'))
-    (out[hash(k)] ??= []).push(...results.map(r => {
-      const [url, title] = r.split('|'); return { url, title };
-    }));
-writeFileSync('data/keywords.json', JSON.stringify(out, null, 1));
+for (const layer of ['surface', 'secret']) {
+  const src = JSON.parse(readFileSync(`data/keywords.${layer}.src.json`, 'utf8'));
+  const out = {};
+  for (const [keys, results] of Object.entries(src))
+    for (const k of keys.split('|'))
+      (out[hash(k)] ??= []).push(...results.map(r => {
+        const [url, title] = r.split('|'); return { url, title };
+      }));
+  writeFileSync(`data/keywords.${layer}.json`, JSON.stringify(out, null, 1));
+}
 ```
 
-At deployment, **do not ship keywords.src.json** (add it to .gitignore or delete it after the build).
+At deployment, **do not ship the `.src.json` files** (add `data/*.src.json` to .gitignore or delete them after the build).
 
 ## 4. Search Engine (`search` Component) — Three-State Feedback
 
-Registered in `components.js`; mounted by search.html as `<main x-data="search">`.
+Registered in `components.js`; mounted by search.html as `<main x-data="search" data-index="data/keywords.surface.json">` (secret-layer search pages point `data-index` at the secret table).
 
 ```js
 // Shared hash helper — must mirror tools/build-keywords.mjs exactly (same trim/lowercase normalization,
@@ -132,16 +140,18 @@ Alpine.data('search', () => ({
       return;
     }
 
-    const map = await (await fetch('data/keywords.json')).json();
+    const map = await (await fetch(this.$el.dataset.index)).json();
     this.results = map[enc] ?? [];
     this.state = this.results.length ? 'hit' : 'miss';
   },
 }));
 ```
 
+**Layer scoping (required).** The component queries the index of the layer whose page mounts it: surface and platform pages carry `data-index="data/keywords.surface.json"`; secret-layer pages carry `data-index="data/keywords.secret.json"`. A surface keyword routes to a surface or platform page, or to a gate — never straight into a secret document. If the container's fiction exposes classified entries in results (container D's archive list), each one either shows `[Access denied]` or resolves to its clearance gate; it never opens the document. Result titles are catalog entries, written the way the issuing body files the document.
+
 ```html
-<!-- search.html -->
-<main id="results" x-data="search" x-cloak>
+<!-- search.html (a secret-layer search page carries data/keywords.secret.json instead) -->
+<main id="results" x-data="search" data-index="data/keywords.surface.json" x-cloak>
   <template x-if="state === 'forbidden'">
     <span :class="forbidden.hidden ? 'hidden-text' : 'visible-text'" x-text="forbidden.text"></span>
     <!-- .hidden-text{color:#000;background:#000} ::selection{color:#f00} → visible only when selected -->
@@ -280,7 +290,8 @@ Alpine.data('progress', () => ({
 ```bash
 node tools/build-keywords.mjs          # regenerate the hash table
 node tools/check-links.mjs             # walk all href/src against the file tree; report dead links
-grep -rn "keywords.src" --include=*.html .   # confirm no page references the plaintext table
+grep -rn "keywords.*src" --include=*.html .   # confirm no page references a plaintext table
+grep -o '"secret/[^"]*"' data/keywords.surface.json   # must return nothing: the surface index never carries a secret URL
 grep -rL "alpine.min.js" --include=*.html .  # list pages missing the vendored Alpine runtime
 grep -rn "placeholder=" --include=*.html .    # every value names its field; none states or restates an answer
 # Register check: read each pages/surface/ and pages/platform/ page as a document of that organization —

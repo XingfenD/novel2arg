@@ -22,6 +22,6 @@ Each phase subagent receives the file paths of `docs/gdd.md`, `docs/reachability
 - **Documents carry their format.** Issuing body, document number, date, addressee, body, signature and seal, distribution list.
 - **Inputs name the field.** `placeholder="工号"`, `placeholder="站内搜索…"`. The gate page may post the account format; the password derivation stays off it.
 - **Copy is declarative.** See references/design-paradigms.md §3.14 before writing any sentence.
-- **Keywords get hashed.** Run `node tools/build-keywords.mjs` after any change to `data/keywords.src.json`.
+- **Keywords get hashed.** Run `node tools/build-keywords.mjs` after any change to either `data/keywords.<layer>.src.json`.
 
 At the end of each phase, re-run the leak scan from workflow/05-puzzle-audit.md Q4 over the files that phase touched.

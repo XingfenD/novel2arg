@@ -7,7 +7,7 @@
 - [ ] `find . -name "*.html" | wc -l` returns 10 or more. The deliverable is a multi-HTML file tree.
 - [ ] `node tools/check-links.mjs` reports zero dead links.
 - [ ] `grep -rL "alpine.min.js" --include=*.html .` returns nothing.
-- [ ] `grep -rn "keywords.src" --include=*.html .` returns nothing.
+- [ ] `grep -rn "keywords.*src" --include=*.html .` returns nothing.
 - [ ] Console on the entry page and one secret page: zero errors, zero 404s.
 - [ ] Timers and observers are released in `destroy()`.
 
@@ -15,7 +15,9 @@
 
 - [ ] The graph walk from `index.html` reaches every page. Zero orphans.
 - [ ] Every `<a>` under `pages/` traces to a legitimate inbound route in the reachability table. Planted clue links are gone.
-- [ ] Every key in `data/keywords.src.json` appears verbatim in the copy of a reachable page.
+- [ ] Every key in both plaintext keyword tables appears verbatim in the copy of a reachable page of the same layer.
+- [ ] `grep -o '"secret/[^"]*"' data/keywords.surface.json` returns nothing.
+- [ ] Every result marked with a clearance level shows `[Access denied]` or resolves to a gate; no classified result opens the document directly.
 
 ## Puzzle integrity (re-run workflow/05 Q4)
 
@@ -23,6 +25,7 @@
 - [ ] `grep -rn "placeholder=" --include=*.html .` — every value names its field.
 - [ ] Failure hints point obliquely at the source. `密码错误 🎂` passes; `想想陈师傅的本命年` fails.
 - [ ] Full walkthrough from `index.html` along the GDD page map. Record the source page for every credential; each one traces to prior page copy.
+- [ ] Result titles in both keyword tables are catalog entries; none summarizes the document's content.
 
 ## Diegetic neutrality
 
