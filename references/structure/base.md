@@ -1,6 +1,6 @@
-# Front-End Project Structure (Multi-Page Fake Website; a Single index.html Is Prohibited)
+# Front-End Base Structure (Shared Across Containers; a Single index.html Is Prohibited)
 
-> Pure static, no build step: HTML + CSS + Alpine.js v3 core (vendored locally; no plugins, no runtime CDN). The only tool is the keyword hasher (Node, optional). Runs on any static host (GitHub Pages preferred).
+> Pure static, no build step: HTML + CSS + Alpine.js v3 core (vendored locally; no plugins, no runtime CDN). The Node tools are optional, dependency-free, and run on built-ins (§1, §10). Runs on any static host (GitHub Pages preferred).
 
 ## 1. Directory Structure
 
@@ -57,13 +57,10 @@ mkdir -p assets/js/vendor
 curl -o assets/js/vendor/alpine.min.js https://cdn.jsdelivr.net/npm/alpinejs@3.17.3/dist/cdn.min.js
 ```
 
-The above is the standard structure for container A (fake official website). Other containers replace only the "hub" part; the pages/assets/data conventions stay the same:
+The tree above is the shared base; the form docs adapt the hub and the page directories:
 
-**Container B — fake computer desktop**: replace `search.html` with `desk.html` (desktop: icon grid + Dock + top menu bar); change `pages/surface/` to `pages/apps/` (one page per "app": chat.html, mailbox.html, cloud-drive.html…, each replicating the desktop wallpaper and menu bar to create the "same computer, popup window" feel); the hub is a plaintext `FILE_DATABASE` inlined in desk.html (keyword → app page mapping; see the Spotlight variant at the end of §4); in-game time is frozen to the same day on every page.
-
-**Container C — simulated internet**: each "website" gets a top-level directory (or its own GitHub repo), sharing the same assets conventions; cross-site navigation uses absolute URL hard links; scrambled directory names serve as a natural anti-spoiler lock. Requires parallel entries under `sites/`: forum/, blog-2009/…blog-2015/, archive-machine/ (fake Wayback Machine: URL whitelist validation, the `gate` component suffices), intranet/, etc.
-
-**Container D — archive system**: replace `search.html` with `query.html` (multi-field query form: name / ID / date, validated by the `gate` component with multiple hash attributes) → `pages/results.html` (archive list: ID + classification + title; unauthorized entries show `[Access denied]`) → `pages/archive/` (one page per case file; clearance levels = different password gates). Skin: government-intranet style — fixed 850px width, gray-blue #003366, serif type, footer "Technical support: Information Systems Division"; the secret layer is classified files switching to secret.css.
+- **Container A — fake official website**: `references/structure/form-website.md` — search hub, layer-scoped indexes, gates as the only access.
+- **Containers B/C/D — system fictions**: `references/structure/form-system.md` — account login, per-account access (RBAC-style), and the desktop / simulated-internet / archive shells. A system project's page root may be `apps/` instead of `pages/`; set `pagesDir` in both checkers' CONFIG (§10).
 
 ## 2. Page Skeleton Template (uniform across pages)
 
@@ -95,7 +92,7 @@ Rules: **persistent top bar** — every page's header (same for container B's to
 
 ## 3. Keyword Hash Build (tools/build-keywords.mjs)
 
-One plaintext source per layer, hashed to one table per layer. The surface table is fetched by surface/platform pages and **must never contain a `pages/secret/` URL**; the secret table is fetched only by secret-layer pages. A `title` is the catalog entry the archive would print (issuing body + document type + number/date) — never a summary of the document's content.
+One plaintext source per layer, hashed to one table per layer. The surface table is fetched by surface/platform pages and **must never contain a `pages/secret/` URL**; the secret table is fetched only by secret-layer pages. A `title` is the catalog entry the archive would print (issuing body + document type + number/date) — never a summary of the document's content. This is the website form's convention (references/structure/form-website.md); a system form keeps a single index and lets the account matrix decide what a hit opens (references/structure/form-system.md §1) — access is never maintained in the JSON.
 
 The canonical implementation ships as **`assets/tools/build-keywords.mjs`** (copy it to `tools/`). Its contract:
 
@@ -153,7 +150,7 @@ Alpine.data('search', () => ({
 }));
 ```
 
-**Layer scoping (required).** The component queries the index of the layer whose page mounts it: surface and platform pages carry `data-index="data/keywords.surface.json"`; secret-layer pages carry `data-index="data/keywords.secret.json"`. A surface keyword routes to a surface or platform page, or to a gate — never straight into a secret document. If the container's fiction exposes classified entries in results (container D's archive list), each one either shows `[Access denied]` or resolves to its clearance gate; it never opens the document. Result titles are catalog entries, written the way the issuing body files the document.
+**Layer scoping (required).** The component queries the index of the layer whose page mounts it: surface and platform pages carry `data-index="data/keywords.surface.json"`; secret-layer pages carry `data-index="data/keywords.secret.json"`. A surface keyword routes to a surface or platform page, or to a gate — never straight into a secret document. If the container's fiction exposes classified entries in results (container D's archive list), each one either shows `[Access denied]` or resolves to its clearance gate; it never opens the document. Result titles are catalog entries, written the way the issuing body files the document. System forms do not split indexes by layer; they keep one index and resolve each hit through the account matrix (references/structure/form-system.md §1).
 
 ```html
 <!-- search.html (a secret-layer search page carries data/keywords.secret.json instead) -->
@@ -175,11 +172,11 @@ Alpine.data('search', () => ({
 </main>
 ```
 
-Desktop-container Spotlight variant: a `desk` component keeps a plaintext `FILE_DATABASE = {keyword: {file, label, color}}`, matches on `@keyup` against `x-model` state, and renders each result with its danger-classification color.
+System containers replace this search hub with their own shells — desktop Spotlight `FILE_DATABASE`, the archive query form, cross-site links; see `references/structure/form-system.md` §4.
 
 ## 5. Password Gate (`gate` Component)
 
-One component, two shapes. `data-expect-hash` sits on **each `<input>`** (comma-separated values = synonyms
+One component, three shapes. `data-expect-hash` sits on **each `<input>`** (comma-separated values = synonyms
 accepted for that field, so a Chinese name and its pinyin both open the same lock); the rest of the
 configuration sits on the **component root** (`<main>`), not on the `<form>`.
 
@@ -204,6 +201,10 @@ configuration sits on the **component root** (`<main>`), not on the `<form>`.
 //   <div class="sheet narrow" x-show="!unlocked"> …the form above… </div>
 //   <div x-show="unlocked" x-cloak> …the guarded document… </div>
 // </main>
+//
+// Shape C — session login + per-account access (system containers B/C/D): data-grant on the login gate,
+// data-access on the protected page, no privilege ladder. The full pattern, the `access` component, and
+// the RBAC rules live in references/structure/form-system.md.
 Alpine.data('gate', () => ({
   error: '', busy: false, unlocked: false, successText: '', _t: null,
   init() { this.successText = this.$el.dataset.successText || ''; },
@@ -215,6 +216,11 @@ Alpine.data('gate', () => ({
       return expects.includes(hash(inp.value || ''));
     });
     if (ok) {
+      const grants = (el.dataset.grant || '').split(',').map((s) => s.trim()).filter(Boolean);   // Shape C (references/structure/form-system.md)
+      if (grants.length) {
+        const seen = JSON.parse(sessionStorage.getItem('access') || '[]');
+        sessionStorage.setItem('access', JSON.stringify([...new Set([...seen, ...grants])]));
+      }
       const next = el.dataset.next;
       const hold = parseInt(el.dataset.successHold || '0', 10);
       const staged = this.successText && hold > 0;
@@ -245,7 +251,9 @@ Gate design rules:
   `x-show="unlocked"` block and expect check-solvable to count it before unlock — that is exactly the
   boundary the check models.
 - **Keep the entry page's honor agreement honest.** It may claim the source hides nothing only if the keyword
-  tables and gate hashes really are hashed, and the page really does not persist unlock state.
+  tables and gate hashes really are hashed; system containers keep the authenticated accounts in
+  `sessionStorage` only (cleared when the tab closes) and say exactly that — no unlock state or progress is
+  persisted (references/structure/form-system.md §6).
 
 The honor agreement on the entry page carries the rest.
 
@@ -325,7 +333,8 @@ body.secret { background:#1a1a1c; color:#9e9e9e; } body.secret h2 { color:#db140
 
 ```js
 // This paradigm has no save by default (progress lives in the player's head). If added: record only visited
-// page numbers; gates stay one-way and untracked. Mount on the shared footer so it runs on every page.
+// page numbers; gates stay one-way and untracked, and a system container's authenticated accounts live in
+// sessionStorage only (references/structure/form-system.md §5). Mount on the shared footer so it runs on every page.
 Alpine.data('progress', () => ({
   seen: [],
   init() {
@@ -342,7 +351,7 @@ Alpine.data('progress', () => ({
 
 ```bash
 node tools/build-keywords.mjs          # regenerate the hash table(s)
-node tools/check-links.mjs             # walk all href/src against the file tree; report dead links + layer leaks
+node tools/check-links.mjs             # walk all href/src/action/data-next against the file tree; report dead links + layer leaks
 node tools/check-solvable.mjs          # cold-start walk: expect "fixpoint in N round(s) · gates 4/4 unlocked · pages 28/28 reachable"
 grep -rn "keywords.*src" --include=*.html .   # confirm no page references a plaintext table
 grep -o '"secret/[^"]*"' data/keywords.surface.json   # must return nothing: the surface index never carries a secret URL
@@ -377,6 +386,7 @@ instead of rewriting the checker (a rewrite throws away the defects these checks
 | `surfaceTable` / `secretUrl` | `/surface/i` on the filename / `secret/` prefix | check-links |
 | `entry` | `index.html` | check-solvable |
 | `gateHashAttr` / `indexAttr` | `data-expect-hash` / `data-index` | check-solvable |
+| `grantAttr` / `accessAttr` / `nextAttr` | `data-grant` / `data-access` / `data-next` | check-solvable (system-form accounts) |
 | `unlockMarkers` / `unlockEnd` | `x-show="unlocked"` … `</main>` | check-solvable |
 | `searchMount` | `x-data="search"` | check-solvable |
 | `maxTokenLen` / `maxPhraseWords` / `maxPhraseLen` | 8 / 4 / 48 | check-solvable matcher |
@@ -386,10 +396,11 @@ after a CONFIG edit.
 
 Five things no static checker can see. Each has a manual method; skipping it is the leak path:
 
-1. **Runtime bindings** — `:href`, `x-bind`, DOM assembled in JS. Both checkers resolve static `href` and
-   static `<form action>` only (the top-bar search box is a real navigation edge in every container). The
-   manual method is the keyword tables: search-result routes live there, and `data-index` tells the
-   checker which table a search page can reach. Keep those two faithful and search stays modelled.
+1. **Runtime bindings** — `:href`, `x-bind`, DOM assembled in JS. Both checkers resolve static `href`,
+   static `<form action>`, and gate `data-next` targets only. The manual method is the keyword tables:
+   search-result routes live there, and `data-index` tells the checker which table a search page can
+   reach. Session login state is the same boundary: model it as `data-grant` / `data-access`
+   (references/structure/form-system.md §5) so the walk sees the accounts, or verify by hand.
 2. **Hubs that are their own database** — container B's plaintext `FILE_DATABASE` in desk.html, and
    container C's absolute cross-site links, expose no keyword table and no static href. Manual method:
    treat the hub as a listing page in the step-4 reachability walk, then click every entry once during the

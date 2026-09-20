@@ -1,13 +1,13 @@
-// Dead-link checker. Walks every <a href>/<img src>/<form action> plus every url in the keyword tables
-// and resolves them against the file tree.
+// Dead-link checker. Walks every <a href>/<img src>/<form action>/data-next gate target plus every url in
+// the keyword tables and resolves them against the file tree.
 // Usage: node tools/check-links.mjs     (run from the project root; expect "0 dead")
 //
-// Also enforces the layer-scoping rule from references/project-structure.md §3: a table whose name marks
+// Also enforces the layer-scoping rule from references/structure/base.md §3: a table whose name marks
 // it as the surface index must never carry a layer-leak url (by default a secret-layer url) — otherwise a
 // public search hands the player a direct route into the secret layer, bypassing the gate.
 //
 // Project conventions live in CONFIG below; a project that renames dirs or layer names edits CONFIG
-// instead of rewriting the checker (references/project-structure.md §10 lists what stays manual).
+// instead of rewriting the checker (references/structure/base.md §10 lists what stays manual).
 import { readFileSync, existsSync, readdirSync, statSync } from 'node:fs';
 import { dirname, resolve, relative, join } from 'node:path';
 
@@ -55,10 +55,10 @@ function checkLink(fromFile, raw) {
 
 for (const f of html) {
   const text = readFileSync(f, 'utf8');
-  // Static href/src/action only. Alpine bindings (:href / x-bind:href) are skipped on purpose —
-  // they are runtime values and cannot be resolved statically. See tools/check-solvable.mjs for how
-  // search-result links are modelled instead.
-  const re = /\s(?:href|src|action)\s*=\s*(["'])([^"']*)\1/gi;
+  // Static href/src/action and gate targets (data-next) only. Alpine bindings (:href / x-bind:href) are
+  // skipped on purpose — they are runtime values and cannot be resolved statically. See
+  // tools/check-solvable.mjs for how search-result and post-gate links are modelled instead.
+  const re = /\s(?:href|src|action|data-next)\s*=\s*(["'])([^"']*)\1/gi;
   let m;
   while ((m = re.exec(text))) checkLink(f, m[2]);
 }

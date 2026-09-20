@@ -20,6 +20,7 @@
 - [ ] Every key in both plaintext keyword tables appears verbatim in the copy of a reachable page of the same layer.
 - [ ] `grep -o '"secret/[^"]*"' data/keywords.surface.json` returns nothing.
 - [ ] Every result marked with a clearance level shows `[Access denied]` or resolves to a gate; no classified result opens the document directly.
+- [ ] System containers: every `data-access` account is granted by some login gate (`data-grant`); no page is reachable through a privilege ladder or a shallow-page "related archives" link; and a search hit to a protected document stays unreachable until the named account is authenticated.
 
 ## Puzzle integrity (re-run workflow/05 Q4)
 
@@ -46,7 +47,7 @@
 - [ ] The header stays fixed to the viewport on long pages; body text scrolls beneath it.
 - [ ] Core interactions work at phone width.
 - [ ] Chrome sweep: load **every** page (plus each search state: hit / miss / forbidden) at desktop and phone width. Collect console errors, `requestfailed`, horizontal overflow (`scrollWidth > innerWidth`), and whether each `[x-data]` element actually initialized. Partial passes miss defects — a CSS specificity bug once silently disabled two declared puzzle types on the secret layer only.
-- [ ] Anything the honor agreement claims is true in code: keyword tables and gate hashes really are hashed, and no page persists unlock state or reading progress.
+- [ ] Anything the honor agreement claims is true in code: keyword tables and gate hashes really are hashed; system containers keep authenticated accounts in `sessionStorage` only and say so; no page persists unlock state or reading progress.
 - [ ] Sensory puzzle hardware requirements are declared on the entry page, and nothing is declared that the site does not actually implement.
 - [ ] Secret-layer entry reskins the whole page: background, title, logo, footer.
 

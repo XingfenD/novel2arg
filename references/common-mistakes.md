@@ -18,13 +18,15 @@ subagent's dispatch prompt. Check the section before returning the step's artifa
 | Horror delivered through adjectives and jump-scare copy | Horror delivered through bureaucratic ledgers, repetition (one sentence copied 21 times), absence (unanswered posts, `[deleted]`) |
 | A single ending, or an ending that is a score | A two-option moral dilemma ending + a fourth-wall close + a sequel hook |
 | No progress feedback | `NN/total` in each page footer; secret pages use anomalous numbering such as `ex/total` |
-| One flat keyword index spanning both layers | Index per layer: surface search returns what the organization publishes, the secret index opens after the reskin |
+| (Website form) one flat keyword index spanning both layers; (system forms) access maintained in the keyword JSONs | Website form: one index per layer. System forms: one index, and the account matrix on the pages decides what a hit opens — access never lives in the JSON (references/structure/form-system.md §1) |
 
 ## Step 4 — Reachability
 
 | Mistake | Correct approach |
 |---|---|
 | Links planted to chain clue → clue | Clue delivery rides the site's own IA: nav bar, index and listing pages, sitemap, search |
+| Shallow page links a deep page under "related files / archives / pages" | Same-layer references only; depth is crossed by search, a gate, or an account login (references/structure/form-system.md §1) |
+| Numeric clearance ladder, or an admin account that opens everything | Per-account access: a page opens only to the accounts it names (`data-access`); no privilege inheritance (references/structure/form-system.md §1) |
 | Result titles that summarize the plot ("…完整版", "四名家长信息") | Catalog entries as the archive would print them: issuing body + document type + number/date |
 | A 机密 badge with no gate behind it | Every classified result shows `[Access denied]` or resolves to a clearance gate |
 | Orphan pages nobody can reach | Step 4 audits the graph before scaffolding; step 8 re-walks it after |
@@ -43,7 +45,7 @@ subagent's dispatch prompt. Check the section before returning the step's artifa
 | Building a SPA adventure engine (canvas scenes, inventory, generic puzzle framework) | Multi-page fake website; each page is an independently openable "document" |
 | A single visual theme | Light/dark dual skins; instant full-page reskin on entering the secret layer |
 | Keywords stored in plaintext JSON | Build script hashes them into a table, preventing "read the source to win" |
-| Rewriting a checker to fit a renamed project | Each tool's `CONFIG` block absorbs renamed dirs, layer names, markers, and the search mount; project-structure.md §10 lists the knobs and the steps no static check replaces. |
+| Rewriting a checker to fit a renamed project | Each tool's `CONFIG` block absorbs renamed dirs, layer names, markers, and the search mount; references/structure/base.md §10 lists the knobs and the steps no static check replaces. |
 
 ## Step 7 — Implementation
 
@@ -60,5 +62,5 @@ subagent's dispatch prompt. Check the section before returning the step's artifa
 | Mistake | Correct approach |
 |---|---|
 | The answer leak-scanned only in form UI | Scan the page **chrome** too — `<title>`, top bar, clearance strip, footer. An answer printed in a header is the same defect as one in a `placeholder`. |
-| Honor agreement claims what the code does not do | Before shipping text like "tables are hashed, nothing is persisted", grep for `localStorage` writes and confirm no page persists unlock state or reading progress. |
+| Honor agreement claims what the code does not do | Before shipping text like "tables are hashed, nothing is persisted", grep for `localStorage` / `sessionStorage` writes and confirm the agreement's wording matches what is actually stored (system accounts are session-only). |
 | Shipping without a solvability check | Copy `assets/tools/check-solvable.mjs` in at scaffold time. It proves every gate stays solvable and every page reachable after content edits, and turns red when a leak fix removes a clue. |

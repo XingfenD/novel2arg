@@ -2,7 +2,7 @@
 // ships the hash tables, so "read the source to win" stops working.
 // Usage: node tools/build-keywords.mjs
 //
-// Convention (see references/project-structure.md §1/§3): one plaintext source per narrative layer,
+// Convention (see references/structure/base.md §1/§3): one plaintext source per narrative layer,
 // each hashed to one table. Both shapes work with zero configuration:
 //   data/keywords.src.json           -> data/keywords.json            (single-table projects)
 //   data/keywords.surface.src.json   -> data/keywords.surface.json     (per-layer, container A default)

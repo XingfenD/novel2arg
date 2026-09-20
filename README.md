@@ -21,6 +21,8 @@ Tell your agent:
 - `SKILL.md` — paradigm constraints, rationalizations, red flags, and the workflow router
 - `workflow/` — eight step files: novel deconstruction → world container selection → GDD → reachability chain analysis → puzzle design audit → scaffolding → implementation → self-check
 - `references/design-paradigms.md` — six-dimension design paradigm (flow / puzzles / copy / typography / conflict / interaction) + 13-type puzzle taxonomy
-- `references/project-structure.md` — multi-file front-end project structure + Alpine.js component reference implementations (search engine, password gates, staging, progress)
+- `references/structure/base.md` — shared multi-file front-end base + Alpine.js component reference implementations (search engine, password gates, staging, progress)
+- `references/structure/form-website.md` — container A: fake official website (search hub, layer-scoped indexes, gates)
+- `references/structure/form-system.md` — containers B/C/D: system fictions (account login, per-account access, desktop / simulated-internet / archive shells)
 - `references/common-mistakes.md` — baseline-test traps grouped by workflow step; each step file cites its section
 - `assets/tools/` — four dependency-free Node scripts copied into each project: `hash.mjs`, `build-keywords.mjs`, `check-links.mjs`, `check-solvable.mjs` — CONFIG-driven for renamed projects, with `check-solvable.mjs --self-test` for the text matcher

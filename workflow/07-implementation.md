@@ -18,7 +18,8 @@ Each phase subagent receives the file paths of `docs/gdd.md`, `docs/reachability
 ## Standing rules for every phase
 
 - **Public pages stay neutral.** Write each one as a document of that organization. A roster entry carries name, title, tenure, duties. The plot stays out of it.
-- **Links come from the reachability table.** A link absent from that table does not get written.
+- **Links come from the reachability table and stay within their layer.** A link absent from that table does not get written; depth is crossed by search, a gate, or account login — never by a "related files / archives / pages" link.
+- **System pages open only to their named accounts.** A protected page carries `data-access` (references/structure/form-system.md §1); an admin account never inherits a colleague's private document.
 - **Documents carry their format.** Issuing body, document number, date, addressee, body, signature and seal, distribution list.
 - **Inputs name the field.** `placeholder="工号"`, `placeholder="站内搜索…"`. The gate page may post the account format; the password derivation stays off it.
 - **Copy is declarative.** See references/design-paradigms.md §3.14 before writing any sentence.

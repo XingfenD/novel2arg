@@ -2,7 +2,8 @@
 // reach every page and solve every gate. Run from the project root: node tools/check-solvable.mjs
 //
 // Three things must hold at once, or this exits 1:
-//   1. Reachable  — from the entry page, via top-bar search / body links / post-gate links, every page is reached.
+//   1. Reachable  — from the entry page, via top-bar search / body links / post-gate links, every page is
+//                   reached; an access-protected page counts only once an account it names is authenticated.
 //   2. Solvable   — for each gate, every field's plaintext already appears in text readable *elsewhere*,
 //                   before the gate is reached.
 //   3. Search is earned — a keyword only opens the pages it routes to once that keyword has been READ
@@ -16,6 +17,12 @@
 // credentials); HTML entities are decoded first, so body copy written as AT&amp;T or O&#39;Brien still
 // matches what the player renders.
 //
+// Session logins are modelled too (system containers; see references/structure/form-system.md): a gate's data-grant
+// authenticates identities for the session, a page's data-access opens its x-show="unlocked" block only to
+// the identities it names ("*" = any authenticated account; there is no privilege inheritance), and
+// data-next is followed as the gate's post-unlock edge. Search edges obey the same matrix: a keyword opens
+// a protected document only once an identity that document names is authenticated.
+//
 // Gates block traversal, so the walk iterates to a fixpoint. Crucial detail: a gate page's body is NOT
 // readable before unlock and IS readable after — a clue parked inside a page's own x-show="unlocked" block
 // only counts once that gate has been passed. Deleting a clue, changing a password, moving a clue into a
@@ -23,7 +30,7 @@
 //
 // Project conventions live in CONFIG below; a project that renames dirs, markers, or the search mount edits
 // CONFIG instead of rewriting the walk (--self-test re-checks the matcher after an edit). What no static
-// checker can see is listed in references/project-structure.md §10, with the manual method for each.
+// checker can see is listed in references/structure/base.md §10, with the manual method for each.
 //
 // Known ceilings (ponytail — deliberately not built):
 //  - Only static href is followed; Alpine :href bindings are invisible here, so search-result links are
@@ -35,7 +42,7 @@ import { readFileSync, readdirSync, statSync, existsSync } from 'node:fs';
 import { dirname, join, relative } from 'node:path';
 import { createHash } from 'node:crypto';
 
-/* ── Project conventions. Defaults match references/project-structure.md; edit if your project renamed them. ── */
+/* ── Project conventions. Defaults match references/structure/base.md; edit if your project renamed them. ── */
 const CONFIG = {
   entry: 'index.html',                                            // BFS root
   gateHashAttr: 'data-expect-hash',                               // per-input accepted hashes (comma = synonyms)
@@ -43,6 +50,9 @@ const CONFIG = {
   unlockEnd: '</main>',                                           // end boundary of the post-gate block
   searchMount: /x-data\s*=\s*["']search["']/,                     // page(s) mounting the search component
   indexAttr: 'data-index',                                        // optional per-search-page keyword table
+  grantAttr: 'data-grant',                                        // Shape C: identities a login gate authenticates
+  accessAttr: 'data-access',                                      // Shape C: identities allowed to read a block
+  nextAttr: 'data-next',                                          // gate target, followed after unlock
   dataDir: 'data',                                                // holds keywords*.src.json / keywords*.json
   pagesDir: 'pages',                                              // keyword-table urls are relative to this
   maxTokenLen: 8,                                                 // character-window cap (CJK / compact tokens)
@@ -131,7 +141,7 @@ function linksOf(frag, fromFile) {
   const out = new Set();
   // href navigates and so does a <form action> — in several containers the top-bar search box is the
   // game's primary route, so both count as edges. Static attributes only; :href / x-bind stay invisible
-  // (see the ceiling notes at the top of this file and project-structure.md §10).
+  // (see the ceiling notes at the top of this file and references/structure/base.md §10).
   const re = /\s(?:href|action)\s*=\s*(["'])([^"']*)\1/gi;
   let m;
   while ((m = re.exec(frag))) {
@@ -157,6 +167,22 @@ function declaredIndexes(t) {
   while ((m = re.exec(t))) out.add(m[2].replace(/^\.?\//, ''));
   return [...out];
 }
+function attrList(t, name) {
+  const out = new Set();
+  const re = new RegExp(`${name}\\s*=\\s*(["'])([^"']+)\\1`, 'gi');
+  let m;
+  while ((m = re.exec(t))) for (const v of m[2].split(',')) { const s = v.trim(); if (s) out.add(s); }
+  return [...out];
+}
+function nextOf(frag, fromFile) {
+  const out = new Set();
+  for (const u of attrList(frag, CONFIG.nextAttr)) {
+    const clean = u.split('?')[0].split('#')[0];
+    if (!clean.endsWith('.html') || /^(https?:|mailto:|tel:|javascript:|data:)/i.test(clean)) continue;
+    out.add(rel(join(dirname(fromFile), clean)));
+  }
+  return [...out];
+}
 
 const pages = {};
 for (const f of walk(ROOT).filter((x) => x.endsWith('.html'))) {
@@ -168,8 +194,10 @@ for (const f of walk(ROOT).filter((x) => x.endsWith('.html'))) {
     allText: visible(t),
     blocked: visible(unlocked) !== '',
     open: linksOf(locked, f),
-    gated: linksOf(unlocked, f),
+    gated: [...linksOf(unlocked, f), ...nextOf(locked, f)],
     fields: gateFields(locked),
+    grants: attrList(locked, CONFIG.grantAttr),
+    access: attrList(locked, CONFIG.accessAttr),
     isSearch: CONFIG.searchMount.test(t),
     indexes: declaredIndexes(t),
     hitsLocked: new Map(),
@@ -250,20 +278,28 @@ for (const n of names) {
 /* ── Fixpoint ── */
 const visited = new Set([CONFIG.entry]);
 const unlocked = new Set();
+const identities = new Set();
 const provenance = new Map();
 let rounds = 0;
 
 if (!pages[CONFIG.entry]) { console.log(`ERROR  entry page ${CONFIG.entry} not found`); process.exit(1); }
 
-// What a page can read right now: a gate page exposes only its locked part until its gate is passed.
-const readableHits = (p) => (unlocked.has(p) ? pages[p].hitsAll : pages[p].hitsLocked);
+// What a page can read right now: access first (Shape C), then the page's own gate. A gate page exposes
+// only its locked part until its gate is passed; a data-access page exposes nothing until one of the
+// authenticated identities it names is present ("*" = any authenticated account).
+const accessOk = (p) => {
+  const need = pages[p].access;
+  return !need.length || (need.includes('*') ? identities.size > 0 : need.some((r) => identities.has(r)));
+};
+const pageOpen = (p) => accessOk(p) && (!pages[p].fields.length || unlocked.has(p));
+const readableHits = (p) => (pageOpen(p) ? pages[p].hitsAll : accessOk(p) ? pages[p].hitsLocked : new Map());
 
 // Search edges come from the page(s) mounting the search component. If such a page declares an index
 // (data-index), only that table's keywords apply; otherwise every table applies.
 function searchEdges() {
   const out = new Set();
   for (const s of names) {
-    if (!pages[s].isSearch || !visited.has(s)) continue;
+    if (!pages[s].isSearch || !visited.has(s) || !accessOk(s)) continue;
     const allowed = pages[s].indexes.length
       ? pages[s].indexes.map(canon)
       : tableNames.map((n) => CONFIG.dataDir + '/' + n);
@@ -271,7 +307,7 @@ function searchEdges() {
       for (const h of readableHits(q).keys()) {
         const tables = kwHashToTables.get(h);
         if (!tables || ![...tables].some((t) => allowed.includes(t))) continue;
-        for (const u of kwHashToUrls.get(h) || []) out.add(u);
+        for (const u of kwHashToUrls.get(h) || []) if (pages[u] && accessOk(u)) out.add(u);
       }
     }
   }
@@ -282,14 +318,15 @@ while (rounds++ < 40) {
   let changed = false;
   const frontier = new Set();
   for (const p of visited) {
-    for (const l of pages[p].open) frontier.add(l);
-    if (unlocked.has(p)) for (const l of pages[p].gated) frontier.add(l);
+    if (!accessOk(p)) continue;                     // a locked page's links are not clickable yet
+    for (const l of pages[p].open) if (pages[l] && accessOk(l)) frontier.add(l);
+    if (pageOpen(p)) for (const l of pages[p].gated) if (pages[l] && accessOk(l)) frontier.add(l);
   }
   for (const u of searchEdges()) frontier.add(u);
   for (const p of frontier) if (pages[p] && !visited.has(p)) { visited.add(p); changed = true; }
 
   for (const g of gatePages) {
-    if (!visited.has(g) || unlocked.has(g)) continue;
+    if (!visited.has(g) || unlocked.has(g) || !accessOk(g)) continue;
     const src = pages[g].fields.map((fld) => {
       const all = [];
       for (const h of fld) {
@@ -301,13 +338,18 @@ while (rounds++ < 40) {
       }
       return all.length ? all : null;
     });
-    if (src.every(Boolean)) { unlocked.add(g); provenance.set(g, src); changed = true; }
+    if (src.every(Boolean)) {
+      unlocked.add(g);
+      for (const r of pages[g].grants) identities.add(r);   // Shape C: a login gate authenticates identities
+      provenance.set(g, src);
+      changed = true;
+    }
   }
   if (!changed) break;
 }
 
 /* ── Report ── */
-console.log(`fixpoint in ${rounds} round(s) · gates ${unlocked.size}/${gatePages.length} unlocked · pages ${visited.size}/${names.length} reachable\n`);
+console.log(`fixpoint in ${rounds} round(s) · gates ${unlocked.size}/${gatePages.length} unlocked · pages ${visited.size}/${names.length} reachable${identities.size ? ` · accounts ${[...identities].join(',')}` : ''}\n`);
 
 let fail = 0;
 for (const g of gatePages) {
@@ -325,7 +367,7 @@ for (const g of gatePages) {
       const found = fld.some((h) => [...visited].some((q) => q !== g && readableHits(q).has(h)));
       return found ? 'traceable' : 'NO CLUE';
     });
-    console.log(`✗ ${g}  STUCK (fields: ${got.join(', ')})${visited.has(g) ? '' : '  — and the gate page itself is unreachable'}`);
+    console.log(`✗ ${g}  STUCK (fields: ${got.join(', ')})${visited.has(g) ? '' : '  — and the gate page itself is unreachable'}${accessOk(g) ? '' : '  — and its data-access account is never authenticated'}`);
   }
 }
 
