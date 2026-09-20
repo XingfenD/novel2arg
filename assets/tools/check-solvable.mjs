@@ -129,7 +129,10 @@ if (process.argv.includes('--self-test')) {
 
 function linksOf(frag, fromFile) {
   const out = new Set();
-  const re = /\shref\s*=\s*(["'])([^"']*)\1/gi;
+  // href navigates and so does a <form action> — in several containers the top-bar search box is the
+  // game's primary route, so both count as edges. Static attributes only; :href / x-bind stay invisible
+  // (see the ceiling notes at the top of this file and project-structure.md §10).
+  const re = /\s(?:href|action)\s*=\s*(["'])([^"']*)\1/gi;
   let m;
   while ((m = re.exec(frag))) {
     const raw = m[2];

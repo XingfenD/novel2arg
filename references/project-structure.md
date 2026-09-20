@@ -386,8 +386,9 @@ after a CONFIG edit.
 
 Five things no static checker can see. Each has a manual method; skipping it is the leak path:
 
-1. **Runtime bindings** — `:href`, `x-bind`, DOM assembled in JS. Both checkers resolve static `href` only.
-   The manual method is the keyword tables: search-result routes live there, and `data-index` tells the
+1. **Runtime bindings** — `:href`, `x-bind`, DOM assembled in JS. Both checkers resolve static `href` and
+   static `<form action>` only (the top-bar search box is a real navigation edge in every container). The
+   manual method is the keyword tables: search-result routes live there, and `data-index` tells the
    checker which table a search page can reach. Keep those two faithful and search stays modelled.
 2. **Hubs that are their own database** — container B's plaintext `FILE_DATABASE` in desk.html, and
    container C's absolute cross-site links, expose no keyword table and no static href. Manual method:
