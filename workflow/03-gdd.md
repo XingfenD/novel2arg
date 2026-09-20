@@ -14,3 +14,5 @@ The GDD carries eight sections.
 8. **Document format specs** — for each announcement, notice, contract, and certificate: issuing body, document number, date, addressee, signature and seal, distribution list.
 
 Sections 2 and 3 are the inputs step 4 audits, and sections 4 and 5 are the inputs step 5 audits. Writing them thinly guarantees both audits fail.
+
+**User review checkpoint.** When the subagent returns `docs/gdd.md`, the orchestrator presents the page map, IA, register split, gate inventory, and ending plan to the user and asks for review. Steps 4 and 5 start only after the user approves; requested changes are dispatched back to step 3.

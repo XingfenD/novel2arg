@@ -75,12 +75,14 @@ Eight steps in order. Each step body lives in `workflow/`; this section routes.
 |---|---|---|---|
 | 1 Deconstruct the novel | workflow/01-deconstruct.md | five tables | subagent |
 | 2 Select the world container | workflow/02-container.md | GDD cover-page record | orchestrator (asks the user) |
-| 3 Write the GDD | workflow/03-gdd.md | `docs/gdd.md`, eight sections | subagent |
+| 3 Write the GDD | workflow/03-gdd.md | `docs/gdd.md`, eight sections | subagent → user review checkpoint |
 | 4 Reachability chain analysis 触达链分析 | workflow/04-reachability.md | `docs/reachability.md` | subagent |
 | 5 Puzzle design audit 谜题设计分析 | workflow/05-puzzle-audit.md | `docs/puzzle-audit.md` with dispositions | subagent |
 | 6 Scaffold | workflow/06-scaffold.md | file tree, every page skeletoned | subagent |
 | 7 Implementation | workflow/07-implementation.md | finished site | one subagent per phase |
 | 8 Self-check | workflow/08-self-check.md | `docs/self-check.md`, pass/fail per item | subagent |
+
+Step 3 ends with a user review checkpoint: when the subagent returns `docs/gdd.md`, the orchestrator presents it to the user and asks for review before dispatching steps 4 and 5. Approval is required; requested changes go back to step 3.
 
 Steps 4 and 5 are gates. A GDD that fails either returns to step 3 before scaffolding starts.
 
