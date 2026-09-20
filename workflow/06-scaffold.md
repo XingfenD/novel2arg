@@ -19,3 +19,5 @@ Minimum structure:
 Pages stay separate documents with real navigation. Alpine manages in-page component lifecycle (`init()` / `destroy()`) only; routing and scene switching stay out of it.
 
 Scaffold every page listed in the reachability table as a skeleton with the correct skin, header nav, footer, and progress number. Empty bodies are fine at this stage; a missing file breaks the graph walk in step 8.
+
+Baseline-test traps for this step: references/common-mistakes.md §6 — check them before returning the artifact.

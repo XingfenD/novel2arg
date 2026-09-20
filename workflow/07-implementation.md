@@ -25,3 +25,5 @@ Each phase subagent receives the file paths of `docs/gdd.md`, `docs/reachability
 - **Keywords get hashed.** Run `node tools/build-keywords.mjs` after any change to either `data/keywords.<layer>.src.json`.
 
 At the end of each phase, re-run the leak scan from workflow/05-puzzle-audit.md Q4 over the files that phase touched.
+
+Baseline-test traps for this step: references/common-mistakes.md §7 — check them before returning the artifact.

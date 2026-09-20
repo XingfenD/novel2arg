@@ -48,3 +48,5 @@ Planting a link in the body copy of an unrelated page is off the list. That is t
 - **Badge check.** Every result marked with a clearance level shows `[Access denied]` or resolves to a gate demanding that clearance. A classified result that opens its document directly is a defect.
 - **Title check.** Each keyword table title reads as a catalog entry (issuing body + document type + number/date). A title that summarizes the document leaks plot onto the search results page.
 - **Post-implementation re-run.** After step 7, re-walk the graph with `node tools/check-links.mjs` and the `href` grep in references/project-structure.md §9. The graph drifts while pages are written.
+
+Baseline-test traps for this step: references/common-mistakes.md §4 — check them before returning the artifact.

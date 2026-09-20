@@ -53,3 +53,5 @@ Sort the surviving puzzles by hop count. The first gate the player meets sits at
 ## Re-run
 
 Copy changes while pages are written. Re-run Q4 against the built file tree at step 8 and record the diff against this table.
+
+Baseline-test traps for this step: references/common-mistakes.md §5 — check them before returning the artifact.

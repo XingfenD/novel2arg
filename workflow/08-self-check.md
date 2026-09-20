@@ -49,3 +49,5 @@
 - [ ] Anything the honor agreement claims is true in code: keyword tables and gate hashes really are hashed, and no page persists unlock state or reading progress.
 - [ ] Sensory puzzle hardware requirements are declared on the entry page, and nothing is declared that the site does not actually implement.
 - [ ] Secret-layer entry reskins the whole page: background, title, logo, footer.
+
+Baseline-test traps for this step: references/common-mistakes.md §8 — check them before returning the artifact.

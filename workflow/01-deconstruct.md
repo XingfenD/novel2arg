@@ -13,3 +13,5 @@
 Life traces drive everything downstream. They are the raw material for the puzzle audit in step 5 and for the neutral public pages specified in step 3. Extract them exhaustively here; a trace invented at implementation time reads as invented.
 
 Mark which characters appear on public pages (roster, department list, news) and what that organization would legitimately publish about each. Step 3 needs this to keep public pages neutral.
+
+Baseline-test traps for this step: references/common-mistakes.md §1 — check them before returning the artifact.
