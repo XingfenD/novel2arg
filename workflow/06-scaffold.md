@@ -12,7 +12,7 @@ Minimum structure:
 - three skin CSS files (`base.css`, `surface.css`, `secret.css`, plus `forbidden.css` when a forbidden-word trigger is in the puzzle set)
 - vendored Alpine runtime (`assets/js/vendor/alpine.min.js`)
 - `components.js` carrying the search, gate, staging, and progress components
-- keyword hash build script (`tools/build-keywords.mjs`) and link checker (`tools/check-links.mjs`)
+- the four verification tools copied from this skill's `assets/tools/` into `tools/`: `hash.mjs`, `build-keywords.mjs`, `check-links.mjs`, `check-solvable.mjs` (they are dependency-free and run on Node built-ins)
 - dual ending pages
 - `docs/` holding the artifacts from steps 1 to 5
 

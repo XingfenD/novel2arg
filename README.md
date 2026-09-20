@@ -22,3 +22,4 @@ Tell your agent:
 - `workflow/` — eight step files: novel deconstruction → world container selection → GDD → reachability chain analysis → puzzle design audit → scaffolding → implementation → self-check
 - `references/design-paradigms.md` — six-dimension design paradigm (flow / puzzles / copy / typography / conflict / interaction) + 13-type puzzle taxonomy
 - `references/project-structure.md` — multi-file front-end project structure + Alpine.js component reference implementations (search engine, password gates, staging, progress)
+- `assets/tools/` — four dependency-free Node scripts copied into each project: `hash.mjs`, `build-keywords.mjs`, `check-links.mjs`, `check-solvable.mjs` — CONFIG-driven for renamed projects, with `check-solvable.mjs --self-test` for the text matcher

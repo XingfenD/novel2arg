@@ -34,11 +34,21 @@
 │   ├── keywords.surface.json     # Surface hash table — must contain no pages/secret/ URL (deploy artifact)
 │   ├── keywords.secret.json      # Secret hash table, fetched only by secret-layer pages (deploy artifact)
 │   └── forbidden.json            # Forbidden word table (hashes + forbidden-state copy)
-├── tools/
-│   ├── build-keywords.mjs        # Plaintext → md5+base64 hash table
-│   └── check-links.mjs           # Dead-link checker
+├── tools/                        # copy these four from the skill's assets/tools/ at scaffold time
+│   ├── hash.mjs                  # md5+base64 for a plaintext value → a gate's data-expect-hash
+│   ├── build-keywords.mjs        # plaintext table(s) → hash table(s)
+│   ├── check-links.mjs           # dead-link checker + surface-index layer-leak guard
+│   └── check-solvable.mjs        # cold-start solvability walk (reachable + solvable + search earned)
 └── README.md                     # How to run + GDD link + player notes
 ```
+
+The four tools are shipped with this skill under `assets/tools/`; scaffold copies them into `tools/` so the
+project stays self-contained and re-runnable. They run on Node built-ins only (`node:crypto`, `node:fs`,
+`node:path`) — no dependencies, no install step. They also auto-discover the keyword tables, so both the
+per-layer convention above and a single-table project work with zero configuration. Re-run all three checks
+(link / solvable, plus the keyword rebuild when the tables change) before every deploy — see §9. Each
+checker keeps its project assumptions in a `CONFIG` block at the top of the file; §10 lists the
+configurable knobs and the review steps no static checker can replace.
 
 Vendor the Alpine runtime once at scaffold time (the pinned version is in the URL; the file is then committed with the game):
 
@@ -87,27 +97,23 @@ Rules: **persistent top bar** — every page's header (same for container B's to
 
 One plaintext source per layer, hashed to one table per layer. The surface table is fetched by surface/platform pages and **must never contain a `pages/secret/` URL**; the secret table is fetched only by secret-layer pages. A `title` is the catalog entry the archive would print (issuing body + document type + number/date) — never a summary of the document's content.
 
-```js
-// Plaintext tables, one per layer:
-// keywords.surface.src.json: {"前台|营业时间": ["surface/news.html|焰溪镇供销社 营业时间公告"], "walnut cake|pastry": [...]}
-// keywords.secret.src.json:  {"Margaret Holt": ["secret/s23-file.html|刑事侦查卷宗 087-J-03 · 询问笔录"]}
-// Keys support | separated synonym aliases; values are "url|title". Usage: node tools/build-keywords.mjs
-import { createHash } from 'node:crypto';
-import { readFileSync, writeFileSync } from 'node:fs';
-const hash = w => createHash('md5').update(w.trim().toLowerCase()).digest('base64');
-for (const layer of ['surface', 'secret']) {
-  const src = JSON.parse(readFileSync(`data/keywords.${layer}.src.json`, 'utf8'));
-  const out = {};
-  for (const [keys, results] of Object.entries(src))
-    for (const k of keys.split('|'))
-      (out[hash(k)] ??= []).push(...results.map(r => {
-        const [url, title] = r.split('|'); return { url, title };
-      }));
-  writeFileSync(`data/keywords.${layer}.json`, JSON.stringify(out, null, 1));
+The canonical implementation ships as **`assets/tools/build-keywords.mjs`** (copy it to `tools/`). Its contract:
+
+- Discovers every `data/keywords*.src.json` and writes the matching `data/keywords*.json` beside it, so both the per-layer convention (`keywords.surface.src.json` → `keywords.surface.json`) and a single-table project (`keywords.src.json` → `keywords.json`) work with no configuration.
+- Keys support `|`-separated synonym aliases. Values are `"url|title"`; the url is relative to `pages/`.
+- Normalizes with `String(w).trim().toLowerCase()` → md5 → base64. This **must be byte-identical** to `tools/hash.mjs` and to the in-page `hash()` helper from §4; if you ever switch to async WebCrypto SHA-256, change all three sides together.
+- De-duplicates by url within a hash bucket, so two aliases that normalize to the same hash never list a page twice.
+
+Example source shape:
+
+```json
+{
+  "前台|营业时间": ["surface/news.html|焰溪镇供销社 营业时间公告"],
+  "Margaret Holt": ["secret/s23-file.html|刑事侦查卷宗 087-J-03 · 询问笔录"]
 }
 ```
 
-At deployment, **do not ship the `.src.json` files** (add `data/*.src.json` to .gitignore or delete them after the build).
+At deployment, **do not ship the `.src.json` files** (add `data/*.src.json` to .gitignore or delete them after the build). `tools/check-links.mjs` also fails the deploy if a table whose name marks it as the surface index (`data/keywords.surface*.json`) carries a `secret/` url.
 
 ## 4. Search Engine (`search` Component) — Three-State Feedback
 
@@ -173,28 +179,75 @@ Desktop-container Spotlight variant: a `desk` component keeps a plaintext `FILE_
 
 ## 5. Password Gate (`gate` Component)
 
+One component, two shapes. `data-expect-hash` sits on **each `<input>`** (comma-separated values = synonyms
+accepted for that field, so a Chinese name and its pinyin both open the same lock); the rest of the
+configuration sits on the **component root** (`<main>`), not on the `<form>`.
+
 ```js
-// Usage:
-// <form x-data="gate" @submit.prevent="submit" data-user-hash="…" data-pass-hash="…"
-//       data-next="../secret/s22.html" data-fail-hint="Login failed: wrong password 🎂">
-//   <input name="user" x-model="user"> <input name="pass" type="password" x-model="pass">
-//   <p class="gate-error" x-show="error" x-text="error"></p>
-//   <button type="submit">Sign in</button>
-// </form>                                   ← failure hints must carry narrative clues
+// Shape A — navigate away on success:
+// <main x-data="gate" data-next="../secret/s22.html" data-fail-hint="Login failed 🎂">
+//   <form class="gate" @submit.prevent="submit">
+//     <label for="u">Account</label>
+//     <input id="u" type="text" placeholder="Employee ID" data-expect-hash="…">
+//     <label for="p">Password</label>
+//     <input id="p" type="password" placeholder="Password" data-expect-hash="…">
+//     <p class="gate-error" x-show="error" x-text="error" x-cloak></p>
+//     <button class="btn" type="submit">Sign in</button>
+//   </form>
+// </main>
+//
+// Shape B — unlock in place, no navigation. The post-gate block MUST open with x-show="unlocked"
+// (or <template x-if="unlocked">): tools/check-solvable.mjs keys on that marker to know which text
+// is readable before the gate and which only becomes readable after it.
+// <main x-data="gate" data-success-text="Decrypting…" data-success-hold="2400">
+//   <div class="blackout" x-show="busy" x-text="successText" x-cloak x-transition></div>
+//   <div class="sheet narrow" x-show="!unlocked"> …the form above… </div>
+//   <div x-show="unlocked" x-cloak> …the guarded document… </div>
+// </main>
 Alpine.data('gate', () => ({
-  user: '', pass: '', error: '',
+  error: '', busy: false, unlocked: false, successText: '', _t: null,
+  init() { this.successText = this.$el.dataset.successText || ''; },
   submit() {
-    const el = this.$el;
-    const ok = hash(this.user) === el.dataset.userHash && hash(this.pass) === el.dataset.passHash;
-    if (ok) return void (location.href = el.dataset.next);
-    this.error = el.dataset.failHint;      // inline red text; a bare alert breaks the facade
-    el.animate([{ transform: 'translateX(0)' }, { transform: 'translateX(-5px)' },
-                { transform: 'translateX(5px)' }, { transform: 'translateX(0)' }], 300);
+    const el = this.$root;          // data-* live on the component root; the submit event's target is the <form>
+    const fields = Array.from(el.querySelectorAll('input[data-expect-hash]'));
+    const ok = fields.length > 0 && fields.every((inp) => {
+      const expects = (inp.dataset.expectHash || '').split(',').map((s) => s.trim()).filter(Boolean);
+      return expects.includes(hash(inp.value || ''));
+    });
+    if (ok) {
+      const next = el.dataset.next;
+      const hold = parseInt(el.dataset.successHold || '0', 10);
+      const staged = this.successText && hold > 0;
+      const finish = () => { if (next) location.href = next; else { this.busy = false; this.unlocked = true; } };
+      if (staged) { this.busy = true; this._t = setTimeout(finish, hold); } else finish();
+      return;
+    }
+    this.error = el.dataset.failHint || 'Verification failed.';   // inline red text; a bare alert breaks the facade
+    el.animate([{ transform: 'translateX(0)' }, { transform: 'translateX(-6px)' },
+                { transform: 'translateX(6px)' }, { transform: 'translateX(0)' }], 320);
   },
+  destroy() { clearTimeout(this._t); },
 }));
 ```
 
-`hash()` is the shared helper from §4. When designing a gate, enforce the **credential triad**: the account is hidden on page A, the password clue on page B (requiring inference: zodiac year → 1977, child-photo date → 20201125), and the gate on page C. Multi-field gates (four-tuple / two-factor) = multiple hash attributes in parallel. Hashing keeps plaintext out of casual view in the source. The honor agreement on the entry page carries the rest.
+`hash()` is the shared helper from §4. When designing a gate, enforce the **credential triad**: the account is hidden on page A, the password clue on page B (requiring inference: zodiac year → 1977, child-photo date → 20201125), and the gate on page C. Hashing keeps plaintext out of casual view in the source.
+
+Gate design rules:
+
+- **Failure hints point at the source obliquely and stop.** `密码错误 🎂` passes; anything naming a page,
+  restating the derivation rule, or spelling the field's content fails. The hint is a copy slot, not an
+  error string — a bare "error" is prohibited.
+- **Inputs name the field only.** `placeholder="Employee ID"` / `工号` / `就诊年份` pass; `placeholder="e.g. 1977"`
+  leaks. The derivation rule stays off the gate page — posting the *account format* on a gate page is fine
+  and realistic, but the password rule lives only in the source document's own copy.
+- **Multi-field gates** (four-tuple / two-factor) are just several `data-expect-hash` inputs; all must match.
+- **A gate page's own body is unreadable until the gate passes.** Do not park a clue inside the page's own
+  `x-show="unlocked"` block and expect check-solvable to count it before unlock — that is exactly the
+  boundary the check models.
+- **Keep the entry page's honor agreement honest.** It may claim the source hides nothing only if the keyword
+  tables and gate hashes really are hashed, and the page really does not persist unlock state.
+
+The honor agreement on the entry page carries the rest.
 
 ## 6. Staging Components (Lifecycle-Managed)
 
@@ -288,15 +341,66 @@ Alpine.data('progress', () => ({
 ## 9. Pre-Deployment Self-Check
 
 ```bash
-node tools/build-keywords.mjs          # regenerate the hash table
-node tools/check-links.mjs             # walk all href/src against the file tree; report dead links
+node tools/build-keywords.mjs          # regenerate the hash table(s)
+node tools/check-links.mjs             # walk all href/src against the file tree; report dead links + layer leaks
+node tools/check-solvable.mjs          # cold-start walk: expect "fixpoint in N round(s) · gates 4/4 unlocked · pages 28/28 reachable"
 grep -rn "keywords.*src" --include=*.html .   # confirm no page references a plaintext table
 grep -o '"secret/[^"]*"' data/keywords.surface.json   # must return nothing: the surface index never carries a secret URL
 grep -rL "alpine.min.js" --include=*.html .  # list pages missing the vendored Alpine runtime
 grep -rn "placeholder=" --include=*.html .    # every value names its field; none states or restates an answer
+grep -rn "gate-hint\|data-fail-hint" --include=*.html .   # hints point at the source obliquely; no page names, no rules
+# Chrome sweep: load every page at desktop and phone width; console errors 0, requestfailed 0, no horizontal overflow
 # Register check: read each pages/surface/ and pages/platform/ page as a document of that organization —
 #   no line addresses the player, mentions the plot, or hints at a credential
 # Link provenance: every <a> under pages/ resolves to nav / index / sitemap / footer / related document
 # Manual walkthrough: play through index.html following the GDD page map; record the source page for every credential
 # Console check: the entry page and one secret page show zero errors and zero 404s (Alpine runtime included)
 ```
+
+`check-solvable.mjs` automates the credential-provenance half of the manual walkthrough, so the manual pass
+only has to judge tone and pacing. It exits non-zero when a clue is deleted, a password changes, a clue is
+misplaced inside a page's own post-unlock block, or a listing entry is cut — run it after every content edit,
+not just before deploy. It reads gate configuration through the conventions in §5 (`data-expect-hash` on each
+input, post-gate block opening with `x-show="unlocked"` or `<template x-if="unlocked">`, search mounted by
+`x-data="search"`); a project that renames those markers edits the `CONFIG` block at the top of the script
+(§10), and `node tools/check-solvable.mjs --self-test` re-checks the matcher after an edit.
+
+## 10. Tool Interface — Configurable Knobs and What Stays Manual
+
+The tools are written to an interface, not to one book. Each checker carries its assumptions in a `CONFIG`
+block at the top of the file; a project that renames directories, layer names, or markers edits CONFIG
+instead of rewriting the checker (a rewrite throws away the defects these checks were built from).
+
+| CONFIG knob | Default | Used by |
+|---|---|---|
+| `dataDir` / `pagesDir` | `data` / `pages` | both checkers |
+| `surfaceTable` / `secretUrl` | `/surface/i` on the filename / `secret/` prefix | check-links |
+| `entry` | `index.html` | check-solvable |
+| `gateHashAttr` / `indexAttr` | `data-expect-hash` / `data-index` | check-solvable |
+| `unlockMarkers` / `unlockEnd` | `x-show="unlocked"` … `</main>` | check-solvable |
+| `searchMount` | `x-data="search"` | check-solvable |
+| `maxTokenLen` / `maxPhraseWords` / `maxPhraseLen` | 8 / 4 / 48 | check-solvable matcher |
+
+`node tools/check-solvable.mjs --self-test` verifies the matcher (multi-word, long-word, HTML entity, CJK)
+after a CONFIG edit.
+
+Five things no static checker can see. Each has a manual method; skipping it is the leak path:
+
+1. **Runtime bindings** — `:href`, `x-bind`, DOM assembled in JS. Both checkers resolve static `href` only.
+   The manual method is the keyword tables: search-result routes live there, and `data-index` tells the
+   checker which table a search page can reach. Keep those two faithful and search stays modelled.
+2. **Hubs that are their own database** — container B's plaintext `FILE_DATABASE` in desk.html, and
+   container C's absolute cross-site links, expose no keyword table and no static href. Manual method:
+   treat the hub as a listing page in the step-4 reachability walk, then click every entry once during the
+   step-8 chrome sweep.
+3. **Un-skippability** — check-solvable proves a gate is solvable, never that it is unavoidable. The manual
+   method is layer scoping: per-layer keyword tables, per-layer `data-index`, and check-links' leak guard.
+4. **Hash normalization is a three-way contract** — the in-page helper, `hash.mjs`, and `build-keywords.mjs`
+   must agree byte-for-byte (`trim().toLowerCase()` → md5 → base64). Switching algorithms means editing all
+   three in one change, then grepping the tree for tables generated under the old rule.
+5. **Multi-site layouts** — container C gives each site its own root or repo. Run the tools once per root;
+   absolute cross-site urls are skipped by design, so the cross-site graph stays a step-4 artifact.
+
+The matcher reads *page text*, not the DOM, for the same reason the player does: it proves a string was
+readable before the gate. A clue hidden in a `placeholder`, `title`, or JS string is invisible to both the
+player and the checker — the step-8 chrome leak scan covers that class.

@@ -5,7 +5,8 @@
 ## Structure
 
 - [ ] `find . -name "*.html" | wc -l` returns 10 or more. The deliverable is a multi-HTML file tree.
-- [ ] `node tools/check-links.mjs` reports zero dead links.
+- [ ] `node tools/check-links.mjs` reports zero dead links (and zero layer leaks).
+- [ ] `node tools/check-solvable.mjs` reports every gate unlocked and every page reachable, and exits 0.
 - [ ] `grep -rL "alpine.min.js" --include=*.html .` returns nothing.
 - [ ] `grep -rn "keywords.*src" --include=*.html .` returns nothing.
 - [ ] Console on the entry page and one secret page: zero errors, zero 404s.
@@ -13,6 +14,7 @@
 
 ## Reachability (re-run workflow/04 against the built tree)
 
+- [ ] `node tools/check-solvable.mjs` passes: it walks the graph from the entry page over top-bar search, body links and post-gate links, and reports gate unlocks plus unreachable pages. This automates the three items below; do them by hand only for the ones it cannot model.
 - [ ] The graph walk from `index.html` reaches every page. Zero orphans.
 - [ ] Every `<a>` under `pages/` traces to a legitimate inbound route in the reachability table. Planted clue links are gone.
 - [ ] Every key in both plaintext keyword tables appears verbatim in the copy of a reachable page of the same layer.
@@ -21,10 +23,10 @@
 
 ## Puzzle integrity (re-run workflow/05 Q4)
 
-- [ ] Leak scan over the built tree: no answer, restatement, derivation rule, or location string on any gate page or inference-chain page.
+- [ ] Leak scan over the built tree: no answer, restatement, derivation rule, or location string on any gate page or inference-chain page. Scan the page **chrome** as well as the form UI — `<title>`, top bar, clearance strip, and footer have all leaked answers in practice.
 - [ ] `grep -rn "placeholder=" --include=*.html .` — every value names its field.
 - [ ] Failure hints point obliquely at the source. `密码错误 🎂` passes; `想想陈师傅的本命年` fails.
-- [ ] Full walkthrough from `index.html` along the GDD page map. Record the source page for every credential; each one traces to prior page copy.
+- [ ] `node tools/check-solvable.mjs` resolves every credential to prior page copy, naming the source page. This replaces the manual provenance pass; still replay the walkthrough yourself once, judging tone and pacing.
 - [ ] Result titles in both keyword tables are catalog entries; none summarizes the document's content.
 
 ## Diegetic neutrality
@@ -43,5 +45,7 @@
 
 - [ ] The header stays fixed to the viewport on long pages; body text scrolls beneath it.
 - [ ] Core interactions work at phone width.
-- [ ] Sensory puzzle hardware requirements are declared on the entry page.
+- [ ] Chrome sweep: load **every** page (plus each search state: hit / miss / forbidden) at desktop and phone width. Collect console errors, `requestfailed`, horizontal overflow (`scrollWidth > innerWidth`), and whether each `[x-data]` element actually initialized. Partial passes miss defects — a CSS specificity bug once silently disabled two declared puzzle types on the secret layer only.
+- [ ] Anything the honor agreement claims is true in code: keyword tables and gate hashes really are hashed, and no page persists unlock state or reading progress.
+- [ ] Sensory puzzle hardware requirements are declared on the entry page, and nothing is declared that the site does not actually implement.
 - [ ] Secret-layer entry reskins the whole page: background, title, logo, footer.

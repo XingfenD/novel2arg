@@ -115,8 +115,13 @@ Steps 4 and 5 are gates. A GDD that fails either returns to step 3 before scaffo
 | Guidance copy decorated with metaphor and personification | Plain declarative sentences |
 | Contrast frames in site copy (是…不是… / 是…而是…) | One positive clause per sentence; references/design-paradigms.md §3.14 |
 | Orchestrator writes the pages itself | One subagent per workflow step; the orchestrator dispatches and reviews |
+| The answer leak-scanned only in form UI | Scan the page **chrome** too — `<title>`, top bar, clearance strip, footer. An answer printed in a header is the same defect as one in a `placeholder`. |
+| Honor agreement claims what the code does not do | Before shipping text like "tables are hashed, nothing is persisted", grep for `localStorage` writes and confirm no page persists unlock state or reading progress. |
+| Shipping without a solvability check | Copy `assets/tools/check-solvable.mjs` in at scaffold time. It proves every gate stays solvable and every page reachable after content edits, and turns red when a leak fix removes a clue. |
+| Rewriting a checker to fit a renamed project | Each tool's `CONFIG` block absorbs renamed dirs, layer names, markers, and the search mount; project-structure.md §10 lists the knobs and the steps no static check replaces. |
 
 ## References
 
 - **references/design-paradigms.md**: six-dimension design paradigm (flow / puzzles / copy / typography / conflict / interaction) + 13-type puzzle taxonomy. Required reading at step 3.
 - **references/project-structure.md**: multi-file front-end project structure + reference implementations for the search engine / password gates / skins / staging modules. Required reading at step 6.
+- **assets/tools/**: four dependency-free scripts copied into every project at step 6 — `hash.mjs` (gate hashes), `build-keywords.mjs` (plaintext tables → hash tables), `check-links.mjs` (dead links + surface-index layer leaks), and `check-solvable.mjs` (cold-start walk: reachable + solvable + search earned). Run all of them at step 8. Each checker's `CONFIG` block absorbs renamed directories and markers; project-structure.md §10 lists the knobs and the manual methods that remain.
