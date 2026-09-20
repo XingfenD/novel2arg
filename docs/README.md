@@ -1,5 +1,7 @@
 # novel2arg
 
+[English](README.md) | [中文](README_zh.md)
+
 An agent skill that adapts mystery/suspense novels into multi-page static web puzzle games disguised as real websites (ARG-lite).
 
 ## Installation
@@ -18,8 +20,9 @@ Tell your agent:
 
 ## Contents
 
-- `SKILL.md` — paradigm constraints, rationalizations, red flags, and the workflow router
+- `SKILL.md` — workflow router and dispatch contract
 - `workflow/` — eight step files: novel deconstruction → world container selection → GDD → reachability chain analysis → puzzle design audit → scaffolding → implementation → self-check
+- `references/paradigm.md` — four constraints, prohibited forms, baseline rationalizations, red flags, exclusions
 - `references/design-paradigms.md` — six-dimension design paradigm (flow / puzzles / copy / typography / conflict / interaction) + 13-type puzzle taxonomy
 - `references/structure/base.md` — shared multi-file front-end base + Alpine.js component reference implementations (search engine, password gates, staging, progress)
 - `references/structure/form-website.md` — container A: fake official website (search hub, layer-scoped indexes, gates)
