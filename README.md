@@ -1,16 +1,21 @@
-# novel2arg (opencode skill)
+# novel2arg
 
 把悬疑小说改编成"伪装成真实网站"的多页面静态网页解密游戏（ARG-lite）的 agent skill。
-范式提炼自三个已上线中文网页解谜游戏的源码级逆向分析（假餐馆官网 / 假 macOS 桌面 / 33 仓库伪互联网）。
 
 ## 安装
 
+克隆到所用运行时的 skills 目录（目录名即 skill 名）：
+
 ```bash
 git clone https://github.com/XingfenD/novel2arg.git \
-  ~/.config/opencode/skills/novel2arg
+  <skills-dir>/novel2arg
 ```
 
-Claude Code 用户改装到 `~/.claude/skills/novel2arg`。
+常见运行时目录：
+
+- Claude Code：`~/.claude/skills/`
+- opencode：`~/.config/opencode/skills/`
+- Codex / Copilot CLI / Gemini CLI：`~/.agents/skills/`
 
 ## 使用
 
