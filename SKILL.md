@@ -1,5 +1,5 @@
 ---
-name: mystery-web-game
+name: novel2arg
 description: Use when adapting a mystery/suspense novel into an interactive web puzzle game, or when the user mentions 网页解密游戏, 网页解谜, ARG, 交互式小说改编, 解谜网站, 悬疑小说改游戏, web puzzle game generation. Covers game design, puzzle taxonomy, fake-site frontend architecture and implementation.
 ---
 
