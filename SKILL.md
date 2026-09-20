@@ -1,20 +1,51 @@
 ---
 name: novel2arg
-description: Use when adapting a mystery/suspense novel into an interactive web puzzle game, or when the user mentions 网页解密游戏, 网页解谜, ARG, 交互式小说改编, 解谜网站, 悬疑小说改游戏, web puzzle game generation. Covers game design, puzzle taxonomy, fake-site frontend architecture and implementation.
+description: Use when adapting a mystery/suspense novel into an interactive web puzzle game, or when the user mentions 网页解密游戏, 网页解谜, ARG, 交互式小说改编, 解谜网站, 悬疑小说改游戏, web puzzle game generation. Also use when such a project drifts toward a single-file SPA, canvas scene engine, inventory-based adventure UI, generic puzzle framework, or random passwords, even when told to "keep it simple" or that an engine was already scaffolded.
 ---
 
 # novel2arg：悬疑小说 → 交互式网页解密游戏
 
 ## Overview
 
-把悬疑小说改编成"伪装成真实网站/电脑/互联网"的多页面静态解谜游戏（ARG-lite）。
+把悬疑小说改编成"伪装成真实网站"的多页面静态解谜游戏（ARG-lite）。
 核心原则一句话：**玩家不是"玩一个游戏"，而是"黑进一个真实网站，翻出不该看的东西"。**
 
-三大约束（违反任何一条即偏离本范式）：
+三大约束（**违背字面即违背本范式**，违反任何一条即偏离）：
 
-1. **网页即世界**：禁止做成"单 index.html 壳 + JS 场景切换"的通用冒险引擎。每个叙事地点 = 一个独立 HTML 页面，URL 栏是叙事道具。
+1. **网页即世界**：每个叙事地点 = 一个独立 HTML 页面——一份可独立打开、可选中复制的"文档"。URL 栏是叙事道具，长篇文案进真实网页文本（不进 canvas）。
 2. **双层叙事**：表层（平庸、温馨、拟真）与里层（黑暗真相）两套皮肤、两套文案，冲突分五级递进揭示。
 3. **解谜 = 理解人物**：所有密码/关键词必须是角色生活痕迹的推理结果（生日、姓名缩写、车牌、黑话），禁止随机串。
+
+**约束 1 的禁止形态**（出现任一即结构性偏离）：
+
+- 单 `index.html` 壳 + JS 场景切换的通用冒险引擎；canvas 场景渲染、热点地图
+- 物品栏 / 证物栏 / 玩家笔记本等"游戏框架 UI"
+- 统一解谜框架引擎（`register(type, panel)` 式谜题登记机）
+- 构建脚本把多页面打包回单文件 dist
+
+## Rationalizations（基线实测辩解，逐字 → 反制）
+
+| 辩解 | 现实 |
+|---|---|
+| "赶时间，一个 html 文件搞定" | 砍内容量（更少页/谜题），不砍结构。单文件=范式外。 |
+| "别推倒重来，引擎层冻结" | 通用游戏框架脚手架≠伪网站。内容层照迁，引擎换成多页面+search/gate。 |
+| "知名解谜游戏都是这个架构" | 知名度≠适配本范式；三个原型均无 canvas/物品栏/谜题引擎。 |
+| "打包成单文件方便分发" | 静态托管（GitHub Pages）零成本，src/ 直接发布即可。 |
+| "密码先随便生成，后补" | 密码=人设推理就是谜题质量本身，没有"后补"。 |
+
+## Red Flags — 出现即停，回 GDD 修正
+
+- 目录里只有一个 HTML
+- 出现 canvas 场景渲染、物品栏、谜题登记引擎
+- 密码是随机串，页面文案里找不到推导出处
+- 只有一套视觉主题
+- "先 demo 跑起来再说"
+
+## 何时不使用
+
+- 非悬疑/恐怖内核（"表层平庸 vs 里层黑暗"依赖反差题材）
+- 非网页交付（Unity / 手游 / 视觉小说引擎）
+- 无解谜的纯互动小说（不需要谜题体系）
 
 ## Workflow
 
@@ -25,7 +56,7 @@ description: Use when adapting a mystery/suspense novel into an interactive web 
 
 ### 2. 选世界容器（引导式路由）
 
-**除非用户已明确指定形式，否则必须先用 question 工具引导用户选择**：给出下表四种容器 + 你基于小说特征的推荐项（放第一位，标注"(推荐)"），一次提问，用户拍板后再继续。
+**除非用户已明确指定形式，否则必须引导用户选择**：给出下表四种容器 + 你基于小说特征的推荐项（放第一位，标注"(推荐)"）。有 question 工具则一次提问，用户拍板后再继续；没有则按推荐项继续，并在 GDD 首页标注"容器为推荐值，待确认"。
 
 | 容器 | 玩家幻想 | 中枢交互 | 路由条件（小说特征） |
 |---|---|---|---|
@@ -48,6 +79,7 @@ description: Use when adapting a mystery/suspense novel into an interactive web 
 表层皮肤与拟真文档页 → 搜索引擎与密码门（先通一条最短通关链）→ 秘密页与换肤 → 演出模块（倒计时黑屏/打字机/滚动揭示）→ 结局与第四面墙收束 → 入口仪式页（规则、硬件要求、君子协定最后写，因为要反映实际玩法）。
 
 ### 6. 自检（全部通过才算完成）
+- **结构自检**：`find . -name "*.html" | wc -l` 应为 10+；产物是多 HTML 文件树，不是单壳应用
 - **可解性走查**：从入口页开始按 GDD 页面图人肉通关一遍，每个关键词/密码都能在前面页面文案中找到出处
 - **死链检查**：`grep -o 'href="[^"]*"' -r . | sort -u` 对照文件树逐一核对
 - **防剧透**：关键词表已哈希（源码不可反推）；无剧透性文件名（密码不入文件名，除非刻意做"URL即道具"）
