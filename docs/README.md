@@ -29,3 +29,17 @@ Tell your agent:
 - `references/structure/form-system.md` — containers B/C/D: system fictions (account login, per-account access, desktop / simulated-internet / archive shells)
 - `references/common-mistakes.md` — baseline-test traps grouped by workflow step; each step file cites its section
 - `assets/tools/` — four dependency-free Node scripts copied into each project: `hash.mjs`, `build-keywords.mjs`, `check-links.mjs`, `check-solvable.mjs` — CONFIG-driven for renamed projects, with `check-solvable.mjs --self-test` for the text matcher
+- `LICENSE` / `LICENSE.docs` — dual license: MIT for code & tooling, CC BY-SA 4.0 for docs & prompt content
+- `USAGE.md` — responsible-use notice (adapting copyrighted novels, deception boundaries); a policy statement, not part of the licenses
+
+## License
+
+Dual-licensed / 双许可：
+
+- Code & tooling (executable files) / 代码与工具：[MIT](../LICENSE)
+- Docs & prompt content / 文档与提示词内容：[CC BY-SA 4.0](../LICENSE.docs)
+
+Outputs you generate with this skill are yours and are not covered by either license.
+Before adapting a novel or publicly deploying a game, read [USAGE.md](../USAGE.md):
+adapting a copyrighted novel requires the rightsholder's permission, and outputs must
+never be used for phishing, impersonation of real organizations, or defamation.
