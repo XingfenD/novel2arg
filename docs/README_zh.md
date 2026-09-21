@@ -29,3 +29,16 @@ agent 会把仓库放进对应的 skills 目录。
 - `references/structure/form-system.md` — 容器 B/C/D：系统类虚构（账号登录、按账号授权、桌面 / 模拟互联网 / 档案系统外壳）
 - `references/common-mistakes.md` — 按工作流步骤分组的基线测试陷阱；各步骤文件引用对应小节
 - `assets/tools/` — 四个零依赖 Node 脚本，随项目复制：`hash.mjs`、`build-keywords.mjs`、`check-links.mjs`、`check-solvable.mjs`；项目改名时改 CONFIG 即可，`check-solvable.mjs --self-test` 可自检文本匹配器
+- `LICENSE` / `LICENSE.docs` — 双许可：代码与工具用 MIT，文档与提示词内容用 CC BY-SA 4.0
+- `docs/USAGE.md` — 使用须知（改编有版权的小说、欺骗性使用边界）；属政策声明，不是许可证的一部分
+
+## 许可证
+
+双许可：
+
+- 代码与工具（可执行文件）：[MIT](../LICENSE)
+- 文档与提示词内容：[CC BY-SA 4.0](../LICENSE.docs)
+
+你用本 skill 生成的产出物归你所有，不受两份许可证约束。
+在改编小说或公开部署游戏前，请阅读 [docs/USAGE.md](USAGE.md)：
+改编有版权的小说需获得版权方授权；产出物禁止用于钓鱼、冒充真实机构或诽谤等用途。
