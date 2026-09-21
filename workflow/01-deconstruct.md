@@ -1,6 +1,6 @@
 # Step 1 — Deconstruct the Novel
 
-**Input:** novel text path. **Output:** `docs/deconstruction.md`, five tables.
+**Input:** novel text path. **Output:** `docs/deconstruction.md`, five tables. A sample of the expected artifact shape: examples/deconstruction-excerpt.md.
 
 | Table | Contents |
 |---|---|

@@ -2,21 +2,17 @@
 // the keyword tables and resolves them against the file tree.
 // Usage: node tools/check-links.mjs     (run from the project root; expect "0 dead")
 //
-// Also enforces the layer-scoping rule from references/structure/base.md §3: a table whose name marks
-// it as the surface index must never carry a layer-leak url (by default a secret-layer url) — otherwise a
-// public search hands the player a direct route into the secret layer, bypassing the gate.
+// Also enforces the layer-scoping rule (R8) from references/structure/components.md §1: a table whose name
+// marks it as the surface index must never carry a layer-leak url (by default a secret-layer url) — otherwise
+// a public search hands the player a direct route into the secret layer, bypassing the gate.
 //
-// Project conventions live in CONFIG below; a project that renames dirs or layer names edits CONFIG
-// instead of rewriting the checker (references/structure/base.md §10 lists what stays manual).
+// Project conventions live in the shared tools/config.mjs; a project that renames dirs or layer names edits
+// that one file instead of rewriting the checker (references/structure/tooling.md §2 lists the knobs,
+// §3 what stays manual).
 import { readFileSync, existsSync, readdirSync, statSync } from 'node:fs';
 import { dirname, resolve, relative, join } from 'node:path';
+import CONFIG from './config.mjs';
 
-const CONFIG = {
-  dataDir: 'data',              // holds keywords*.src.json / keywords*.json
-  pagesDir: 'pages',            // keyword-table urls are relative to this
-  surfaceTable: /surface/i,     // tables matching this name are the public index
-  secretUrl: /^secret\//,       // a url in a public index matching this is a layer leak
-};
 const ROOT = process.cwd();
 const DATA = join(ROOT, CONFIG.dataDir);
 

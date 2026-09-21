@@ -1,10 +1,11 @@
 # Step 8 — Self-Check
 
-**Input:** the finished site plus all `docs/` artifacts. **Output:** a pass/fail line per item, written to `docs/self-check.md`. Every item must pass.
+**Input:** the finished site plus all `docs/` artifacts. **Output:** a pass/fail line per item, written to `docs/self-check.md`. Every item must pass. This checklist is canonical — references/structure/tooling.md covers only the cadence, the shared CONFIG, and the manual methods; commands are not duplicated there.
 
 ## Structure
 
-- [ ] `find . -name "*.html" | wc -l` returns 10 or more. The deliverable is a multi-HTML file tree.
+- [ ] `find . -name "*.html" | wc -l` returns 10 or more. The deliverable is a multi-HTML file tree (R1).
+- [ ] `node tools/build-keywords.mjs` runs cleanly before the checkers — a stale hash table hides link and solvability drift (R3).
 - [ ] `node tools/check-links.mjs` reports zero dead links (and zero layer leaks).
 - [ ] `node tools/check-solvable.mjs` reports every gate unlocked and every page reachable, and exits 0.
 - [ ] `grep -rL "alpine.min.js" --include=*.html .` returns nothing.
@@ -26,7 +27,7 @@
 
 - [ ] Leak scan over the built tree: no answer, restatement, derivation rule, or location string on any gate page or inference-chain page. Scan the page **chrome** as well as the form UI — `<title>`, top bar, clearance strip, and footer have all leaked answers in practice.
 - [ ] `grep -rn "placeholder=" --include=*.html .` — every value names its field.
-- [ ] Failure hints point obliquely at the source. `密码错误 🎂` passes; `想想陈师傅的本命年` fails.
+- [ ] `grep -rn "data-fail-hint\|gate-hint" --include=*.html .` — failure hints point obliquely at the source (R4). `密码错误 🎂` passes; `想想陈师傅的本命年` fails.
 - [ ] `node tools/check-solvable.mjs` resolves every credential to prior page copy, naming the source page. This replaces the manual provenance pass; still replay the walkthrough yourself once, judging tone and pacing.
 - [ ] Result titles in both keyword tables are catalog entries; none summarizes the document's content.
 
@@ -39,7 +40,7 @@
 ## Copy register
 
 - [ ] Guidance text on the entry ritual page is plain declarative sentences.
-- [ ] Contrast frames (是…不是… / 是…而是… / 不能…只能…) appear nowhere in site copy. Scan with `grep -rnE '不是|而是|不能.*只能|并非.*而是' pages/ index.html`.
+- [ ] Contrast frames (是…不是… / 是…而是… / 不能…只能…) appear nowhere in site copy (R11). Scan with `grep -rnE '不是|而是|不能.*只能|并非.*而是' pages/ index.html`.
 - [ ] No metaphor, personification, or adjectives piled for effect in guidance text or documents.
 
 ## Presentation

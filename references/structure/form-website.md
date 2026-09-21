@@ -1,8 +1,8 @@
 # Form — Fake Official Website (Container A)
 
 For games where the player infiltrates an organization's public website: reach is differentiated by
-**search + gates**, not by accounts. Read `references/structure/base.md` first; this file adds the
-website layer on top of the shared base.
+**search + gates**, not by accounts (rules R7–R9 in references/guardrails.md). Read
+`references/structure/base.md` first; this file adds the website layer on top of the shared base.
 
 ## 1. Structure
 
@@ -29,19 +29,19 @@ website layer on top of the shared base.
 No accounts. Every hidden page is reached by keyword search or a gate:
 
 - Surface and platform pages mount the search component with `data-index="data/keywords.surface.json"`;
-  secret-layer pages point `data-index` at the secret table (references/structure/base.md §4). Layer scoping is
-  required — one flat index turns the search box into a walkthrough.
+  secret-layer pages point `data-index` at the secret table (references/structure/components.md §2). Layer
+  scoping is required (R8) — one flat index turns the search box into a walkthrough.
 - A surface keyword routes to a surface or platform page, or to a gate — never straight into a secret
-  document. Classified results show `[Access denied]` or resolve to their clearance gate.
-- Gates are Shape A/B (references/structure/base.md §5); the credential triad applies (account clue on page A,
-  password clue on page B, gate on page C).
+  document (R8). Classified results show `[Access denied]` or resolve to their clearance gate (R8).
+- Gates are Shape A/B (references/structure/components.md §3); the credential triad applies (account clue on
+  page A, password clue on page B, gate on page C) (R3).
 
 ## 3. IA rules
 
 Nav bar, index and listing pages, sitemap, and footer links carry clue delivery alongside search. Every
-link exists because that organization would publish it; no page carries a "related files / archives" link
-into a deeper layer (workflow/04-reachability.md audits this). Result titles are catalog entries, not plot
-summaries.
+link exists because that organization would publish it (R7); no page carries a "related files / archives" link
+into a deeper layer (R7; workflow/04-reachability.md audits this). Result titles are catalog entries, not plot
+summaries (R9).
 
 ## 4. Intranet sub-area
 

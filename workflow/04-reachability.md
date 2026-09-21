@@ -2,7 +2,7 @@
 
 A gate step. A GDD that fails here goes back to step 3 before any scaffolding starts.
 
-**Input:** `docs/gdd.md` sections 1, 2, 4, plus the keyword table. **Output:** `docs/reachability.md`.
+**Input:** `docs/gdd.md` sections 1, 2, 4, plus the keyword table. **Output:** `docs/reachability.md`. A sample of the expected artifact shape: examples/reachability-excerpt.md.
 
 Build a directed graph: nodes are pages, edges are inbound routes, root is `index.html`. Walk it breadth-first. Every page the walk misses is an orphan.
 
@@ -41,13 +41,13 @@ Planting a link in the body copy of an unrelated page is off the list. That is t
 
 ## Additional checks
 
-- **Reverse check.** An edge whose only function is moving the player to the next clue is a defect even when its target is reachable. Delete it and re-route through a listing page or search.
+- **Reverse check (R7).** An edge whose only function is moving the player to the next clue is a defect even when its target is reachable. Delete it and re-route through a listing page or search.
 - **Depth check.** Count hops from `index.html` to the page carrying each gate's clue. A clue sitting more than three listing-levels deep gets a shallower index entry.
-- **Access check.** System containers: every protected page names the accounts that open it (`data-access`), every login gate names the account it grants (`data-grant`), and no account inherits another's page. A numeric clearance ladder, or an admin account that opens everything, fails this check (references/structure/form-system.md §1).
+- **Access check (R10).** System containers: every protected page names the accounts that open it (`data-access`), every login gate names the account it grants (`data-grant`), and no account inherits another's page. A numeric clearance ladder, or an admin account that opens everything, fails this check (references/structure/form-system.md §1).
 - **Keyword solvability.** Every key in the plaintext keyword tables appears verbatim in the copy of a reachable page **of the same layer**. A keyword that appears nowhere makes its puzzle unsolvable; a surface-index key that appears only on a secret page has no legitimate delivery.
-- **Layer check.** `data/keywords.surface.json` contains no `pages/secret/` URL, and every secret-index entry is fetched only from a secret-layer page. A surface search hit that opens a secret page without a gate fails this check. (Website form; a system form keeps one index and resolves hits through the access matrix — references/structure/form-system.md §1.)
-- **Badge check.** Every result marked with a clearance level shows `[Access denied]` or resolves to a gate demanding that clearance. A classified result that opens its document directly is a defect.
-- **Title check.** Each keyword table title reads as a catalog entry (issuing body + document type + number/date). A title that summarizes the document leaks plot onto the search results page.
-- **Post-implementation re-run.** After step 7, re-walk the graph with `node tools/check-links.mjs` and the `href` grep in references/structure/base.md §9. The graph drifts while pages are written.
+- **Layer check (R8).** `data/keywords.surface.json` contains no `pages/secret/` URL, and every secret-index entry is fetched only from a secret-layer page. A surface search hit that opens a secret page without a gate fails this check. (Website form; a system form keeps one index and resolves hits through the access matrix — references/structure/form-system.md §1.)
+- **Badge check (R8).** Every result marked with a clearance level shows `[Access denied]` or resolves to a gate demanding that clearance. A classified result that opens its document directly is a defect.
+- **Title check (R9).** Each keyword table title reads as a catalog entry (issuing body + document type + number/date). A title that summarizes the document leaks plot onto the search results page.
+- **Post-implementation re-run.** After step 7, re-walk the graph with `node tools/check-links.mjs` plus the link-provenance item of the workflow/08-self-check.md checklist (cadence in references/structure/tooling.md §1). The graph drifts while pages are written.
 
 Baseline-test traps for this step: references/common-mistakes.md §4 — check them before returning the artifact.

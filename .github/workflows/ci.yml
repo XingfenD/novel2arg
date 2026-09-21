@@ -1,0 +1,18 @@
+name: checks
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  self-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Docs self-check (paths, §citations, rule IDs, links, orphans)
+        run: node scripts/check-docs.mjs
+      - name: Matcher self-test
+        run: node assets/tools/check-solvable.mjs --self-test

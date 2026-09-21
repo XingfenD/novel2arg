@@ -2,7 +2,7 @@
 
 A gate step. A GDD that fails here goes back to step 3 before any scaffolding starts.
 
-**Input:** `docs/gdd.md` sections 4 and 5, plus `docs/reachability.md`. **Output:** `docs/puzzle-audit.md`.
+**Input:** `docs/gdd.md` sections 4 and 5, plus `docs/reachability.md`. **Output:** `docs/puzzle-audit.md`. A sample of the expected artifact shape: examples/puzzle-audit-excerpt.md.
 
 Four questions per puzzle, one row per puzzle, a written verdict on each.
 
@@ -18,7 +18,7 @@ Name the source page and quote the exact span carrying the clue. Then write the 
 
 > 站内帖《老蛇的本命年》发布于 2013 年 → 2013 为癸巳蛇年 → 陈国栋生于 1977 → 密码 `1977`
 
-A chain longer than two hops gets redesigned. Knowledge from outside the site is allowed only for a puzzle the GDD declares as type I (knowledge-search tutorial).
+A chain longer than two hops gets redesigned. Knowledge from outside the site is allowed only for a puzzle the GDD declares as type I (knowledge-search tutorial). The chain must start from a life trace, never a random string (R3).
 
 ## Q3 直觉性 — Intuitiveness
 
@@ -34,9 +34,9 @@ Search the gate page and every page in the inference chain for four things:
 | A restatement | `placeholder="例如 1977"`, help text spelling the credential |
 | The derivation rule | `初始密码为本人出生年份` posted under the form |
 | The answer's location | `答案在员工风采页`, `去老帖子里找本命年` |
-| A login string printed verbatim (system containers) | `账号：chen.gd` in the staff roster — only the initial account may appear |
+| A login string printed verbatim (system containers) (R10) | `账号：chen.gd` in the staff roster — only the initial account may appear |
 
-Scope covers `placeholder`, `<label>`, help text, empty states, failure hints, the surrounding body copy, and HTML comments. A failure hint points at the source obliquely and stops there — `密码错误 🎂` qualifies; `想想陈师傅的本命年` leaks the location.
+Scope covers `placeholder`, `<label>`, help text, empty states, failure hints, the surrounding body copy, and HTML comments (R4). A failure hint points at the source obliquely and stops there — `密码错误 🎂` qualifies; `想想陈师傅的本命年` leaks the location.
 
 At implementation time this runs as a real grep over the page set, recorded in `docs/puzzle-audit.md`. A mental pass leaves the leaks in.
 

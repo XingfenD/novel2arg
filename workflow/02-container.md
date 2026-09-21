@@ -21,4 +21,4 @@ Unless the user has already specified a format, guide them through the choice. P
 
 Whichever container is chosen, its form doc is required reading for steps 3 and 6: `references/structure/form-website.md` (A) or `references/structure/form-system.md` (B/C/D).
 
-**Record on the GDD cover page:** primary container, central interaction implementation (A/B: search engine in references/structure/base.md §4; C: cross-site hard links plus obfuscated directory names; D: §5 `gate.js` multi-field gate plus archive list page), secondary container and its nesting location.
+**Record on the GDD cover page:** primary container, central interaction implementation (A/B: search engine in references/structure/components.md §2; C: cross-site hard links plus obfuscated directory names; D: multi-field gate in references/structure/components.md §3 plus archive list page), secondary container and its nesting location.

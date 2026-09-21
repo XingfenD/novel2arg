@@ -2,7 +2,7 @@
 // ships the hash tables, so "read the source to win" stops working.
 // Usage: node tools/build-keywords.mjs
 //
-// Convention (see references/structure/base.md §1/§3): one plaintext source per narrative layer,
+// Convention (see references/structure/base.md §1 and components.md §1): one plaintext source per layer,
 // each hashed to one table. Both shapes work with zero configuration:
 //   data/keywords.src.json           -> data/keywords.json            (single-table projects)
 //   data/keywords.surface.src.json   -> data/keywords.surface.json     (per-layer, container A default)
@@ -16,8 +16,9 @@
 import { createHash } from 'node:crypto';
 import { readFileSync, writeFileSync, readdirSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
+import CONFIG from './config.mjs';
 
-const DATA = 'data';
+const DATA = CONFIG.dataDir;
 const hash = (w) => createHash('md5').update(String(w).trim().toLowerCase()).digest('base64');
 
 if (!existsSync(DATA)) {

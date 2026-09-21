@@ -28,9 +28,10 @@
 // only counts once that gate has been passed. Deleting a clue, changing a password, moving a clue into a
 // post-unlock block, or cutting a listing entry all turn this check red.
 //
-// Project conventions live in CONFIG below; a project that renames dirs, markers, or the search mount edits
-// CONFIG instead of rewriting the walk (--self-test re-checks the matcher after an edit). What no static
-// checker can see is listed in references/structure/base.md §10, with the manual method for each.
+// Project conventions live in the shared tools/config.mjs; a project that renames dirs, markers, or the
+// search mount edits that one file instead of rewriting the walk (--self-test re-checks the matcher after an
+// edit; references/structure/tooling.md §2). What no static checker can see is listed in tooling.md §3, with
+// the manual method for each.
 //
 // Known ceilings (ponytail — deliberately not built):
 //  - Only static href is followed; Alpine :href bindings are invisible here, so search-result links are
@@ -42,23 +43,7 @@ import { readFileSync, readdirSync, statSync, existsSync } from 'node:fs';
 import { dirname, join, relative } from 'node:path';
 import { createHash } from 'node:crypto';
 
-/* ── Project conventions. Defaults match references/structure/base.md; edit if your project renamed them. ── */
-const CONFIG = {
-  entry: 'index.html',                                            // BFS root
-  gateHashAttr: 'data-expect-hash',                               // per-input accepted hashes (comma = synonyms)
-  unlockMarkers: [/x-show\s*=\s*["']unlocked["']/, /<template\s+x-if\s*=\s*["']unlocked["']/], // start of the post-gate block
-  unlockEnd: '</main>',                                           // end boundary of the post-gate block
-  searchMount: /x-data\s*=\s*["']search["']/,                     // page(s) mounting the search component
-  indexAttr: 'data-index',                                        // optional per-search-page keyword table
-  grantAttr: 'data-grant',                                        // Shape C: identities a login gate authenticates
-  accessAttr: 'data-access',                                      // Shape C: identities allowed to read a block
-  nextAttr: 'data-next',                                          // gate target, followed after unlock
-  dataDir: 'data',                                                // holds keywords*.src.json / keywords*.json
-  pagesDir: 'pages',                                              // keyword-table urls are relative to this
-  maxTokenLen: 8,                                                 // character-window cap (CJK / compact tokens)
-  maxPhraseWords: 4,                                              // word n-gram width (multi-word credentials)
-  maxPhraseLen: 48,                                               // character cap for one candidate
-};
+import CONFIG from './config.mjs';   // shared conventions; defaults match references/structure/base.md
 
 const ROOT = process.cwd();
 const hash = (w) => createHash('md5').update(String(w).trim().toLowerCase()).digest('base64');
@@ -141,7 +126,7 @@ function linksOf(frag, fromFile) {
   const out = new Set();
   // href navigates and so does a <form action> — in several containers the top-bar search box is the
   // game's primary route, so both count as edges. Static attributes only; :href / x-bind stay invisible
-  // (see the ceiling notes at the top of this file and references/structure/base.md §10).
+  // (see the ceiling notes at the top of this file and references/structure/tooling.md §3).
   const re = /\s(?:href|action)\s*=\s*(["'])([^"']*)\1/gi;
   let m;
   while ((m = re.exec(frag))) {

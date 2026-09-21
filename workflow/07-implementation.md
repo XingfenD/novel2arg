@@ -13,18 +13,18 @@
 
 Phase 6 lands last because its copy has to describe the game that now exists.
 
-Each phase subagent receives the file paths of `docs/gdd.md`, `docs/reachability.md`, `docs/puzzle-audit.md`, both reference files, and the list of pages it owns. It returns the changed file list plus unresolved questions.
+Each phase subagent receives: the file paths of `docs/gdd.md`, `docs/reachability.md`, and `docs/puzzle-audit.md`; the reference files it must load — `references/guardrails.md`, `references/design-playbook.md` §3 for the copy rules, `references/structure/base.md`, `references/structure/components.md`, and the chosen container's form doc (`references/structure/form-website.md` for A, `references/structure/form-system.md` for B/C/D); and the list of pages it owns. It returns the changed file list plus unresolved questions.
 
 ## Standing rules for every phase
 
 - **The framework is fixed.** Step 6a set the shell, skins, components, and tools; phases fill page copy and content — they do not rebuild or restyle the framework.
-- **Public pages stay neutral.** Write each one as a document of that organization. A roster entry carries name, title, tenure, duties. The plot stays out of it.
-- **Links come from the reachability table and stay within their layer.** A link absent from that table does not get written; depth is crossed by search, a gate, or account login — never by a "related files / archives / pages" link.
-- **System pages open only to their named accounts.** A protected page carries `data-access` (references/structure/form-system.md §1); an admin account never inherits a colleague's private document; only the initial account is printed — every other login is inferred from clues, never copied from a page.
-- **Documents carry their format.** Issuing body, document number, date, addressee, body, signature and seal, distribution list.
-- **Inputs name the field.** `placeholder="工号"`, `placeholder="站内搜索…"`. The gate page may post the account format; the password derivation stays off it.
-- **Copy is declarative.** See references/design-paradigms.md §3.14 before writing any sentence.
-- **Keywords get hashed.** Run `node tools/build-keywords.mjs` after any change to either `data/keywords.<layer>.src.json`.
+- **Public pages stay neutral (R5).** Write each one as a document of that organization. A roster entry carries name, title, tenure, duties. The plot stays out of it.
+- **Links come from the reachability table and stay within their layer (R7).** A link absent from that table does not get written; depth is crossed by search, a gate, or account login — never by a "related files / archives / pages" link.
+- **System pages open only to their named accounts (R10).** A protected page carries `data-access` (references/structure/form-system.md §1); an admin account never inherits a colleague's private document; only the initial account is printed — every other login is inferred from clues, never copied from a page.
+- **Documents carry their format (R6).** Issuing body, document number, date, addressee, body, signature and seal, distribution list.
+- **Inputs name the field (R4).** `placeholder="工号"`, `placeholder="站内搜索…"`. The gate page may post the account format; the password derivation stays off it.
+- **Copy is declarative (R11).** See references/design-playbook.md §3.14 before writing any sentence.
+- **Keywords get hashed (R3).** Run `node tools/build-keywords.mjs` after any change to either `data/keywords.<layer>.src.json`.
 
 At the end of each phase, re-run the leak scan from workflow/05-puzzle-audit.md Q4 over the files that phase touched.
 

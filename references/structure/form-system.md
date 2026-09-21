@@ -2,8 +2,9 @@
 
 When the container is a machine — a computer desktop (B), a simulated internet / intranet (C), an archive
 system (D) — the player is inside a system, and reach is differentiated by **account login + per-account
-access**, not by page links. Read `references/structure/base.md` first; this file adds the system layer
-on top of the shared base (tree, page skeleton, gate component, staging, skins, tools).
+access** (R10), not by page links. Read `references/structure/base.md` first; this file adds the system layer
+on top of the shared base (tree and skeleton in base.md; gate component, staging, skins in
+references/structure/components.md; tools in references/structure/tooling.md).
 
 ## 1. Reach model — accounts, not levels (RBAC-style)
 
@@ -12,16 +13,16 @@ on top of the shared base (tree, page skeleton, gate component, staging, skins, 
 - A **protected page or block** names the accounts allowed to read it: `data-access="chen"` (comma = any of
   them, `*` = any authenticated account). The block still opens with `x-show="unlocked"` so
   `tools/check-solvable.mjs` can model the boundary.
-- **No privilege ladder.** A page opens only to the accounts it names; an admin account never inherits a
+- **No privilege ladder (R10).** A page opens only to the accounts it names; an admin account never inherits a
   colleague's private file. If the plot needs admin access to one, the page names it
   (`data-access="chen,admin"`) and the fiction justifies it.
-- **Depth is crossed by search, a gate, or an account — never by a link.** A shallow page must not carry
+- **Depth is crossed by search, a gate, or an account — never by a link (R7).** A shallow page must not carry
   "related files / related archives / related pages" links into a deeper layer; workflow/04-reachability.md
   audits this. Each person's private document stays closed until their own account is found and used.
 - **Accounts accumulate in the tab** (a deliberate player-friendly simplification): once authenticated, an
   account stays available — no sign-out, no cross-visit persistence. Closing the tab clears everything.
   Finding each account is itself a puzzle beat, so the roster of identities is part of the clue graph.
-- **Accounts are inferred, not printed.** A publicly readable page carries no login string except the initial
+- **Accounts are inferred, not printed (R10).** A publicly readable page carries no login string except the initial
   account — the one the player starts with. Every other account is a puzzle beat: the player assembles it
   from text clues (a name, a 工号, an entry year, an email in a signature) plus the account format the gate
   posts. A roster column or notice printing a colleague's login collapses the access matrix into one page of
@@ -88,10 +89,10 @@ authenticates the account first, then solves the gate.
 - **B desktop**: `desk.html` (icon grid + Dock + top menu bar); one page per app (`chat.html`,
   `mailbox.html`, `cloud-drive.html`…), each replicating the wallpaper and menu bar. The Spotlight
   `FILE_DATABASE` is plaintext JS, invisible to `check-solvable` — mirror its entries in a keyword table or
-  verify the search edges by hand (§10 item 2). The OS account is the login.
+  verify the search edges by hand (references/structure/tooling.md §3 item 2). The OS account is the login.
 - **C simulated internet**: each site gets a top-level directory (`sites/forum/`, `sites/blog-2009/`…) with
   absolute cross-site links; the intranet login is the account system. Run the tools once per site root
-  (§10 item 5).
+  (references/structure/tooling.md §3 item 5).
 - **D archive system**: `query.html` (multi-field gate: name / ID / date) → `pages/results.html` (catalog
   entries; unauthorized rows show `[Access denied]` or resolve to their clearance gate) → `pages/archive/`
   detail pages, each carrying `data-access` for the accounts allowed to open it. "Clearance" is an account,
@@ -107,10 +108,10 @@ authenticates the account first, then solves the gate.
   the walk until an authenticated account is named; the walk prints `· accounts chen` when any were used.
 - A page whose `data-access` names an account that no login gate ever grants is reported stuck/unreachable
   — that is a broken clue graph, not a checker error.
-- If the page root is not `pages/` (e.g. `apps/`), set `pagesDir` in both checkers' CONFIG; they warn when
-  the directory is missing.
+- If the page root is not `pages/` (e.g. `apps/`), set `pagesDir` once in `tools/config.mjs`
+  (references/structure/tooling.md §2); the checkers warn when the directory is missing.
 - State held only in JS with no attribute stays invisible to both checkers — model it with `data-grant` /
-  `data-access` or verify manually (§10 item 1).
+  `data-access` or verify manually (references/structure/tooling.md §3 item 1).
 
 ## 6. Honor agreement
 
@@ -121,9 +122,9 @@ persisted and no progress is saved. Never use `localStorage` for access state.
 
 | Anti-pattern | Why it fails |
 |---|---|
-| Numeric clearance ladder ("level 3 reads levels 1–2") | A ladder is not per-person access: every private document leaks to the highest account, and the login stops being a puzzle |
-| An admin / root account that opens everything | Same leak; the fiction rarely supports it, and workflow/04's tier check calls it a defect |
-| A shallow page's "related archives / files" link into a deep layer | Crosses depth with a link; reach must go through search, a gate, or an account |
+| Numeric clearance ladder ("level 3 reads levels 1–2") (R10) | A ladder is not per-person access: every private document leaks to the highest account, and the login stops being a puzzle |
+| An admin / root account that opens everything (R10) | Same leak; the fiction rarely supports it, and workflow/04's access check calls it a defect |
+| A shallow page's "related archives / files" link into a deep layer (R7) | Crosses depth with a link; reach must go through search, a gate, or an account |
 | `data-access` naming an account no gate grants | Dead private page; check-solvable reports it unreachable |
 | Access state in `localStorage` | Breaks the honor agreement and the session fiction |
 | A public page prints a colleague's login (`账号：chen.gd` in the roster) | Only the initial account may be printed; every other login is inferred from clues (workflow/05 Q4 scans for it) |
