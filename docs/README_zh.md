@@ -35,7 +35,7 @@ agent 会把仓库放进对应的 skills 目录。
 - `scripts/check-docs.mjs` — 仓库自检（路径、§ 引用、规则编号、链接、孤儿文档），由 CI（`.github/workflows/ci.yml`）运行
 - `docs/CHANGELOG.md` — 变更日志（每条中英文各一行）
 - `LICENSE` / `LICENSE.docs` — 双许可：代码与工具用 MIT，文档与提示词内容用 CC BY-SA 4.0
-- `docs/USAGE.md` — 使用须知（改编有版权的小说、欺骗性使用边界）；属政策声明，不是许可证的一部分
+- `docs/USAGE.md` / `docs/USAGE_zh.md` — 使用须知中英文版（改编有版权的小说、欺骗性使用边界）；属政策声明，不是许可证的一部分
 
 ## 许可证
 
@@ -45,5 +45,5 @@ agent 会把仓库放进对应的 skills 目录。
 - 文档与提示词内容：[CC BY-SA 4.0](../LICENSE.docs)
 
 你用本 skill 生成的产出物归你所有，不受两份许可证约束。
-在改编小说或公开部署游戏前，请阅读 [docs/USAGE.md](USAGE.md)：
+在改编小说或公开部署游戏前，请阅读[使用须知](USAGE_zh.md)（[English](USAGE.md)）：
 改编有版权的小说需获得版权方授权；产出物禁止用于钓鱼、冒充真实机构或诽谤等用途。

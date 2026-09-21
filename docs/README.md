@@ -35,16 +35,17 @@ Tell your agent:
 - `scripts/check-docs.mjs` — repo self-check (paths, § citations, rule IDs, links, orphans), run by CI (`.github/workflows/ci.yml`)
 - `docs/CHANGELOG.md` — change log (English + Chinese per entry)
 - `LICENSE` / `LICENSE.docs` — dual license: MIT for code & tooling, CC BY-SA 4.0 for docs & prompt content
-- `docs/USAGE.md` — responsible-use notice (adapting copyrighted novels, deception boundaries); a policy statement, not part of the licenses
+- `docs/USAGE.md` / `docs/USAGE_zh.md` — responsible-use notice in English and Chinese (adapting copyrighted novels, deception boundaries); a policy statement, not part of the licenses
 
 ## License
 
-Dual-licensed / 双许可：
+Dual-licensed:
 
-- Code & tooling (executable files) / 代码与工具：[MIT](../LICENSE)
-- Docs & prompt content / 文档与提示词内容：[CC BY-SA 4.0](../LICENSE.docs)
+- Code & tooling (executable files): [MIT](../LICENSE)
+- Docs & prompt content: [CC BY-SA 4.0](../LICENSE.docs)
 
 Outputs you generate with this skill are yours and are not covered by either license.
-Before adapting a novel or publicly deploying a game, read [docs/USAGE.md](USAGE.md):
+Before adapting a novel or publicly deploying a game, read [docs/USAGE.md](USAGE.md)
+([中文版](USAGE_zh.md)):
 adapting a copyrighted novel requires the rightsholder's permission, and outputs must
 never be used for phishing, impersonation of real organizations, or defamation.
