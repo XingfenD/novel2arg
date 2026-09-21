@@ -6,13 +6,13 @@ A gate step. A GDD that fails here goes back to step 3 before any scaffolding st
 
 Four questions per puzzle, one row per puzzle, a written verdict on each.
 
-## Q1 必要性 — Necessity
+## Q1 Necessity
 
 Write one sentence naming what the guarded page gives the player. If the honest answer is atmosphere, the gate becomes a plain link or the page moves to the atmosphere list. Two adjacent gates sharing a puzzle type get merged or one gets cut; the loop needs variety more than it needs volume.
 
 A blank cell here means 删除.
 
-## Q2 答案可得性 — Obtainability
+## Q2 Obtainability
 
 Name the source page and quote the exact span carrying the clue. Then write the inference chain on one line:
 
@@ -20,11 +20,11 @@ Name the source page and quote the exact span carrying the clue. Then write the 
 
 A chain longer than two hops gets redesigned. Knowledge from outside the site is allowed only for a puzzle the GDD declares as type I (knowledge-search tutorial). The chain must start from a life trace, never a random string (R3).
 
-## Q3 直觉性 — Intuitiveness
+## Q3 Intuitiveness
 
 Ask whether a reader's eye lands on that span while reading the page for its stated purpose. Body copy, tables, captions, dates, and signatures pass. `alt` attributes, CSS comments, HTML source, and text invisible until selected pass only when the GDD declares the puzzle as type F (visual concealment) or type M (meta easter egg).
 
-## Q4 泄答扫描 — Leak scan
+## Q4 Leak scan
 
 Search the gate page and every page in the inference chain for four things:
 

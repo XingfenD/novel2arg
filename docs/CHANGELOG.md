@@ -4,6 +4,9 @@ Higher versions on top. Each entry: English line, then Chinese line; entries sep
 
 ## Unreleased
 
+- Normalize the Step-5 workflow section headings to English-only — `Q1 Necessity`, `Q2 Obtainability`, `Q3 Intuitiveness`, `Q4 Leak scan` — removing the last inline Chinese/English duplication from `workflow/05-puzzle-audit.md`.
+- 将步骤 5 工作流的小节标题统一为纯英文（`Q1 Necessity`、`Q2 Obtainability`、`Q3 Intuitiveness`、`Q4 Leak scan`），移除 `workflow/05-puzzle-audit.md` 中残留的中英并置。
+
 - Split `docs/USAGE.md` into an English file plus `docs/USAGE_zh.md`, and remove the inline English/Chinese duplication from `docs/README.md` and the root `README.md`: each document now carries one language, and translations live in `_zh` sibling files.
 - 将 `docs/USAGE.md` 拆为英文版与 `docs/USAGE_zh.md`，并移除 `docs/README.md` 与根 `README.md` 的段内中英双语：每份文档只保留一种语言，译文放在 `_zh` 同名单文件。
 
