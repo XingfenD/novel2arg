@@ -17,6 +17,7 @@ Each phase subagent receives the file paths of `docs/gdd.md`, `docs/reachability
 
 ## Standing rules for every phase
 
+- **The framework is fixed.** Step 6a set the shell, skins, components, and tools; phases fill page copy and content — they do not rebuild or restyle the framework.
 - **Public pages stay neutral.** Write each one as a document of that organization. A roster entry carries name, title, tenure, duties. The plot stays out of it.
 - **Links come from the reachability table and stay within their layer.** A link absent from that table does not get written; depth is crossed by search, a gate, or account login — never by a "related files / archives / pages" link.
 - **System pages open only to their named accounts.** A protected page carries `data-access` (references/structure/form-system.md §1); an admin account never inherits a colleague's private document; only the initial account is printed — every other login is inferred from clues, never copied from a page.

@@ -47,6 +47,9 @@ subagent's dispatch prompt. Check the section before returning the step's artifa
 | A single visual theme | Light/dark dual skins; instant full-page reskin on entering the secret layer |
 | Keywords stored in plaintext JSON | Build script hashes them into a table, preventing "read the source to win" |
 | Rewriting a checker to fit a renamed project | Each tool's `CONFIG` block absorbs renamed dirs, layer names, markers, and the search mount; references/structure/base.md §10 lists the knobs and the steps no static check replaces. |
+| (6a) The prompt carries the novel, GDD, or other plot-bearing artifacts | 6a reads only `docs/system-profile.md` plus the infrastructure references; keeping plot out of its context is the point of the split |
+| (6a) Plot copy written into base pages to fill empty bodies | Base pages carry the system's own words; empty or placeholder bodies are correct at this stage |
+| (6b/7) Rebuilding or restyling the framework 6a produced | The shell, skins, components, and tools are fixed at 6a; 6b adds skeletons, step 7 fills content |
 
 ## Step 7 — Implementation
 

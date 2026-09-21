@@ -21,7 +21,7 @@ Eight steps in order. Each step body lives in `workflow/`; this section routes.
 | 3 Write the GDD | workflow/03-gdd.md | `docs/gdd.md`, eight sections | subagent → user review checkpoint |
 | 4 Reachability chain analysis 触达链分析 | workflow/04-reachability.md | `docs/reachability.md` | subagent |
 | 5 Puzzle design audit 谜题设计分析 | workflow/05-puzzle-audit.md | `docs/puzzle-audit.md` with dispositions | subagent |
-| 6 Scaffold | workflow/06-scaffold.md | file tree, every page skeletoned | subagent |
+| 6 Scaffold | workflow/06-scaffold.md | framework + every page skeletoned | 6a framework (plot-blind) → 6b skeletons (plot-aware) |
 | 7 Implementation | workflow/07-implementation.md | finished site | one subagent per phase |
 | 8 Self-check | workflow/08-self-check.md | `docs/self-check.md`, pass/fail per item | subagent |
 
@@ -29,7 +29,7 @@ Step 3 ends with a user review checkpoint: when the subagent returns `docs/gdd.m
 
 Steps 4 and 5 are gates. A GDD that fails either returns to step 3 before scaffolding starts.
 
-**Dispatch contract.** The orchestrator writes the prompt, reads the returned artifact, then dispatches the next step. It performs step 2 itself and delegates the rest. Every prompt carries: the novel text path, file paths of prior artifacts, that step's deliverable definition copied from its workflow file, the reference file paths that step cites, the realism priority (references/paradigm.md: realism outranks any check, and a conflict goes to the user through the orchestrator), and the closing line "return the artifact plus unresolved questions; route questions back through the orchestrator." Subagents hold no conversation with the user.
+**Dispatch contract.** The orchestrator writes the prompt, reads the returned artifact, then dispatches the next step. It performs step 2 itself and delegates the rest. Every prompt carries: the novel text path, file paths of prior artifacts, that step's deliverable definition copied from its workflow file, the reference file paths that step cites, the realism priority (references/paradigm.md: realism outranks any check, and a conflict goes to the user through the orchestrator), and the closing line "return the artifact plus unresolved questions; route questions back through the orchestrator." The one exception is step 6a: its prompt carries `docs/system-profile.md` and the infrastructure references only — no novel text, no plot-bearing artifacts. Subagents hold no conversation with the user.
 
 ## References
 
