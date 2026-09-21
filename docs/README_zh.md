@@ -31,7 +31,7 @@ agent 会把仓库放进对应的 skills 目录。
 - `references/structure/form-system.md` — 容器 B/C/D：系统类虚构（账号登录、按账号授权、桌面 / 模拟互联网 / 档案系统外壳）
 - `references/common-mistakes.md` — 按工作流步骤分组的基线测试陷阱；各步骤文件引用对应小节
 - `examples/` — 步骤 1/3/4/5 的产物形状示例 + 一份填好的派发 prompt 样例
-- `assets/tools/` — 随项目复制的零依赖 Node 文件：`config.mjs`（两个检查脚本共享的约定，项目改名时只改这一个文件）、`hash.mjs`、`build-keywords.mjs`、`check-links.mjs`、`check-solvable.mjs`、`vendor-alpine.mjs`；`check-solvable.mjs --self-test` 可自检文本匹配器
+- `assets/tools/` — 随项目复制的零依赖 Node 文件：`config.mjs`（所有检查脚本共享的约定，项目改名时只改这一个文件）、`hash.mjs`、`build-keywords.mjs`、`check-links.mjs`、`check-solvable.mjs`、`check-credentials.mjs`（组合 / 派生凭据：部件 + 规则 + 零明文）、`check-reachability.mjs`（演算副本可达性）、`vendor-alpine.mjs`；`check-solvable.mjs --self-test` 可自检文本匹配器
 - `scripts/check-docs.mjs` — 仓库自检（路径、§ 引用、规则编号、链接、孤儿文档），由 CI（`.github/workflows/ci.yml`）运行
 - `docs/CHANGELOG.md` — 变更日志（每条中英文各一行）
 - `LICENSE` / `LICENSE.docs` — 双许可：代码与工具用 MIT，文档与提示词内容用 CC BY-SA 4.0

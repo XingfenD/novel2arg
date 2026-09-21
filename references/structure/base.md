@@ -37,22 +37,26 @@
 │   ├── keywords.secret.src.json  # Plaintext secret index (development only; excluded from the deploy directory after build)
 │   ├── keywords.surface.json     # Surface hash table — must contain no pages/secret/ URL (deploy artifact)
 │   ├── keywords.secret.json      # Secret hash table, fetched only by secret-layer pages (deploy artifact)
-│   └── forbidden.json            # Forbidden word table (hashes + forbidden-state copy)
-├── tools/                        # copy these six from the skill's assets/tools/ at scaffold time
+│   ├── forbidden.json            # Forbidden word table (hashes + forbidden-state copy)
+│   └── credentials.src.json      # Composite/derived-credential provenance manifest (development only; plaintext values, excluded from deploy like the keyword .src tables)
+├── tools/                        # copy these eight from the skill's assets/tools/ at scaffold time
 │   ├── config.mjs                # shared project conventions — the single file to edit for a renamed project
 │   ├── hash.mjs                  # md5+base64 for a plaintext value → a gate's data-expect-hash
 │   ├── build-keywords.mjs        # plaintext table(s) → hash table(s)
 │   ├── check-links.mjs           # dead-link checker + surface-index layer-leak guard
 │   ├── check-solvable.mjs        # cold-start solvability walk (reachable + solvable + search earned)
+│   ├── check-credentials.mjs     # composite/derived credential provenance (parts + rule + zero-plaintext) — the half check-solvable cannot model
+│   ├── check-reachability.mjs    # rehearsal build: inject the credentials into a throwaway copy, then run check-solvable for reachability
 │   └── vendor-alpine.mjs         # downloads the pinned Alpine runtime and verifies its sha256
 └── README.md                     # How to run + GDD link + player notes
 ```
 
 The tools ship with this skill under `assets/tools/`; scaffold copies them into `tools/` so the project stays
-self-contained and re-runnable. They run on Node built-ins only (`node:crypto`, `node:fs`, `node:path`) — no
-dependencies, no install step. Both checkers import their assumptions from the shared `tools/config.mjs`
-(edit that one file when the project renames directories or markers; references/structure/tooling.md §2
-lists the knobs and references/structure/tooling.md §3 the manual methods that remain). The keyword tables are auto-discovered, so both the
+self-contained and re-runnable. They run on Node built-ins only (`node:crypto`, `node:fs`, `node:path`,
+`node:child_process`) — no dependencies, no install step. The checkers import their assumptions from the
+shared `tools/config.mjs` (edit that one file when the project renames directories or markers;
+references/structure/tooling.md §2 lists the knobs and references/structure/tooling.md §3 the manual methods
+that remain). The keyword tables are auto-discovered, so both the
 per-layer convention above and a single-table project work with zero configuration. Re-run the checks after
 every content edit, not just before deploy — the canonical pass/fail checklist is `workflow/08-self-check.md`.
 

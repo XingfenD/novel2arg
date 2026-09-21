@@ -4,6 +4,9 @@ Higher versions on top. Each entry: English line, then Chinese line; entries sep
 
 ## Unreleased
 
+- Harden the skill against the defects found in the wuxiafusi owner review: ship `check-credentials.mjs` (composite/derived credential provenance: parts + rule + zero-plaintext) and `check-reachability.mjs` (rehearsal build) so a derived account is never printed just to turn `check-solvable` green; move system-container access state from per-tab `sessionStorage` to a cross-tab session cookie so a `target="_blank"` result stays unlocked; add `data-grants` so one login box serves several roles instead of two forms on a page; give images an owned step-7 phase plus a step-8 asset-manifest reconciliation; add a GDD asset manifest + entity registry with a self-consistency scan, and step-8 cross-page consistency, example-must-satisfy-rule, zero-jump, and cross-tab session checks. The two new checkers import the shared `tools/config.mjs`, and their citations point at the split `components.md` / `tooling.md`.
+- 针对 wuxiafusi 项目审查暴露的缺陷加固本 skill：新增 `check-credentials.mjs`（组合 / 派生凭据溯源：部件 + 规则 + 零明文）与 `check-reachability.mjs`（演算副本），使派生账号不再为了 `check-solvable` 变绿而被印到公开页；系统容器的登录态由按标签页的 `sessionStorage` 改为跨标签页会话 Cookie，使 `target="_blank"` 打开的卷宗仍保持解锁；新增 `data-grants`，让单个登录框服务多身份而非在页面上摆两个表单；图片在步骤 7 有专属 phase 并在步骤 8 与 GDD 资产清单对账；GDD 增加资产清单 + 实体登记表与自洽扫描，步骤 8 增加跨页一致性、样例须满足规则、零跳通关、跨标签页会话等检查。两个新检查器导入共享的 `tools/config.mjs`，引用指向拆分后的 `components.md` / `tooling.md`。
+
 - Merge the plot-blind / plot-aware scaffold split and the dual-license / USAGE notices into the restructured docs; the conflict resolution keeps both sides and updates every citation to the renamed reference files.
 - 将脚手架 6a/6b 拆分与双许可 / USAGE 说明并入重构后的文档；冲突解决保留双方内容，并将所有引用更新为改名后的 reference 文件。
 
@@ -16,8 +19,8 @@ Higher versions on top. Each entry: English line, then Chinese line; entries sep
 - Add repo self-checks: `scripts/check-docs.mjs` (validates file paths, `§N`/`§N.M` citations, rule IDs, markdown links, orphan docs) wired into `.github/workflows/ci.yml` together with `check-solvable.mjs --self-test`.
 - 新增仓库自检：`scripts/check-docs.mjs`（校验文件路径、`§N`/`§N.M` 引用、规则编号、markdown 链接、孤儿文档），与 `check-solvable.mjs --self-test` 一起接入 `.github/workflows/ci.yml`。
 
-- Tools: extract the shared conventions into `assets/tools/config.mjs` (imported by both checkers and build-keywords, so a renamed project edits one file); add `assets/tools/vendor-alpine.mjs` (downloads the pinned Alpine runtime and verifies its sha256).
-- 工具：共享约定抽到 `assets/tools/config.mjs`（两个检查器与 build-keywords 共同导入，项目改名只需改一处）；新增 `assets/tools/vendor-alpine.mjs`（下载固定版本 Alpine 运行时并校验 sha256）。
+- Tools: extract the shared conventions into `assets/tools/config.mjs` (imported by every checker and build-keywords, so a renamed project edits one file); add `assets/tools/vendor-alpine.mjs` (downloads the pinned Alpine runtime and verifies its sha256).
+- 工具：共享约定抽到 `assets/tools/config.mjs`（所有检查器与 build-keywords 共同导入，项目改名只需改一处）；新增 `assets/tools/vendor-alpine.mjs`（下载固定版本 Alpine 运行时并校验 sha256）。
 
 - Add `examples/` with artifact-shape excerpts for steps 1/3/4/5 plus a filled dispatch-prompt sample; SKILL.md turns the dispatch contract into a six-item checklist and records the output project-root convention.
 - 新增 `examples/`：步骤 1/3/4/5 的产物形状示例与一份填好的派发 prompt 样例；SKILL.md 将派发契约改为六项清单，并记录产出项目根目录约定。

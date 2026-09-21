@@ -31,7 +31,7 @@ Tell your agent:
 - `references/structure/form-system.md` — containers B/C/D: system fictions (account login, per-account access, desktop / simulated-internet / archive shells)
 - `references/common-mistakes.md` — baseline-test traps grouped by workflow step; each step file cites its section
 - `examples/` — artifact-shape excerpts for steps 1/3/4/5 + a filled dispatch-prompt sample
-- `assets/tools/` — dependency-free Node files copied into each project: `config.mjs` (shared conventions both checkers import; the one file a renamed project edits), `hash.mjs`, `build-keywords.mjs`, `check-links.mjs`, `check-solvable.mjs`, `vendor-alpine.mjs` — with `check-solvable.mjs --self-test` for the text matcher
+- `assets/tools/` — dependency-free Node files copied into each project: `config.mjs` (shared conventions every checker imports; the one file a renamed project edits), `hash.mjs`, `build-keywords.mjs`, `check-links.mjs`, `check-solvable.mjs`, `check-credentials.mjs` (composite/derived credentials: parts + rule + zero-plaintext), `check-reachability.mjs` (rehearsal reachability build), `vendor-alpine.mjs` — with `check-solvable.mjs --self-test` for the text matcher
 - `scripts/check-docs.mjs` — repo self-check (paths, § citations, rule IDs, links, orphans), run by CI (`.github/workflows/ci.yml`)
 - `docs/CHANGELOG.md` — change log (English + Chinese per entry)
 - `LICENSE` / `LICENSE.docs` — dual license: MIT for code & tooling, CC BY-SA 4.0 for docs & prompt content

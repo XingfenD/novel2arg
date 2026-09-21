@@ -23,7 +23,7 @@ artifact-shape anchor included in that step's dispatch prompt, when one exists.
 |---|---|---|---|---|
 | 1 Deconstruct the novel | workflow/01-deconstruct.md | five tables | examples/deconstruction-excerpt.md | subagent |
 | 2 Select the world container | workflow/02-container.md | GDD cover-page record | — | orchestrator (asks the user) |
-| 3 Write the GDD | workflow/03-gdd.md | `docs/gdd.md`, eight sections | examples/gdd-excerpt.md | subagent → user review checkpoint |
+| 3 Write the GDD | workflow/03-gdd.md | `docs/gdd.md`, front matter (asset manifest + entity registry) + eight sections | examples/gdd-excerpt.md | subagent → user review checkpoint |
 | 4 Reachability chain analysis 触达链分析 | workflow/04-reachability.md | `docs/reachability.md` | examples/reachability-excerpt.md | subagent |
 | 5 Puzzle design audit 谜题设计分析 | workflow/05-puzzle-audit.md | `docs/puzzle-audit.md` with dispositions | examples/puzzle-audit-excerpt.md | subagent |
 | 6 Scaffold | workflow/06-scaffold.md | framework + every page skeletoned | — | 6a framework (plot-blind) → 6b skeletons (plot-aware) |
@@ -56,10 +56,10 @@ only — no novel text, no plot-bearing artifacts.
 - **references/structure/components.md**: Alpine component reference implementations — keyword hash build, search engine, password gates, staging, skins, progress. Required reading at steps 6 and 7.
 - **references/structure/form-website.md**: container A — fake official website: search hub, layer-scoped indexes, gates as the only access. Required reading at steps 3 and 6 when container A is chosen.
 - **references/structure/form-system.md**: containers B/C/D — system fictions: account login, per-account access (RBAC-style), desktop / simulated-internet / archive shells, checker conventions. Required reading at steps 3 and 6 when a system container is chosen.
-- **references/structure/tooling.md**: check cadence, the shared `tools/config.mjs` knobs, and the five manual methods no static checker replaces. Required reading at step 8.
+- **references/structure/tooling.md**: check cadence, the shared `tools/config.mjs` knobs, and the nine manual methods no static checker replaces. Required reading at step 8.
 - **references/common-mistakes.md**: baseline-test traps grouped by workflow step; each step file cites its section.
 - **examples/**: artifact excerpts anchoring the expected shape of steps 1/3/4/5, plus a filled dispatch-prompt sample for the orchestrator.
-- **assets/tools/**: dependency-free Node files copied into every project at step 6 — `config.mjs` (shared conventions both checkers import; the one file a renamed project edits), `hash.mjs` (design-time gate hashes, steps 3/5), `build-keywords.mjs` (plaintext tables → hash tables; re-run after every src edit), `check-links.mjs` (dead links + surface-index layer leaks), `check-solvable.mjs` (cold-start walk: reachable + solvable + search earned), and `vendor-alpine.mjs` (downloads the pinned Alpine runtime, sha256-verified, step 6). Steps 7 and 8 run build-keywords, check-links, and check-solvable; the canonical pass/fail checklist is workflow/08-self-check.md.
+- **assets/tools/**: dependency-free Node files copied into every project at step 6 — `config.mjs` (shared conventions every checker imports; the one file a renamed project edits), `hash.mjs` (design-time gate hashes, steps 3/5), `build-keywords.mjs` (plaintext tables → hash tables; re-run after every src edit), `check-links.mjs` (dead links + surface-index layer leaks), `check-solvable.mjs` (cold-start walk: reachable + solvable + search earned), `check-credentials.mjs` (composite/derived credentials: parts + rule + zero-plaintext — the half `check-solvable` cannot model), `check-reachability.mjs` (rehearsal build: inject the credentials into a throwaway copy, then prove gates unlock + pages reachable), and `vendor-alpine.mjs` (downloads the pinned Alpine runtime, sha256-verified, step 6). Steps 7 and 8 run build-keywords, check-links, and check-solvable; a project with derived credentials or a system container also runs check-credentials and check-reachability. The canonical pass/fail checklist is workflow/08-self-check.md.
 
 ## Repo self-checks
 

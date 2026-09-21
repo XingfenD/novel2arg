@@ -25,6 +25,9 @@ Step-2 section is intentionally absent, not missing.
 | No progress feedback | `NN/total` in each page footer; secret pages use anomalous numbering such as `ex/total` |
 | (Website form) one flat keyword index spanning both layers; (system forms) access maintained in the keyword JSONs | Website form: one index per layer (R8). System forms: one index, and the account matrix on the pages decides what a hit opens — access never lives in the JSON (R10; references/structure/form-system.md §1) |
 | (System forms) a colleague's login printed on a public page (`账号：chen.gd` in the roster) | Only the initial account may be printed; every other account is inferred from text clues (R10; references/structure/form-system.md §1) |
+| GDD contradicts itself — a page named two ways (page map vs. nav vs. its own title), or a value one line forbids and another requires on the same page | Run the step-3 self-consistency scan before the user checkpoint; the GDD entity registry is the single source of truth every page copies |
+| A worked example that violates the rule it illustrates (sample `wang00□□` against a "pinyin initials" rule, or the wrong shape) | Every example satisfies its stated derivation and matches the real value's length / separators / mask |
+| Two components of one credential co-located on a page (工号 + year together → zero-jump solve) | Split the components across pages so the derivation is the puzzle (R3; GDD puzzle allocation table) |
 
 ## Step 4 — Reachability
 
@@ -43,6 +46,7 @@ Step-2 section is intentionally absent, not missing.
 |---|---|
 | The answer in a `placeholder` or help text | Field names only; oblique failure hints carry the feedback (R4) |
 | A gate kept because it is already written | Step 5 necessity question; a blank justification means 删除 |
+| Printing a derived account on a public page to make `check-solvable` green | It only matches verbatim strings, so a derived credential reads STUCK; prove it with `check-credentials.mjs` (parts + rule + zero-plaintext), never by printing it — a static site has no server auth, so client-side masking is not privacy |
 
 ## Step 6 — Scaffold
 
@@ -65,11 +69,18 @@ Step-2 section is intentionally absent, not missing.
 | Guidance copy decorated with metaphor and personification | Plain declarative sentences (R11) |
 | Contrast frames in site copy (是…不是… / 是…而是…) | One positive clause per sentence (R11; references/design-playbook.md §3.14) |
 | Orchestrator writes the pages itself | One subagent per workflow step; the orchestrator dispatches and reviews |
+| A declared image / seal / scan / photo never landed (no `<img>` written, so no checker complains) | Step 7 phase 4 owns the GDD asset manifest; step 8 reconciles every declared asset against files + references |
+| One login split into two forms to give the checker "one form = one identity" | One box + `data-grants` (account→identity map); two forms leak the design intent in the title and read as game UI (references/structure/form-system.md §2) |
+| Access state in per-tab `sessionStorage` behind a `target="_blank"` result | Session cookie (cross-tab); the new tab the result opens else reads as logged out (references/structure/components.md §2–§3) |
+| Credential printed in plaintext to satisfy a static checker | Zero-plaintext: `check-credentials.mjs` asserts no account appears whole; client-side masking is not privacy on a static site |
 
 ## Step 8 — Self-Check
 
 | Mistake | Correct approach |
 |---|---|
 | The answer leak-scanned only in form UI | Scan the page **chrome** too — `<title>`, top bar, clearance strip, footer. An answer printed in a header is the same defect as one in a `placeholder` (R4) |
-| Honor agreement claims what the code does not do | Before shipping text like "tables are hashed, nothing is persisted", grep for `localStorage` / `sessionStorage` writes and confirm the agreement's wording matches what is actually stored (system accounts are session-only) (R3) |
-| Shipping without a solvability check | Copy `assets/tools/check-solvable.mjs` in at scaffold time. It proves every gate stays solvable and every page reachable after content edits, and turns red when a leak fix removes a clue |
+| Honor agreement claims what the code does not do | Before shipping text like "tables are hashed, nothing is persisted", grep for `localStorage` / `sessionStorage` / cookie writes and confirm the agreement's wording matches what is actually stored (system accounts live in a session cookie, cleared when the browser closes) (R3) |
+| Cross-tab unlock left untested because `check-solvable` is green | It models identities as one global set and cannot see per-tab isolation; run the manual new-tab test (log in → open a `target="_blank"` result → the protected doc must be unlocked there) |
+| Asset manifest unreconciled | Every GDD-declared asset exists under `assets/` and is referenced by ≥1 page; an `<img>` never written has no `src` for check-links to resolve |
+| Shared entities drift between pages | Reconcile names / IDs / accounts / page titles / dates against the GDD entity registry; a roster missing a duty-schedule person, or a page under two titles, fails here |
+| Shipping without a solvability check | Copy `assets/tools/check-solvable.mjs` in at scaffold time. It proves every gate stays solvable and every page reachable after content edits, and turns red when a leak fix removes a clue. For derived credentials add `check-credentials.mjs` + `check-reachability.mjs` |

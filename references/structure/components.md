@@ -88,6 +88,8 @@ Alpine.data('search', () => ({
 
 System containers replace this search hub with their own shells — desktop Spotlight `FILE_DATABASE`, the archive query form, cross-site links; see `references/structure/form-system.md` §4.
 
+**New tabs vs. session state (required reading for system containers).** `target="_blank"` opens each result in a fresh tab, and a fresh tab gets a fresh `sessionStorage` — so a `data-access`-protected document opened this way reads as locked even though the player is "logged in" on the original tab. Any container that crosses an account login with new-tab results (container D's `query → results → archive` chain) must hold session state in a **session cookie** (shared across tabs, cleared when the browser closes), not per-tab `sessionStorage`; see §3 and `references/structure/form-system.md` §6. `check-solvable.mjs` models identities as one global set and cannot see per-tab isolation, so it reports green while the real browser fails — the step-8 cross-tab manual test is the only thing that catches this (tooling.md §3 item 7).
+
 ## 3. Password Gate (`gate` Component)
 
 One component, three shapes. `data-expect-hash` sits on **each `<input>`** (comma-separated values = synonyms
@@ -119,22 +121,57 @@ configuration sits on the **component root** (`<main>`), not on the `<form>`.
 // Shape C — session login + per-account access (system containers B/C/D): data-grant on the login gate,
 // data-access on the protected page, no privilege ladder (R10). The full pattern, the `access` component,
 // and the RBAC rules live in references/structure/form-system.md.
+//
+// Cross-tab session store. Access state MUST survive a result opened in a new tab (target="_blank", §2);
+// per-tab sessionStorage does not, so hold it in a session cookie (no max-age/expires → cleared when the
+// browser closes, matching the "signed out after this session" honor agreement). sessionStorage is the
+// fallback for private mode where cookies are blocked. Rename ACCESS_KEY per project.
+const ACCESS_KEY = 'access', SKIN_KEY = 'skin';
+const session = {
+  _read(key) {
+    const m = document.cookie.match(new RegExp('(?:^|; )' + key + '=([^;]*)'));
+    if (m) { try { return JSON.parse(decodeURIComponent(m[1])); } catch (e) { /* fall through */ } }
+    try { return JSON.parse(sessionStorage.getItem(key) || 'null'); } catch (e) { return null; }
+  },
+  _write(key, val) {
+    const v = encodeURIComponent(JSON.stringify(val));
+    document.cookie = `${key}=${v}; path=/; SameSite=Lax`;            // session cookie: deliberately no expiry
+    try { sessionStorage.setItem(key, JSON.stringify(val)); } catch (e) { /* private mode */ }
+  },
+  access() { return this._read(ACCESS_KEY) || []; },
+  grant(ids) { this._write(ACCESS_KEY, [...new Set([...this.access(), ...ids])]); },
+  reskin(name) { if (name) this._write(SKIN_KEY, name); },            // optional: a skin token secret/system pages apply
+  skin() { return this._read(SKIN_KEY); },
+};
 Alpine.data('gate', () => ({
   error: '', busy: false, unlocked: false, successText: '', _t: null,
   init() { this.successText = this.$el.dataset.successText || ''; },
   submit() {
     const el = this.$root;          // data-* live on the component root; the submit event's target is the <form>
-    const fields = Array.from(el.querySelectorAll('input[data-expect-hash]'));
-    const ok = fields.length > 0 && fields.every((inp) => {
-      const expects = (inp.dataset.expectHash || '').split(',').map((s) => s.trim()).filter(Boolean);
-      return expects.includes(hash(inp.value || ''));
-    });
+    const inputs = Array.from(el.querySelectorAll('input[data-expect-hash]'));
+    // Single-box multi-identity (Shape C). data-grants is a JSON map on the root:
+    //   { "<account-hash>": { "id": "intern", "pw": ["<pw-hash>", …], "reskin": "secret" }, … }
+    // It resolves WHICH identity the typed account grants and validates the password against that identity,
+    // so one login box can serve several roles without splitting into several forms on the page. data-grant
+    // stays on the root as the flat list of identities check-solvable walks; data-grants is the runtime truth.
+    let ok, grantIds = [];
+    if (el.dataset.grants) {
+      const map = JSON.parse(el.dataset.grants);
+      const acc = inputs.find((i) => i.type !== 'password');
+      const pw = inputs.find((i) => i.type === 'password');
+      const entry = acc ? map[hash(acc.value || '')] : null;
+      ok = !!entry && (!pw || (entry.pw || []).includes(hash(pw.value || '')));   // account+password are paired
+      if (ok) { grantIds = entry.id ? [entry.id] : []; session.reskin(entry.reskin); }
+    } else {
+      // Legacy / multi-field gates: every data-expect-hash input must match; data-grant is unconditional.
+      ok = inputs.length > 0 && inputs.every((inp) => {
+        const expects = (inp.dataset.expectHash || '').split(',').map((s) => s.trim()).filter(Boolean);
+        return expects.includes(hash(inp.value || ''));
+      });
+      grantIds = (el.dataset.grant || '').split(',').map((s) => s.trim()).filter(Boolean);
+    }
     if (ok) {
-      const grants = (el.dataset.grant || '').split(',').map((s) => s.trim()).filter(Boolean);   // Shape C (references/structure/form-system.md)
-      if (grants.length) {
-        const seen = JSON.parse(sessionStorage.getItem('access') || '[]');
-        sessionStorage.setItem('access', JSON.stringify([...new Set([...seen, ...grants])]));
-      }
+      if (grantIds.length) session.grant(grantIds);
       const next = el.dataset.next;
       const hold = parseInt(el.dataset.successHold || '0', 10);
       const staged = this.successText && hold > 0;
@@ -152,6 +189,8 @@ Alpine.data('gate', () => ({
 
 `hash()` is the shared helper from §2. When designing a gate, enforce the **credential triad**: the account is hidden on page A, the password clue on page B (requiring inference: zodiac year → 1977, child-photo date → 20201125), and the gate on page C. Hashing keeps plaintext out of casual view in the source (R3).
 
+A credential may be **derived/composite** — an account assembled from parts (pinyin initials + license-year), never printed whole. `check-solvable.mjs` only matches a value that appears *verbatim* in a readable page, so it cannot prove a derived credential solvable and will report the gate STUCK. **Never print the credential to turn it green** — that leaks it to every visitor (a static site has no server auth; client-side masking is not privacy, R12) and collapses the puzzle. Declare the value, its composition rule, and its public-page components in `data/credentials.src.json` and prove it with `tools/check-credentials.mjs` (parts + rule + zero-plaintext); prove reachability-given-the-credential with `tools/check-reachability.mjs`. See tooling.md §1 and §3.
+
 Gate design rules:
 
 - **Failure hints point at the source obliquely and stop (R4).** `密码错误 🎂` passes; anything naming a page,
@@ -165,9 +204,10 @@ Gate design rules:
   `x-show="unlocked"` block and expect check-solvable to count it before unlock — that is exactly the
   boundary the check models.
 - **Keep the entry page's honor agreement honest.** It may claim the source hides nothing only if the keyword
-  tables and gate hashes really are hashed (R3); system containers keep the authenticated accounts in
-  `sessionStorage` only (cleared when the tab closes) and say exactly that — no unlock state or progress is
-  persisted (references/structure/form-system.md §6).
+  tables and gate hashes really are hashed (R3); system containers keep the authenticated accounts in a
+  **session cookie** (cross-tab, cleared when the browser closes — not per-tab `sessionStorage`, which a
+  `target="_blank"` result leaves behind) and say exactly that — no unlock state or progress is persisted
+  across sessions (references/structure/form-system.md §6).
 
 The honor agreement on the entry page carries the rest.
 
@@ -247,8 +287,9 @@ body.secret { background:#1a1a1c; color:#9e9e9e; } body.secret h2 { color:#db140
 
 ```js
 // This paradigm has no save by default (progress lives in the player's head). If added: record only visited
-// page numbers; gates stay one-way and untracked, and a system container's authenticated accounts live in
-// sessionStorage only (references/structure/form-system.md §5). Mount on the shared footer so it runs on every page.
+// page numbers; gates stay one-way and untracked, and a system container's authenticated accounts live in a
+// session cookie, never localStorage (references/structure/form-system.md §6). Mount on the shared footer so
+// it runs on every page.
 Alpine.data('progress', () => ({
   seen: [],
   init() {
