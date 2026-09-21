@@ -19,7 +19,7 @@
 | Type | Mechanism |
 |---|---|
 | A Keyword search gate | Literal term → hash lookup → hidden page; synonym/alias tolerance; one keyword can return multiple results. The hit stays inside the layer whose search surface ran the query; a hit marked classified lands on its clearance gate |
-| B Cross-page credential delivery | **Three elements: account on page A, password clue on page B, gate on page C** — the minimum puzzle unit |
+| B Cross-page credential delivery | **Three elements: account on page A, password clue on page B, gate on page C** — the minimum puzzle unit. The credential may be *derived* (account = pinyin initials + license-year, password = entry year), assembled from parts rather than printed whole; prove it with `tools/check-credentials.mjs`, never by printing it (references/structure/base.md §5) |
 | C Password hidden in URL | Filename/path is the credential (`passwordisXXX.html`); the address bar becomes a narrative prop; use sparingly — it spoils the reveal |
 | D Classical cryptography | Polybius square, Morse (audio dots/dashes at 1:3), book cipher (page-line); the puzzle is presented on the page, verified client-side |
 | E Sensory puzzles | Stereo channel separation (headphone requirement must be declared on the entry page), click counting, flashlight mask (radial-gradient + cursor tracking) |

@@ -28,7 +28,7 @@ agent 会把仓库放进对应的 skills 目录。
 - `references/structure/form-website.md` — 容器 A：假官方网站（搜索中枢、分层索引、密码门）
 - `references/structure/form-system.md` — 容器 B/C/D：系统类虚构（账号登录、按账号授权、桌面 / 模拟互联网 / 档案系统外壳）
 - `references/common-mistakes.md` — 按工作流步骤分组的基线测试陷阱；各步骤文件引用对应小节
-- `assets/tools/` — 四个零依赖 Node 脚本，随项目复制：`hash.mjs`、`build-keywords.mjs`、`check-links.mjs`、`check-solvable.mjs`；项目改名时改 CONFIG 即可，`check-solvable.mjs --self-test` 可自检文本匹配器
+- `assets/tools/` — 六个零依赖 Node 脚本，随项目复制：`hash.mjs`、`build-keywords.mjs`、`check-links.mjs`、`check-solvable.mjs`、`check-credentials.mjs`（组合 / 派生凭据：部件 + 规则 + 零明文）、`check-reachability.mjs`（演算副本可达性）；项目改名时改 CONFIG 即可，`check-solvable.mjs --self-test` 可自检文本匹配器
 - `LICENSE` / `LICENSE.docs` — 双许可：代码与工具用 MIT，文档与提示词内容用 CC BY-SA 4.0
 - `docs/USAGE.md` — 使用须知（改编有版权的小说、欺骗性使用边界）；属政策声明，不是许可证的一部分
 

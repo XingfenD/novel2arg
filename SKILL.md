@@ -18,7 +18,7 @@ Eight steps in order. Each step body lives in `workflow/`; this section routes.
 |---|---|---|---|
 | 1 Deconstruct the novel | workflow/01-deconstruct.md | five tables | subagent |
 | 2 Select the world container | workflow/02-container.md | GDD cover-page record | orchestrator (asks the user) |
-| 3 Write the GDD | workflow/03-gdd.md | `docs/gdd.md`, eight sections | subagent → user review checkpoint |
+| 3 Write the GDD | workflow/03-gdd.md | `docs/gdd.md`, front matter (asset manifest + entity registry) + eight sections | subagent → user review checkpoint |
 | 4 Reachability chain analysis 触达链分析 | workflow/04-reachability.md | `docs/reachability.md` | subagent |
 | 5 Puzzle design audit 谜题设计分析 | workflow/05-puzzle-audit.md | `docs/puzzle-audit.md` with dispositions | subagent |
 | 6 Scaffold | workflow/06-scaffold.md | file tree, every page skeletoned | subagent |
@@ -39,4 +39,4 @@ Steps 4 and 5 are gates. A GDD that fails either returns to step 3 before scaffo
 - **references/structure/form-website.md**: container A — fake official website: search hub, layer-scoped indexes, gates as the only access. Required reading at steps 3 and 6 when container A is chosen.
 - **references/structure/form-system.md**: containers B/C/D — system fictions: account login, per-account access (RBAC-style), desktop / simulated-internet / archive shells, checker conventions. Required reading at steps 3 and 6 when a system container is chosen.
 - **references/common-mistakes.md**: baseline-test traps grouped by workflow step; each step file cites its section.
-- **assets/tools/**: four dependency-free scripts copied into every project at step 6 — `hash.mjs` (gate hashes), `build-keywords.mjs` (plaintext tables → hash tables), `check-links.mjs` (dead links + surface-index layer leaks), and `check-solvable.mjs` (cold-start walk: reachable + solvable + search earned). Run all of them at step 8. Each checker's `CONFIG` block absorbs renamed directories and markers; references/structure/base.md §10 lists the knobs and the manual methods that remain.
+- **assets/tools/**: six dependency-free scripts copied into every project at step 6 — `hash.mjs` (gate hashes), `build-keywords.mjs` (plaintext tables → hash tables), `check-links.mjs` (dead links + surface-index layer leaks), `check-solvable.mjs` (cold-start walk: reachable + solvable + search earned), `check-credentials.mjs` (composite/derived credentials: parts + rule + zero-plaintext — the half `check-solvable` cannot model), and `check-reachability.mjs` (rehearsal build: inject the credentials into a throwaway copy, then prove gates unlock + pages reachable). Run all of them at step 8. Each checker's `CONFIG` block absorbs renamed directories and markers; references/structure/base.md §10 lists the knobs and the manual methods that remain.

@@ -38,6 +38,15 @@
 //  - This proves solvability, not that a gate is un-skippable. If the page behind a gate is reachable by
 //    another route, the walk still passes. Catching that is a layer-scoping question: keep per-layer
 //    keyword tables and let check-links.mjs enforce that the surface index carries no secret url.
+//  - Solvable means the field's plaintext appears VERBATIM in a readable page. A DERIVED/composite credential
+//    (account = pinyin initials + license-year, never printed whole) therefore reads as STUCK here. Do NOT
+//    print it to turn this check green — that leaks it to every visitor (a static site has no server auth) and
+//    kills the puzzle. Prove it with check-credentials.mjs (parts + rule + zero-plaintext) and prove the graph
+//    still unlocks with check-reachability.mjs (a rehearsal copy with the values injected). See base.md §10.
+//  - Authenticated identities are modelled as ONE global set, so per-tab session isolation is invisible: if
+//    access lives in sessionStorage but results open target="_blank" in a fresh tab, this walk still passes
+//    while the real browser shows the document locked. Use a session cookie (base.md §4–§5,
+//    form-system.md §6) and run the step-8 cross-tab manual test.
 import { readFileSync, readdirSync, statSync, existsSync } from 'node:fs';
 import { dirname, join, relative } from 'node:path';
 import { createHash } from 'node:crypto';

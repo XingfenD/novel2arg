@@ -8,7 +8,9 @@ on top of the shared base (tree, page skeleton, gate component, staging, skins, 
 ## 1. Reach model — accounts, not levels (RBAC-style)
 
 - A **login gate** authenticates one account: `data-grant="chen"` + `data-next="apps/mail.html"` on the
-  component root. Success records the account in `sessionStorage` for this tab only.
+  component root. Success records the account in a **session cookie** (cross-tab, cleared when the browser
+  closes) — not per-tab `sessionStorage`, which a `target="_blank"` result opens in a fresh tab and loses
+  (references/structure/base.md §4–§5). One login box may serve several roles through `data-grants` (§2).
 - A **protected page or block** names the accounts allowed to read it: `data-access="chen"` (comma = any of
   them, `*` = any authenticated account). The block still opens with `x-show="unlocked"` so
   `tools/check-solvable.mjs` can model the boundary.
@@ -18,14 +20,22 @@ on top of the shared base (tree, page skeleton, gate component, staging, skins, 
 - **Depth is crossed by search, a gate, or an account — never by a link.** A shallow page must not carry
   "related files / related archives / related pages" links into a deeper layer; workflow/04-reachability.md
   audits this. Each person's private document stays closed until their own account is found and used.
-- **Accounts accumulate in the tab** (a deliberate player-friendly simplification): once authenticated, an
-  account stays available — no sign-out, no cross-visit persistence. Closing the tab clears everything.
-  Finding each account is itself a puzzle beat, so the roster of identities is part of the clue graph.
+- **Accounts accumulate for the session** (a deliberate player-friendly simplification): once authenticated, an
+  account stays available across tabs — no sign-out, no cross-session persistence. Closing the browser clears
+  everything. Because results open `target="_blank"`, the state lives in a session cookie, not per-tab
+  `sessionStorage`. Finding each account is itself a puzzle beat, so the roster of identities is part of the clue graph.
 - **Accounts are inferred, not printed.** A publicly readable page carries no login string except the initial
   account — the one the player starts with. Every other account is a puzzle beat: the player assembles it
   from text clues (a name, a 工号, an entry year, an email in a signature) plus the account format the gate
   posts. A roster column or notice printing a colleague's login collapses the access matrix into one page of
   reading; workflow/05 Q4 scans for it.
+- **A derived account is proved by parts, never by printing it.** `check-solvable.mjs` matches a credential
+  only when its full string appears *verbatim* in a readable page, so an assembled account (pinyin initials +
+  license-year) reads as STUCK there. Printing it to turn that check green leaks it to every visitor — a
+  static site has no server auth, and client-side masking (`x-show`, a CSS class) is not privacy. Declare the
+  value, its rule, and its public-page components in `data/credentials.src.json`; `check-credentials.mjs`
+  proves it assembles and stays zero-plaintext, and `check-reachability.mjs` proves the graph unlocks once it
+  is known (references/structure/base.md §5, §9–§10).
 
 ### Search / query results obey the access matrix
 
@@ -44,21 +54,35 @@ index is **not** where access lives:
 The website form keeps its per-layer tables (`references/structure/form-website.md`); in a system form the account
 matrix replaces them.
 
-## 2. Login page (`gate` + `data-grant`)
+## 2. Login page (`gate` + `data-grant` / `data-grants`)
+
+One login box, one identity per credential. `data-grant` is the flat list of identities the gate can grant —
+it is what `check-solvable.mjs` walks. When a single box serves several roles (an intern account and a
+case-handler account on one portal), `data-grants` is a JSON map on the root that resolves the *typed account*
+to its identity, its own password hash(es), and an optional reskin token; the runtime pairs account with
+password per entry, so `intern + handler-pw` is rejected. **Do not split one login into two forms on the page
+to give the checker "one form = one identity"** — that leaks the design intent in the second form's title and
+reads as game UI. Keep one box; let `data-grants` carry the matrix.
 
 ```html
-<main x-data="gate" data-grant="chen" data-next="apps/mail.html" data-fail-hint="密码错误">
+<!-- Single box, two roles. data-grant = static list for the walk; data-grants = runtime account→identity map. -->
+<main x-data="gate" data-grant="intern,handler" data-next="query.html" data-fail-hint="账号或口令有误"
+      data-grants='{"<hash:hz-sy-0042>":{"id":"intern","pw":["<hash:1998>"]},
+                    "<hash:lly0219>":{"id":"handler","pw":["<hash:2003>"],"reskin":"secret"}}'>
   <form class="gate" @submit.prevent="submit">
-    <label for="u">账号</label><input id="u" type="text" placeholder="工号" data-expect-hash="…">
-    <label for="p">密码</label><input id="p" type="password" placeholder="密码" data-expect-hash="…">
+    <label for="u">账号</label><input id="u" type="text" placeholder="工号" data-expect-hash="<hash:hz-sy-0042>,<hash:lly0219>">
+    <label for="p">密码</label><input id="p" type="password" placeholder="密码" data-expect-hash="<hash:1998>,<hash:2003>">
     <p class="gate-error" x-show="error" x-text="error" x-cloak></p>
     <button type="submit">登录</button>
   </form>
 </main>
 ```
 
-The credential triad still applies (account clue on page A, password clue on page B, gate on page C). The
-account string in `data-grant` is the identity other pages will match against; it is not printed anywhere except the initial account (§1).
+The `gate` component reads `data-grants` first and falls back to `data-grant` when it is absent
+(references/structure/base.md §5). The credential triad still applies (account clue on page A, password clue
+on page B, gate on page C). The account string in `data-grant` / the `data-grants` keys is the identity other
+pages match against; it is printed nowhere except the initial account (§1), and a derived account is proved
+by `check-credentials.mjs`, not by printing it.
 
 ## 3. Protected page (`access` component)
 
@@ -70,12 +94,17 @@ account string in `data-grant` is the identity other pages will match against; i
 ```
 
 ```js
+// Reads the cross-tab session cookie set by the gate (base.md §5 `session` helper), falling back to
+// sessionStorage in private mode. A protected document opened in a new tab (target="_blank") must still
+// unlock — per-tab sessionStorage would not, which is exactly the defect this avoids.
 Alpine.data('access', () => ({
   unlocked: false,
   init() {
-    const held = JSON.parse(sessionStorage.getItem('access') || '[]');
+    const held = session.access();          // base.md §5 helper: cookie-first, sessionStorage fallback
     const need = (this.$el.dataset.access || '').split(',').map((s) => s.trim()).filter(Boolean);
     this.unlocked = need.some((r) => (r === '*' ? held.length > 0 : held.includes(r)));
+    const skin = session.skin();            // optional reskin token granted at login
+    if (skin) document.body.classList.add(skin);
   },
 }));
 ```
@@ -101,21 +130,29 @@ authenticates the account first, then solves the gate.
 
 ## 5. Checker conventions (`assets/tools/`)
 
-- Login gate: `data-grant` + `data-next`. `check-links.mjs` resolves `data-next` like a link;
-  `check-solvable.mjs` follows it as the post-unlock edge.
+- Login gate: `data-grant` (+ `data-grants` for a single-box multi-role login) + `data-next`. `check-links.mjs`
+  resolves `data-next` like a link; `check-solvable.mjs` follows it as the post-unlock edge and walks the flat
+  `data-grant` list.
 - Protected page/block: `data-access` + `x-show="unlocked"`. The block's text and links stay unreadable to
   the walk until an authenticated account is named; the walk prints `· accounts chen` when any were used.
 - A page whose `data-access` names an account that no login gate ever grants is reported stuck/unreachable
   — that is a broken clue graph, not a checker error.
-- If the page root is not `pages/` (e.g. `apps/`), set `pagesDir` in both checkers' CONFIG; they warn when
+- A **derived/composite** account is outside `check-solvable`'s verbatim model: declare it in
+  `data/credentials.src.json` and run `check-credentials.mjs` (parts + rule + zero-plaintext) plus
+  `check-reachability.mjs` (rehearsal copy with the values injected). Never print the account to make
+  `check-solvable` green (§1).
+- If the page root is not `pages/` (e.g. `apps/`), set `pagesDir` in the checkers' CONFIG; they warn when
   the directory is missing.
-- State held only in JS with no attribute stays invisible to both checkers — model it with `data-grant` /
-  `data-access` or verify manually (§10 item 1).
+- State held only in JS with no attribute stays invisible to the checkers — model it with `data-grant` /
+  `data-access` or verify manually (§10 item 1). Per-tab vs cross-tab session storage is likewise invisible
+  to `check-solvable` (it models identities as one global set): verify the new-tab unlock by hand (§10 item 7).
 
 ## 6. Honor agreement
 
-State the truth: access lives in `sessionStorage` for this tab and disappears when it closes; nothing is
-persisted and no progress is saved. Never use `localStorage` for access state.
+State the truth: access lives in a **session cookie**, shared across the tabs the player opens and cleared
+when the browser closes; nothing survives the session and no progress is saved. Never use `localStorage` for
+access state, and never per-tab `sessionStorage` where a result opens `target="_blank"` (the new tab would
+read as logged out). The entry page's wording must match what the code stores (workflow/08 greps for it).
 
 ## 7. Anti-patterns
 
@@ -125,5 +162,7 @@ persisted and no progress is saved. Never use `localStorage` for access state.
 | An admin / root account that opens everything | Same leak; the fiction rarely supports it, and workflow/04's tier check calls it a defect |
 | A shallow page's "related archives / files" link into a deep layer | Crosses depth with a link; reach must go through search, a gate, or an account |
 | `data-access` naming an account no gate grants | Dead private page; check-solvable reports it unreachable |
-| Access state in `localStorage` | Breaks the honor agreement and the session fiction |
+| Access state in `localStorage`, or in per-tab `sessionStorage` behind a `target="_blank"` result | localStorage breaks the honor agreement and the session fiction; per-tab sessionStorage reads as logged out in the new tab the result opens — use a session cookie |
+| Printing a derived account on a public page to make `check-solvable` green | check-solvable only matches verbatim strings; printing the credential leaks it to every visitor (no server auth) and collapses the puzzle. Prove it with `check-credentials.mjs` instead |
+| Splitting one login into two forms so each is "one identity" | Leaks the design intent in the second form's title and reads as game UI; one box + `data-grants` carries the matrix (§2) |
 | A public page prints a colleague's login (`账号：chen.gd` in the roster) | Only the initial account may be printed; every other login is inferred from clues (workflow/05 Q4 scans for it) |

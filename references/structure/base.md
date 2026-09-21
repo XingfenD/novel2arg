@@ -33,22 +33,27 @@
 │   ├── keywords.secret.src.json  # Plaintext secret index (development only; excluded from the deploy directory after build)
 │   ├── keywords.surface.json     # Surface hash table — must contain no pages/secret/ URL (deploy artifact)
 │   ├── keywords.secret.json      # Secret hash table, fetched only by secret-layer pages (deploy artifact)
-│   └── forbidden.json            # Forbidden word table (hashes + forbidden-state copy)
-├── tools/                        # copy these four from the skill's assets/tools/ at scaffold time
+│   ├── forbidden.json            # Forbidden word table (hashes + forbidden-state copy)
+│   └── credentials.src.json      # Composite-credential provenance manifest (development only; plaintext values, excluded from deploy like the keyword .src tables)
+├── tools/                        # copy these six from the skill's assets/tools/ at scaffold time
 │   ├── hash.mjs                  # md5+base64 for a plaintext value → a gate's data-expect-hash
 │   ├── build-keywords.mjs        # plaintext table(s) → hash table(s)
 │   ├── check-links.mjs           # dead-link checker + surface-index layer-leak guard
-│   └── check-solvable.mjs        # cold-start solvability walk (reachable + solvable + search earned)
+│   ├── check-solvable.mjs        # cold-start solvability walk (reachable + solvable + search earned)
+│   ├── check-credentials.mjs     # composite/derived credential provenance (parts + rule + zero-plaintext) — the half check-solvable cannot model
+│   └── check-reachability.mjs    # rehearsal build: inject the credentials into a throwaway copy, then run check-solvable for reachability
 └── README.md                     # How to run + GDD link + player notes
 ```
 
-The four tools are shipped with this skill under `assets/tools/`; scaffold copies them into `tools/` so the
+The six tools are shipped with this skill under `assets/tools/`; scaffold copies them into `tools/` so the
 project stays self-contained and re-runnable. They run on Node built-ins only (`node:crypto`, `node:fs`,
-`node:path`) — no dependencies, no install step. They also auto-discover the keyword tables, so both the
-per-layer convention above and a single-table project work with zero configuration. Re-run all three checks
-(link / solvable, plus the keyword rebuild when the tables change) before every deploy — see §9. Each
-checker keeps its project assumptions in a `CONFIG` block at the top of the file; §10 lists the
-configurable knobs and the review steps no static checker can replace.
+`node:path`, `node:child_process`) — no dependencies, no install step. The keyword checkers auto-discover
+the tables, so both the per-layer convention above and a single-table project work with zero configuration.
+Re-run the checks before every deploy — see §9: `build-keywords` (when a table changes), `check-links`,
+`check-solvable`, and — for any project with derived/composite credentials or a system container —
+`check-credentials` plus `check-reachability`. Each checker keeps its project assumptions in a `CONFIG`
+block at the top of the file; §10 lists the configurable knobs and the review steps no static checker can
+replace.
 
 Vendor the Alpine runtime once at scaffold time (the pinned version is in the URL; the file is then committed with the game):
 
@@ -60,7 +65,7 @@ curl -o assets/js/vendor/alpine.min.js https://cdn.jsdelivr.net/npm/alpinejs@3.1
 The tree above is the shared base; the form docs adapt the hub and the page directories:
 
 - **Container A — fake official website**: `references/structure/form-website.md` — search hub, layer-scoped indexes, gates as the only access.
-- **Containers B/C/D — system fictions**: `references/structure/form-system.md` — account login, per-account access (RBAC-style), and the desktop / simulated-internet / archive shells. A system project's page root may be `apps/` instead of `pages/`; set `pagesDir` in both checkers' CONFIG (§10).
+- **Containers B/C/D — system fictions**: `references/structure/form-system.md` — account login, per-account access (RBAC-style), and the desktop / simulated-internet / archive shells. A system project's page root may be `apps/` instead of `pages/`; set `pagesDir` in the CONFIG of `check-links.mjs` and `check-solvable.mjs` (§10).
 
 ## 2. Page Skeleton Template (uniform across pages)
 
@@ -174,6 +179,8 @@ Alpine.data('search', () => ({
 
 System containers replace this search hub with their own shells — desktop Spotlight `FILE_DATABASE`, the archive query form, cross-site links; see `references/structure/form-system.md` §4.
 
+**New tabs vs. session state (required reading for system containers).** `target="_blank"` opens each result in a fresh tab, and a fresh tab gets a fresh `sessionStorage` — so a `data-access`-protected document opened this way reads as locked even though the player is "logged in" on the original tab. Any container that crosses an account login with new-tab results (container D's `query → results → archive` chain) must hold session state in a **session cookie** (shared across tabs, cleared when the browser closes), not per-tab `sessionStorage`; see §5 and `references/structure/form-system.md` §6. `check-solvable.mjs` models identities as one global set and cannot see per-tab isolation, so it reports green while the real browser fails — the step-8 cross-tab manual test is the only thing that catches this.
+
 ## 5. Password Gate (`gate` Component)
 
 One component, three shapes. `data-expect-hash` sits on **each `<input>`** (comma-separated values = synonyms
@@ -205,22 +212,57 @@ configuration sits on the **component root** (`<main>`), not on the `<form>`.
 // Shape C — session login + per-account access (system containers B/C/D): data-grant on the login gate,
 // data-access on the protected page, no privilege ladder. The full pattern, the `access` component, and
 // the RBAC rules live in references/structure/form-system.md.
+//
+// Cross-tab session store. Access state MUST survive a result opened in a new tab (target="_blank", §4);
+// per-tab sessionStorage does not, so hold it in a session cookie (no max-age/expires → cleared when the
+// browser closes, matching the "signed out after this session" honor agreement). sessionStorage is the
+// fallback for private mode where cookies are blocked. Rename ACCESS_KEY per project.
+const ACCESS_KEY = 'access', SKIN_KEY = 'skin';
+const session = {
+  _read(key) {
+    const m = document.cookie.match(new RegExp('(?:^|; )' + key + '=([^;]*)'));
+    if (m) { try { return JSON.parse(decodeURIComponent(m[1])); } catch (e) { /* fall through */ } }
+    try { return JSON.parse(sessionStorage.getItem(key) || 'null'); } catch (e) { return null; }
+  },
+  _write(key, val) {
+    const v = encodeURIComponent(JSON.stringify(val));
+    document.cookie = `${key}=${v}; path=/; SameSite=Lax`;            // session cookie: deliberately no expiry
+    try { sessionStorage.setItem(key, JSON.stringify(val)); } catch (e) { /* private mode */ }
+  },
+  access() { return this._read(ACCESS_KEY) || []; },
+  grant(ids) { this._write(ACCESS_KEY, [...new Set([...this.access(), ...ids])]); },
+  reskin(name) { if (name) this._write(SKIN_KEY, name); },            // optional: a skin token secret/system pages apply
+  skin() { return this._read(SKIN_KEY); },
+};
 Alpine.data('gate', () => ({
   error: '', busy: false, unlocked: false, successText: '', _t: null,
   init() { this.successText = this.$el.dataset.successText || ''; },
   submit() {
     const el = this.$root;          // data-* live on the component root; the submit event's target is the <form>
-    const fields = Array.from(el.querySelectorAll('input[data-expect-hash]'));
-    const ok = fields.length > 0 && fields.every((inp) => {
-      const expects = (inp.dataset.expectHash || '').split(',').map((s) => s.trim()).filter(Boolean);
-      return expects.includes(hash(inp.value || ''));
-    });
+    const inputs = Array.from(el.querySelectorAll('input[data-expect-hash]'));
+    // Single-box multi-identity (Shape C). data-grants is a JSON map on the root:
+    //   { "<account-hash>": { "id": "intern", "pw": ["<pw-hash>", …], "reskin": "secret" }, … }
+    // It resolves WHICH identity the typed account grants and validates the password against that identity,
+    // so one login box can serve several roles without splitting into several forms on the page. data-grant
+    // stays on the root as the flat list of identities check-solvable walks; data-grants is the runtime truth.
+    let ok, grantIds = [];
+    if (el.dataset.grants) {
+      const map = JSON.parse(el.dataset.grants);
+      const acc = inputs.find((i) => i.type !== 'password');
+      const pw = inputs.find((i) => i.type === 'password');
+      const entry = acc ? map[hash(acc.value || '')] : null;
+      ok = !!entry && (!pw || (entry.pw || []).includes(hash(pw.value || '')));   // account+password are paired
+      if (ok) { grantIds = entry.id ? [entry.id] : []; session.reskin(entry.reskin); }
+    } else {
+      // Legacy / multi-field gates: every data-expect-hash input must match; data-grant is unconditional.
+      ok = inputs.length > 0 && inputs.every((inp) => {
+        const expects = (inp.dataset.expectHash || '').split(',').map((s) => s.trim()).filter(Boolean);
+        return expects.includes(hash(inp.value || ''));
+      });
+      grantIds = (el.dataset.grant || '').split(',').map((s) => s.trim()).filter(Boolean);
+    }
     if (ok) {
-      const grants = (el.dataset.grant || '').split(',').map((s) => s.trim()).filter(Boolean);   // Shape C (references/structure/form-system.md)
-      if (grants.length) {
-        const seen = JSON.parse(sessionStorage.getItem('access') || '[]');
-        sessionStorage.setItem('access', JSON.stringify([...new Set([...seen, ...grants])]));
-      }
+      if (grantIds.length) session.grant(grantIds);
       const next = el.dataset.next;
       const hold = parseInt(el.dataset.successHold || '0', 10);
       const staged = this.successText && hold > 0;
@@ -238,6 +280,8 @@ Alpine.data('gate', () => ({
 
 `hash()` is the shared helper from §4. When designing a gate, enforce the **credential triad**: the account is hidden on page A, the password clue on page B (requiring inference: zodiac year → 1977, child-photo date → 20201125), and the gate on page C. Hashing keeps plaintext out of casual view in the source.
 
+A credential may be **derived/composite** — an account assembled from parts (pinyin initials + license-year), never printed whole. `check-solvable.mjs` only matches a value that appears *verbatim* in a readable page, so it cannot prove a derived credential solvable and will report the gate STUCK. **Never print the credential to turn it green** — that leaks it to every visitor (a static site has no server auth; client-side masking is not privacy) and collapses the puzzle. Declare the value, its composition rule, and its public-page components in `data/credentials.src.json` and prove it with `tools/check-credentials.mjs` (parts + rule + zero-plaintext); prove reachability-given-the-credential with `tools/check-reachability.mjs`. See §9–§10 and `references/structure/form-system.md` §1.
+
 Gate design rules:
 
 - **Failure hints point at the source obliquely and stop.** `密码错误 🎂` passes; anything naming a page,
@@ -251,9 +295,10 @@ Gate design rules:
   `x-show="unlocked"` block and expect check-solvable to count it before unlock — that is exactly the
   boundary the check models.
 - **Keep the entry page's honor agreement honest.** It may claim the source hides nothing only if the keyword
-  tables and gate hashes really are hashed; system containers keep the authenticated accounts in
-  `sessionStorage` only (cleared when the tab closes) and say exactly that — no unlock state or progress is
-  persisted (references/structure/form-system.md §6).
+  tables and gate hashes really are hashed; system containers keep the authenticated accounts in a **session
+  cookie** (cross-tab, cleared when the browser closes — not per-tab `sessionStorage`, which a `target="_blank"`
+  result leaves behind) and say exactly that — no unlock state or progress is persisted across sessions
+  (references/structure/form-system.md §6).
 
 The honor agreement on the entry page carries the rest.
 
@@ -333,8 +378,9 @@ body.secret { background:#1a1a1c; color:#9e9e9e; } body.secret h2 { color:#db140
 
 ```js
 // This paradigm has no save by default (progress lives in the player's head). If added: record only visited
-// page numbers; gates stay one-way and untracked, and a system container's authenticated accounts live in
-// sessionStorage only (references/structure/form-system.md §5). Mount on the shared footer so it runs on every page.
+// page numbers; gates stay one-way and untracked, and a system container's authenticated accounts live in a
+// session cookie, never localStorage (references/structure/form-system.md §6). Mount on the shared footer so
+// it runs on every page.
 Alpine.data('progress', () => ({
   seen: [],
   init() {
@@ -353,12 +399,21 @@ Alpine.data('progress', () => ({
 node tools/build-keywords.mjs          # regenerate the hash table(s)
 node tools/check-links.mjs             # walk all href/src/action/data-next against the file tree; report dead links + layer leaks
 node tools/check-solvable.mjs          # cold-start walk: expect "fixpoint in N round(s) · gates 4/4 unlocked · pages 28/28 reachable"
-grep -rn "keywords.*src" --include=*.html .   # confirm no page references a plaintext table
+node tools/check-credentials.mjs       # composite/derived credentials: parts + rule + zero-plaintext (run whenever data/credentials.src.json exists)
+node tools/check-reachability.mjs      # rehearsal build: inject the credentials into a throwaway copy, then prove gates unlock + pages reachable
+grep -rn "keywords.*src\|credentials.*src" --include=*.html .   # confirm no page references a plaintext source table
 grep -o '"secret/[^"]*"' data/keywords.surface.json   # must return nothing: the surface index never carries a secret URL
 grep -rL "alpine.min.js" --include=*.html .  # list pages missing the vendored Alpine runtime
 grep -rn "placeholder=" --include=*.html .    # every value names its field; none states or restates an answer
 grep -rn "gate-hint\|data-fail-hint" --include=*.html .   # hints point at the source obliquely; no page names, no rules
-# Chrome sweep: load every page at desktop and phone width; console errors 0, requestfailed 0, no horizontal overflow
+# Asset manifest: every asset the GDD §0.1 declares (emblem / seals / scans / photos / mock docs) exists under
+#   assets/ AND is referenced by at least one page. check-links only resolves an <img src> that was written;
+#   a declared-but-never-landed asset has no src to resolve, so reconcile the GDD list by hand:
+#   for each declared asset, grep -rn "<asset-filename>" --include=*.html . must return ≥1 hit, and the file must exist.
+# Chrome sweep: load every page at desktop and phone width; console errors 0, requestfailed 0 (incl. every <img>), no horizontal overflow
+# Cross-tab session (system containers): log in, open a search/result link (target="_blank") in the new tab —
+#   the protected document must be unlocked there too; close the browser, reopen — signed out. Per-tab
+#   sessionStorage fails this; a session cookie passes (check-solvable cannot see the difference — §10).
 # Register check: read each pages/surface/ and pages/platform/ page as a document of that organization —
 #   no line addresses the player, mentions the plot, or hints at a credential
 # Link provenance: every <a> under pages/ resolves to nav / index / sitemap / footer / related document
@@ -366,13 +421,7 @@ grep -rn "gate-hint\|data-fail-hint" --include=*.html .   # hints point at the s
 # Console check: the entry page and one secret page show zero errors and zero 404s (Alpine runtime included)
 ```
 
-`check-solvable.mjs` automates the credential-provenance half of the manual walkthrough, so the manual pass
-only has to judge tone and pacing. It exits non-zero when a clue is deleted, a password changes, a clue is
-misplaced inside a page's own post-unlock block, or a listing entry is cut — run it after every content edit,
-not just before deploy. It reads gate configuration through the conventions in §5 (`data-expect-hash` on each
-input, post-gate block opening with `x-show="unlocked"` or `<template x-if="unlocked">`, search mounted by
-`x-data="search"`); a project that renames those markers edits the `CONFIG` block at the top of the script
-(§10), and `node tools/check-solvable.mjs --self-test` re-checks the matcher after an edit.
+`check-solvable.mjs` automates the credential-provenance half of the manual walkthrough **for verbatim credentials**, so the manual pass only has to judge tone and pacing. It exits non-zero when a clue is deleted, a password changes, a clue is misplaced inside a page's own post-unlock block, or a listing entry is cut — run it after every content edit, not just before deploy. It reads gate configuration through the conventions in §5 (`data-expect-hash` on each input, post-gate block opening with `x-show="unlocked"` or `<template x-if="unlocked">`, search mounted by `x-data="search"`); a project that renames those markers edits the `CONFIG` block at the top of the script (§10), and `node tools/check-solvable.mjs --self-test` re-checks the matcher after an edit. A **derived/composite** credential is outside its model: `check-credentials.mjs` proves it assembles from public parts and stays zero-plaintext, and `check-reachability.mjs` proves the graph still unlocks once it is known (§10).
 
 ## 10. Tool Interface — Configurable Knobs and What Stays Manual
 
@@ -382,21 +431,25 @@ instead of rewriting the checker (a rewrite throws away the defects these checks
 
 | CONFIG knob | Default | Used by |
 |---|---|---|
-| `dataDir` / `pagesDir` | `data` / `pages` | both checkers |
+| `dataDir` / `pagesDir` | `data` / `pages` | check-links, check-solvable |
 | `surfaceTable` / `secretUrl` | `/surface/i` on the filename / `secret/` prefix | check-links |
-| `entry` | `index.html` | check-solvable |
-| `gateHashAttr` / `indexAttr` | `data-expect-hash` / `data-index` | check-solvable |
+| `entry` | `index.html` | check-solvable, check-reachability |
+| `gateHashAttr` / `indexAttr` | `data-expect-hash` / `data-index` | check-solvable, check-credentials |
 | `grantAttr` / `accessAttr` / `nextAttr` | `data-grant` / `data-access` / `data-next` | check-solvable (system-form accounts) |
-| `unlockMarkers` / `unlockEnd` | `x-show="unlocked"` … `</main>` | check-solvable |
+| `unlockMarkers` / `unlockEnd` | `x-show="unlocked"` … `</main>` | check-solvable, check-reachability |
 | `searchMount` | `x-data="search"` | check-solvable |
 | `maxTokenLen` / `maxPhraseWords` / `maxPhraseLen` | 8 / 4 / 48 | check-solvable matcher |
+| `credTable` | `data/credentials.src.json` | check-credentials, check-reachability |
+| `derivedKinds` / `zeroPlaintextKinds` | `['account','secret']` / `['account']` | check-credentials |
+| `skipDirs` | `.git node_modules docs tools deploy` | check-credentials |
+| `solver` | `tools/check-solvable.mjs` | check-reachability |
 
 `node tools/check-solvable.mjs --self-test` verifies the matcher (multi-word, long-word, HTML entity, CJK)
 after a CONFIG edit.
 
-Five things no static checker can see. Each has a manual method; skipping it is the leak path:
+Things no static checker can see. Each has a manual method or a companion tool; skipping it is the leak path:
 
-1. **Runtime bindings** — `:href`, `x-bind`, DOM assembled in JS. Both checkers resolve static `href`,
+1. **Runtime bindings** — `:href`, `x-bind`, DOM assembled in JS. Both link checkers resolve static `href`,
    static `<form action>`, and gate `data-next` targets only. The manual method is the keyword tables:
    search-result routes live there, and `data-index` tells the checker which table a search page can
    reach. Session login state is the same boundary: model it as `data-grant` / `data-access`
@@ -408,10 +461,30 @@ Five things no static checker can see. Each has a manual method; skipping it is 
 3. **Un-skippability** — check-solvable proves a gate is solvable, never that it is unavoidable. The manual
    method is layer scoping: per-layer keyword tables, per-layer `data-index`, and check-links' leak guard.
 4. **Hash normalization is a three-way contract** — the in-page helper, `hash.mjs`, and `build-keywords.mjs`
-   must agree byte-for-byte (`trim().toLowerCase()` → md5 → base64). Switching algorithms means editing all
-   three in one change, then grepping the tree for tables generated under the old rule.
+   must agree byte-for-byte (`trim().toLowerCase()` → md5 → base64); `check-credentials.mjs` is a fourth
+   side of the same contract. Switching algorithms means editing all of them in one change, then grepping
+   the tree for tables generated under the old rule.
 5. **Multi-site layouts** — container C gives each site its own root or repo. Run the tools once per root;
    absolute cross-site urls are skipped by design, so the cross-site graph stays a step-4 artifact.
+6. **Derived / composite credentials** — check-solvable matches a value only when it appears *verbatim* in a
+   readable page, so an account assembled from parts (pinyin initials + license-year) reads as STUCK. The
+   fix is **not** to print it (that leaks it to every visitor and kills the puzzle); it is
+   `check-credentials.mjs` (parts + rule + zero-plaintext over `data/credentials.src.json`) plus
+   `check-reachability.mjs` (a rehearsal copy with the values injected, proving the graph still unlocks).
+7. **Per-tab session vs. new-tab results** — check-solvable models authenticated identities as one global
+   set, so it cannot see that `sessionStorage` is per-tab while search results open `target="_blank"` in a
+   fresh tab. It reports green while the real browser shows the protected document locked. The manual method
+   is the step-8 cross-tab test; the structural fix is a session cookie (§4–§5,
+   references/structure/form-system.md §6).
+8. **Element-level permission masking** — a checker reads page *text*, not computed visibility. A credential
+   or answer hidden only by `x-show` / a CSS class / an element-level `data-access` mask is still in the HTML
+   sent to every visitor; on a static site with no server auth, client-side masking is not privacy. Treat
+   anything so masked as public: the step-8 chrome leak scan and `check-credentials`' zero-plaintext
+   assertion are what catch it.
+9. **GDD-declared assets that were never landed** — check-links resolves an `<img src>` only if the tag was
+   written; a emblem/seal/scan/photo/mock-doc the GDD §0.1 lists but no page references has no src to
+   resolve, so neither checker complains. The manual method is the §9 asset-manifest reconciliation: every
+   declared asset exists under `assets/` and is referenced by at least one page.
 
 The matcher reads *page text*, not the DOM, for the same reason the player does: it proves a string was
 readable before the gate. A clue hidden in a `placeholder`, `title`, or JS string is invisible to both the

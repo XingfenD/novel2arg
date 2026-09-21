@@ -7,9 +7,12 @@
 - [ ] `find . -name "*.html" | wc -l` returns 10 or more. The deliverable is a multi-HTML file tree.
 - [ ] `node tools/check-links.mjs` reports zero dead links (and zero layer leaks).
 - [ ] `node tools/check-solvable.mjs` reports every gate unlocked and every page reachable, and exits 0.
+- [ ] `node tools/check-credentials.mjs` passes (every derived credential assembles from public-page components, binds to its gate, and stays zero-plaintext) — run whenever `data/credentials.src.json` exists.
+- [ ] `node tools/check-reachability.mjs` exits 0 (rehearsal copy: once each credential is known, every gate unlocks and every page is reachable).
 - [ ] `grep -rL "alpine.min.js" --include=*.html .` returns nothing.
-- [ ] `grep -rn "keywords.*src" --include=*.html .` returns nothing.
-- [ ] Console on the entry page and one secret page: zero errors, zero 404s.
+- [ ] `grep -rn "keywords.*src\|credentials.*src" --include=*.html .` returns nothing (no page references a plaintext source table).
+- [ ] **Asset manifest reconciled.** Every asset the GDD §0.1 declares exists under `assets/` AND is referenced by at least one page (`grep -rn "<asset-filename>" --include=*.html .` returns ≥1 hit). An `<img>` that was never written has no `src` for check-links to resolve, so this is a manual reconciliation against the GDD list (base.md §10 item 9).
+- [ ] Console on the entry page and one secret page: zero errors, zero 404s (including every `<img>` request).
 - [ ] Timers and observers are released in `destroy()`.
 
 ## Reachability (re-run workflow/04 against the built tree)
@@ -27,8 +30,16 @@
 - [ ] Leak scan over the built tree: no answer, restatement, derivation rule, or location string on any gate page or inference-chain page. Scan the page **chrome** as well as the form UI — `<title>`, top bar, clearance strip, and footer have all leaked answers in practice.
 - [ ] `grep -rn "placeholder=" --include=*.html .` — every value names its field.
 - [ ] Failure hints point obliquely at the source. `密码错误 🎂` passes; `想想陈师傅的本命年` fails.
-- [ ] `node tools/check-solvable.mjs` resolves every credential to prior page copy, naming the source page. This replaces the manual provenance pass; still replay the walkthrough yourself once, judging tone and pacing.
+- [ ] `node tools/check-solvable.mjs` resolves every **verbatim** credential to prior page copy, naming the source page. This replaces the manual provenance pass; still replay the walkthrough yourself once, judging tone and pacing.
+- [ ] `node tools/check-credentials.mjs` resolves every **derived/composite** credential to its public-page components and asserts zero plaintext: no account string appears whole on any page (client-side masking — `x-show`, a CSS class, an element-level `data-access` — is not privacy on a static site with no server auth; the HTML reaches every visitor).
+- [ ] No single page co-locates two components of one credential (a "zero-jump" solve): if the 工号 and the year print on the same page, the player copies both without inferring. Split them per the GDD puzzle allocation table.
 - [ ] Result titles in both keyword tables are catalog entries; none summarizes the document's content.
+
+## Consistency (GDD entity registry vs. the built tree)
+
+- [ ] Every shared entity — person name, ID / license number, account, page title, nav label, document number, key date — is byte-identical across the GDD entity registry (§0.2) and every page that carries it. A roster missing a person who appears on a duty schedule, or a page answering to two titles (nav vs. its own `<title>` vs. body references), fails here.
+- [ ] Every worked example satisfies the rule it illustrates. A sample account must obey the stated derivation (a "pinyin initials" rule cannot be exemplified by a full-pinyin string), and its shape must match real values (length, separators, mask).
+- [ ] No GDD self-contradiction survived into the pages: a value one GDD line forbids is not required by another line on the same page (the registry is the tiebreaker).
 
 ## Diegetic neutrality
 
@@ -46,8 +57,9 @@
 
 - [ ] The header stays fixed to the viewport on long pages; body text scrolls beneath it.
 - [ ] Core interactions work at phone width.
-- [ ] Chrome sweep: load **every** page (plus each search state: hit / miss / forbidden) at desktop and phone width. Collect console errors, `requestfailed`, horizontal overflow (`scrollWidth > innerWidth`), and whether each `[x-data]` element actually initialized. Partial passes miss defects — a CSS specificity bug once silently disabled two declared puzzle types on the secret layer only.
-- [ ] Anything the honor agreement claims is true in code: keyword tables and gate hashes really are hashed; system containers keep authenticated accounts in `sessionStorage` only and say so; no page persists unlock state or reading progress.
+- [ ] Chrome sweep: load **every** page (plus each search state: hit / miss / forbidden) at desktop and phone width. Collect console errors, `requestfailed` (including every `<img>`), horizontal overflow (`scrollWidth > innerWidth`), and whether each `[x-data]` element actually initialized. Partial passes miss defects — a CSS specificity bug once silently disabled two declared puzzle types on the secret layer only.
+- [ ] **Cross-tab session (system containers).** Log in, then open a search/result link (`target="_blank"`): the protected document must be unlocked in the new tab too. Close the browser, reopen: signed out. Per-tab `sessionStorage` fails the first half; a session cookie passes. `check-solvable.mjs` models identities as one global set and cannot see this — it reports green either way, so this manual test is the only catch (base.md §10 item 7).
+- [ ] Anything the honor agreement claims is true in code: keyword tables and gate hashes really are hashed; system containers keep authenticated accounts in a **session cookie** (cross-tab, cleared when the browser closes) and say so; no page persists unlock state or reading progress across sessions. `grep -rn "localStorage\|sessionStorage" --include=*.js --include=*.html .` and confirm the wording matches what is actually stored.
 - [ ] Sensory puzzle hardware requirements are declared on the entry page, and nothing is declared that the site does not actually implement.
 - [ ] Secret-layer entry reskins the whole page: background, title, logo, footer.
 
