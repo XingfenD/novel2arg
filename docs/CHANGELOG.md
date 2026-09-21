@@ -4,6 +4,9 @@ Higher versions on top. Each entry: English line, then Chinese line; entries sep
 
 ## Unreleased
 
+- Restructure the skill around a selectable design-module catalog: optional mechanics (search, account login, layer reskin, progress numbering, collection carriers, staging) move out of the mandatory guardrails into `references/design-playbook.md` §2, step 2 now assembles the chosen modules into `docs/system-profile.md` with the user, and the GDD plus later steps adapt to that selection. Removes the honor-agreement copy, the mandatory clearance / `[Access denied]` search conventions, and the mandatory dual-skin and `secret/` directory naming (the restricted area takes the fiction's own word, e.g. `internal/`, via the `secretUrl` CONFIG knob); in-fiction carriers such as a notebook or evidence wall are no longer treated as a prohibited form.
+- 以可选设计模块目录重构本 skill：把可选机制（搜索、账号登录、换肤、进度编号、收集载体、分阶段演出）从强制护栏移入 `references/design-playbook.md` §2；步骤 2 与用户一起把选定模块组装成 `docs/system-profile.md`，GDD 与后续步骤按选择适配。移除 honor agreement 文案、强制的密级 / `[Access denied]` 搜索约定，以及强制的双皮肤与 `secret/` 目录命名（受限区域改用虚构自身的词，如 `internal/`，由 `secretUrl` 配置项指向）；虚构内的笔记本 / 证据墙等载体不再视为禁止形态。
+
 - Normalize the Step-5 workflow section headings to English-only — `Q1 Necessity`, `Q2 Obtainability`, `Q3 Intuitiveness`, `Q4 Leak scan` — removing the last inline Chinese/English duplication from `workflow/05-puzzle-audit.md`.
 - 将步骤 5 工作流的小节标题统一为纯英文（`Q1 Necessity`、`Q2 Obtainability`、`Q3 Intuitiveness`、`Q4 Leak scan`），移除 `workflow/05-puzzle-audit.md` 中残留的中英并置。
 

@@ -6,16 +6,22 @@ Two dispatches in order: 6a builds the system framework with no plot in its cont
 
 ## 6a — Front-end system framework (plot-blind)
 
-The orchestrator writes `docs/system-profile.md` before dispatching. It is a filtered extraction, not a copy: the container and its form doc; the system identity (system type, organization name, era, register, language); the shell IA (top bar items, directory layout, page root, site roots for C); the list of base pages every such system has; the infrastructure requirements (base.md sections, dual-skin mechanism, components.js, vendored Alpine, tools/, checker CONFIG knobs); the search/index convention (layer-scoped tables for A, one index for B/C/D); the progress-numbering convention. It carries no characters, plot, secrets, clue design, endings, novel text, or prior artifacts.
+Step 2 wrote `docs/system-profile.md` with the user; 6a consumes it. The profile is the assembly record:
+container and form doc; system identity (type, organization, era, register, language); selected modules; shell
+IA (top bar, directory layout, page root, site roots for C); base pages; infrastructure (base.md sections,
+components.js, vendored Alpine, tools/, CONFIG knobs); index/access convention; numbering choice. It carries no
+characters, plot, secrets, clue design, endings, novel text, or prior artifacts.
 
-Build the framework strictly per references/structure/base.md §1, using the page skeleton in references/structure/base.md §2 for every page, and the form doc:
+Build the framework strictly per `references/structure/base.md` §1, using the page skeleton in
+`references/structure/base.md` §2 for every page, and the form doc:
 
-- the full directory tree, layer directories included
-- `index.html` entry shell (start button, rules and honor-agreement placeholders; its copy lands in step 7 phase 6)
+- the full directory tree, areas included (base.md's naming rules: the restricted area takes the fiction's own word, never `secret/`)
+- `index.html` entry shell (start button; rules placeholders only where the profile lists any — its copy lands in step 7 phase 7)
 - the system shell and base pages — A: home, nav/index/listing templates, search results, login/gate template; B: `desk.html` plus empty app shells; C: site roots, intranet home and login; D: `query.html`, `results.html`, detail template
-- the skin CSS set (`base.css`, `surface.css`, `secret.css`, plus `forbidden.css` only when the profile declares the forbidden trigger), `components.js` (search / gate / access / staging / progress; reference implementations: references/structure/components.md), the vendored Alpine runtime (`assets/js/vendor/alpine.min.js`, produced by `node tools/vendor-alpine.mjs`, which pins the version and verifies the sha256 before writing), the eight tool files copied from this skill's `assets/tools/` into `tools/` (`config.mjs` — shared conventions every checker imports, the one file a renamed project edits — plus `hash.mjs`, `build-keywords.mjs`, `check-links.mjs`, `check-solvable.mjs`, `check-credentials.mjs`, `check-reachability.mjs`, `vendor-alpine.mjs`; dependency-free, Node built-ins only), empty-but-valid keyword table(s) in the profile's convention
-- dual ending pages, and `docs/` holding the artifacts from steps 1 to 5
-- every base page on the references/structure/base.md §2 skeleton: correct skin, header nav, footer, progress number, empty or placeholder body
+- the skin CSS the profile selects (`base.css` and `surface.css` always; `secret.css` only with M5; `forbidden.css` only with M6), `components.js` with only the selected components (search / gate / access / staging / progress; reference implementations: `references/structure/components.md`), the vendored Alpine runtime (`assets/js/vendor/alpine.min.js`, produced by `node tools/vendor-alpine.mjs`, which pins the version and verifies the sha256 before writing)
+- the eight tool files copied from this skill's `assets/tools/` into `tools/` (`config.mjs` — shared conventions every checker imports, the one file a renamed project edits — plus `hash.mjs`, `build-keywords.mjs`, `check-links.mjs`, `check-solvable.mjs`, `check-credentials.mjs`, `check-reachability.mjs`, `vendor-alpine.mjs`; dependency-free, Node built-ins only), and empty-but-valid keyword table(s) only when M1 is selected
+- ending pages when M10 is selected, and `docs/` holding the artifacts from steps 1 to 5
+- every base page on the `references/structure/base.md` §2 skeleton: correct skin, header nav, footer, progress number when M7 is selected, empty or placeholder body
 
 The framework is a real system's shell, not a game: no plot copy anywhere, and filenames do not spoil. Base page copy uses the system's own words (通知公告, 通讯录), never the story's. Pages stay separate documents with real navigation; Alpine manages in-page component lifecycle (`init()` / `destroy()`) only — routing and scene switching stay out of it.
 
@@ -23,7 +29,7 @@ The framework is a real system's shell, not a game: no plot copy anywhere, and f
 
 ## 6b — Page skeletons (plot-aware)
 
-On the 6a framework, scaffold every page listed in the reachability table as a skeleton with the correct skin, header nav, footer, and progress number. Empty bodies are fine at this stage; a missing file breaks the graph walk in step 8. The dual ending pages are skeletons here; their copy lands in step 7.
+On the 6a framework, scaffold every page listed in the reachability table as a skeleton with the correct skin, header nav, footer, and progress number (when M7 is selected). Empty bodies are fine at this stage; a missing file breaks the graph walk in step 8. The ending pages are skeletons here; their copy lands in step 7.
 
 The framework is fixed: do not rebuild the shell, CSS, components, or tools — add the page set only.
 

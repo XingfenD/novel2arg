@@ -1,74 +1,65 @@
-# Front-End Base Structure (Shared Across Containers; a Single index.html Is Prohibited)
+# Front-End Base (Shared Across Containers; a Single index.html Is Prohibited)
 
-> Pure static, no build step: HTML + CSS + Alpine.js v3 core (vendored locally; no plugins, no runtime CDN). The Node tools are optional, dependency-free, and run on built-ins. Runs on any static host (GitHub Pages preferred).
->
-> This file covers the directory tree (§1) and the page skeleton (§2). The Alpine component reference
-> implementations (search / gate / staging / skins / progress) live in `references/structure/components.md`;
-> the check cadence, the shared tool CONFIG, and the manual methods live in `references/structure/tooling.md`.
+> Pure static, no build step: HTML + CSS + Alpine.js v3 core (vendored locally; no plugins, no runtime CDN).
+> The Node tools are optional, dependency-free, and run on built-ins. Runs on any static host (GitHub Pages
+> preferred). This file covers the directory tree (§1) and the page skeleton (§2). The Alpine component
+> reference implementations live in `references/structure/components.md`; check cadence, shared config, and
+> manual methods in `references/structure/tooling.md`.
 
 ## 1. Directory Structure
 
+Module marks (M1…M13) come from `references/design-playbook.md` §2 and appear only when selected in
+`docs/system-profile.md`; everything else belongs to the base.
+
 ```
 <game-name>/
-├── index.html                    # Entry ritual page: disclaimer + role assignment + rules + start button
-├── search.html                   # Search results page (hub for container A; for desktop / simulated-internet containers, replace with desk.html or cross-site links)
+├── index.html                    # Entry page (M9): role assignment + start button (rules only where the fiction needs them)
+├── search.html                   # M1 search module
 ├── pages/
-│   ├── surface/                  # Surface pages (light skin, for the facade)
-│   │   ├── home.html  menu.html  news.html ...
-│   ├── platform/                 # Mid-layer functional pages (login / posts / system pages; optional)
-│   │   ├── login.html  posts-01.html ...
-│   ├── secret/                   # Secret pages (dark skin; filenames must not spoil — use numbers or scrambled names)
-│   │   ├── s19-record.html  s23-diary.html ...
-│   └── endings/
-│       ├── ending-a.html  ending-b.html
+│   ├── home.html  menu.html  news.html …      # public pages, flat until the fiction needs sections
+│   └── internal/                 # restricted area — name it with the fiction's own word (staff/ archive/ members/),
+│       │                         # never "secret"; filenames must not spoil. Point CONFIG.secretUrl here (tooling.md §2).
+│       └── s19-record.html  s23-diary.html …
 ├── assets/
 │   ├── css/
-│   │   ├── base.css              # Shared: layout skeleton, document realism kit, progress footer, x-cloak
-│   │   ├── surface.css           # Surface skin (light / warm / realistic)
-│   │   ├── secret.css            # Secret skin (near-black + blood red + handwriting + whitespace reveals)
-│   │   └── forbidden.css         # Forbidden state (full-page shift when a forbidden keyword is searched)
+│   │   ├── base.css              # shared layout skeleton, document realism kit, x-cloak
+│   │   ├── surface.css           # public skin
+│   │   └── secret.css            # M5 layer-reskin module
 │   ├── js/
-│   │   ├── components.js         # Alpine components (search / gate / staging / progress), registered on alpine:init
+│   │   ├── components.js         # Alpine components (search / gate / access / staging / progress), registered on alpine:init
 │   │   └── vendor/
 │   │       └── alpine.min.js     # Alpine v3 core, pinned (vendored once via tools/vendor-alpine.mjs; never edited; no plugins)
-│   ├── img/  audio/  docs/       # Images, audio puzzles, downloadable mock documents (pdf/xlsx)
+│   └── img/  audio/  docs/       # Images, audio puzzles, downloadable mock documents (pdf/xlsx)
 ├── data/
-│   ├── keywords.surface.src.json # Plaintext surface index (development only; excluded from the deploy directory after build)
-│   ├── keywords.secret.src.json  # Plaintext secret index (development only; excluded from the deploy directory after build)
-│   ├── keywords.surface.json     # Surface hash table — must contain no pages/secret/ URL (deploy artifact)
-│   ├── keywords.secret.json      # Secret hash table, fetched only by secret-layer pages (deploy artifact)
-│   ├── forbidden.json            # Forbidden word table (hashes + forbidden-state copy)
-│   └── credentials.src.json      # Composite/derived-credential provenance manifest (development only; plaintext values, excluded from deploy like the keyword .src tables)
-├── tools/                        # copy these eight from the skill's assets/tools/ at scaffold time
-│   ├── config.mjs                # shared project conventions — the single file to edit for a renamed project
-│   ├── hash.mjs                  # md5+base64 for a plaintext value → a gate's data-expect-hash
-│   ├── build-keywords.mjs        # plaintext table(s) → hash table(s)
-│   ├── check-links.mjs           # dead-link checker + surface-index layer-leak guard
-│   ├── check-solvable.mjs        # cold-start solvability walk (reachable + solvable + search earned)
-│   ├── check-credentials.mjs     # composite/derived credential provenance (parts + rule + zero-plaintext) — the half check-solvable cannot model
-│   ├── check-reachability.mjs    # rehearsal build: inject the credentials into a throwaway copy, then run check-solvable for reachability
-│   └── vendor-alpine.mjs         # downloads the pinned Alpine runtime and verifies its sha256
+│   ├── keywords.surface.src.json # Plaintext public index (development only; excluded from the deploy tree)
+│   ├── keywords.secret.src.json  # Plaintext deep index (development only; excluded from the deploy tree)
+│   ├── keywords.surface.json     # Public hash table — must contain no restricted-area URL (R8)
+│   ├── keywords.secret.json      # Deep hash table, fetched only by deep pages
+│   ├── forbidden.json            # M6 module (hashes + forbidden-state copy)
+│   └── credentials.src.json      # M2 derived-credential provenance (development only)
+├── tools/                        # the eight files copied from this skill's assets/tools/ at scaffold time
 └── README.md                     # How to run + GDD link + player notes
 ```
 
-The tools ship with this skill under `assets/tools/`; scaffold copies them into `tools/` so the project stays
+The tools ship under `assets/tools/` in this skill; scaffold copies them into `tools/` so the project stays
 self-contained and re-runnable. They run on Node built-ins only (`node:crypto`, `node:fs`, `node:path`,
-`node:child_process`) — no dependencies, no install step. The checkers import their assumptions from the
-shared `tools/config.mjs` (edit that one file when the project renames directories or markers;
-references/structure/tooling.md §2 lists the knobs and references/structure/tooling.md §3 the manual methods
-that remain). The keyword tables are auto-discovered, so both the
-per-layer convention above and a single-table project work with zero configuration. Re-run the checks after
-every content edit, not just before deploy — the canonical pass/fail checklist is `workflow/08-self-check.md`.
+`node:child_process`) — no dependencies, no install step. The checkers import their assumptions from the shared
+`tools/config.mjs`: a project that renames directories, layer names, or markers edits that one file instead of
+rewriting a checker (`references/structure/tooling.md` §2 lists the knobs, its section 3 the methods no static
+check replaces). Keyword tables are auto-discovered, so the per-layer convention above and a single-table project both
+work with zero configuration. Re-run the checks after every content edit, not just before deploy — the canonical
+pass/fail checklist is `workflow/08-self-check.md`.
 
-Vendor the Alpine runtime once at scaffold time (the script pins the version and verifies the sha256 before writing the file, which is then committed with the game):
+Vendor the Alpine runtime once at scaffold time (the script pins the version and verifies the sha256 before
+writing the file, which is then committed with the game):
 
 ```bash
 node tools/vendor-alpine.mjs      # writes assets/js/vendor/alpine.min.js (alpinejs@3.17.3, checksum-verified)
 ```
 
-The tree above is the shared base; the form docs adapt the hub and the page directories:
+The tree above is the shared base; the form docs adapt the pages and the reach model:
 
-- **Container A — fake official website**: `references/structure/form-website.md` — search hub, layer-scoped indexes, gates as the only access.
+- **Container A — fake official website**: `references/structure/form-website.md` — search hub, audience-scoped indexes, gates.
 - **Containers B/C/D — system fictions**: `references/structure/form-system.md` — account login, per-account access (RBAC-style), and the desktop / simulated-internet / archive shells. A system project's page root may be `apps/` instead of `pages/`; set `pagesDir` once in `tools/config.mjs` (tooling.md §2).
 
 ## 2. Page Skeleton Template (uniform across pages)
@@ -78,23 +69,27 @@ The tree above is the shared base; the form docs adapt the hub and the page dire
 <html lang="en">
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>&lt;Surface page title&gt;</title>
+  <title>&lt;Page title&gt;</title>
   <link rel="stylesheet" href="../../assets/css/base.css">
-  <link rel="stylesheet" href="../../assets/css/surface.css"><!-- secret/ pages link secret.css instead -->
+  <link rel="stylesheet" href="../../assets/css/surface.css"><!-- M5: deep pages link secret.css instead -->
   <script defer src="../../assets/js/components.js"></script><!-- registers Alpine components on alpine:init; runs before the Alpine runtime -->
   <script defer src="../../assets/js/vendor/alpine.min.js"></script><!-- vendored Alpine v3 core; auto-starts and fires alpine:init -->
 </head>
-<body data-page="14" data-total="36"><!-- progress number -->
-  <header><!-- site-wide persistent search form (the surface world rejects you: front-door onclick pops "Temporarily closed") -->
-    <form id="search-form" action="/search.html" method="get">
-      <input type="text" name="q" placeholder="Search..."><button type="submit">Search</button>
-    </form>
+<body><!-- M7: data-page="14" data-total="36" -->
+  <header><!-- site-wide persistent bar carrying this organization's own nav links (and the M1 search form when selected) -->
   </header>
-  <main><!-- page body: one "document". Bury keywords for the next page in the copy (bold proper nouns / place them in tables) --></main>
-  <footer><small>© ... <span class="progress">14/36</span></small></footer>
-  <!-- secret pages may add easter eggs: invisible links, black-on-black selectable text, hand-copied red text (see references/design-playbook.md §4.5) -->
+  <main><!-- page body: one "document". Bury the next keyword in the copy (bold proper nouns / place them in tables) --></main>
+  <footer><small>© ...<!-- M7: <span class="progress">14/36</span> --></small></footer>
+  <!-- M11 world texture: invisible links, black-on-black selectable text, hand-copied red text (`references/design-playbook.md` §2) -->
 </body>
 </html>
 ```
 
-Rules: **persistent top bar** — every page's header (same for container B's top menu bar) is fixed to the top of the viewport and does not leave view on long pages (base.css gives `position: sticky; top: 0` + an opaque background site-wide; secret/ pages included); the header carries that organization's own nav links (nav bar / index / sitemap), which together with the search box and the footer's own links are the only cross-page links a public page carries (R7); every `<input>` placeholder names its field (`Search...`, `Employee ID`) (R4); every page loads the same two scripts in the same order (`components.js` before the Alpine runtime) and carries no inline behavior wiring — behavior lives in `x-data` components; secret/ page footers may use anomalous numbers such as `ex/36` or `?/36`; the `[This content has been deleted]` placeholder is a valid narrative element.
+Rules: **persistent top bar** — every page's header (same for container B's top menu bar) is fixed to the top
+of the viewport and does not leave view on long pages (base.css gives `position: sticky; top: 0` + an opaque
+background site-wide, deep pages included); the header carries that organization's own nav links, which together
+with the footer's own links (and the M1 search box when selected) are the only cross-page links a public page
+carries (R7). Every `<input>` placeholder names its field (`Search...`, `Employee ID`) (R4). Every page loads the
+same two scripts in the same order (`components.js` before the Alpine runtime) and carries no inline behavior
+wiring — behavior lives in `x-data` components. Deep-page footers may use anomalous numbers such as `ex/36` or
+`?/36` (M7); the `[This content has been deleted]` placeholder is a valid narrative element.

@@ -12,7 +12,8 @@
 - [ ] `node tools/check-reachability.mjs` exits 0 (rehearsal copy: once each credential is known, every gate unlocks and every page is reachable).
 - [ ] `grep -rL "alpine.min.js" --include=*.html .` returns nothing.
 - [ ] `grep -rn "keywords.*src\|credentials.*src" --include=*.html .` returns nothing (no page references a plaintext source table).
-- [ ] **Asset manifest reconciled.** Every asset the GDD asset manifest declares exists under `assets/` AND is referenced by at least one page (`grep -rn "<asset-filename>" --include=*.html .` returns ≥1 hit). An `<img>` that was never written has no `src` for check-links to resolve, so this is a manual reconciliation against the GDD list (references/structure/tooling.md §3 item 9).
+- [ ] **Module match.** The built site matches `docs/system-profile.md`: every selected module is present and works, and every unselected one is absent (no dead skin, search table, gate component, or account furniture).
+- [ ] **Asset manifest reconciled.** Every asset the GDD asset manifest declares exists under `assets/` AND is referenced by at least one page (`grep -rn "<asset-filename>" --include=*.html .` returns ≥1 hit). An `<img>` that was never written has no `src` for check-links to resolve, so this is a manual reconciliation against the GDD list (`references/structure/tooling.md` §3 item 9).
 - [ ] Console on the entry page and one secret page: zero errors, zero 404s (including every `<img>` request).
 - [ ] Timers and observers are released in `destroy()`.
 
@@ -21,14 +22,14 @@
 - [ ] `node tools/check-solvable.mjs` passes: it walks the graph from the entry page over top-bar search, body links and post-gate links, and reports gate unlocks plus unreachable pages. This automates the three items below; do them by hand only for the ones it cannot model.
 - [ ] The graph walk from `index.html` reaches every page. Zero orphans.
 - [ ] Every `<a>` under `pages/` traces to a legitimate inbound route in the reachability table. Planted clue links are gone.
-- [ ] Every key in both plaintext keyword tables appears verbatim in the copy of a reachable page of the same layer.
-- [ ] `grep -o '"secret/[^"]*"' data/keywords.surface.json` returns nothing.
-- [ ] Every result marked with a clearance level shows `[Access denied]` or resolves to a gate; no classified result opens the document directly.
-- [ ] System containers: every `data-access` account is granted by some login gate (`data-grant`); no page is reachable through a privilege ladder or a shallow-page "related archives" link; and a search hit to a protected document stays unreachable until the named account is authenticated.
+- [ ] Every key in both plaintext keyword tables appears verbatim in the copy of a reachable page of the same audience.
+- [ ] The public keyword table carries no restricted-area URL (default `internal/`; the `secretUrl` CONFIG knob).
+- [ ] Every result or list row the visitor may not open resolves to its gate or a plain locked notice; nothing opens its document directly.
+- [ ] System containers (M3): every `data-access` account is granted by some login gate (`data-grant`); no page is reachable through a privilege ladder or a shallow-page "related archives" link; and a search hit to a protected document stays unreachable until the named account is authenticated.
 
 ## Puzzle integrity (re-run workflow/05 Q4)
 
-- [ ] Leak scan over the built tree: no answer, restatement, derivation rule, or location string on any gate page or inference-chain page. Scan the page **chrome** as well as the form UI — `<title>`, top bar, clearance strip, and footer have all leaked answers in practice.
+- [ ] Leak scan over the built tree: no answer, restatement, derivation rule, or location string on any gate page or inference-chain page. Scan the page **chrome** as well as the form UI — `<title>`, top bar, and footer have all leaked answers in practice.
 - [ ] `grep -rn "placeholder=" --include=*.html .` — every value names its field.
 - [ ] `grep -rn "data-fail-hint\|gate-hint" --include=*.html .` — failure hints point obliquely at the source (R4). `密码错误 🎂` passes; `想想陈师傅的本命年` fails.
 - [ ] `node tools/check-solvable.mjs` resolves every **verbatim** credential to prior page copy, naming the source page. This replaces the manual provenance pass; still replay the walkthrough yourself once, judging tone and pacing.
@@ -44,7 +45,7 @@
 
 ## Diegetic neutrality
 
-- [ ] Read each `pages/surface/` and `pages/platform/` page as a document of that organization. It is complete, plausible, and gives nothing away. No page mentions the plot.
+- [ ] Read each public page as a document of that organization. It is complete, plausible, and gives nothing away. No page mentions the plot.
 - [ ] Each announcement, notice, contract, and certificate carries issuing body, document number, date, addressee, signature or seal.
 - [ ] No in-world page addresses the player.
 
@@ -59,9 +60,9 @@
 - [ ] The header stays fixed to the viewport on long pages; body text scrolls beneath it.
 - [ ] Core interactions work at phone width.
 - [ ] Chrome sweep: load **every** page (plus each search state: hit / miss / forbidden) at desktop and phone width. Collect console errors, `requestfailed` (including every `<img>`), horizontal overflow (`scrollWidth > innerWidth`), and whether each `[x-data]` element actually initialized. Partial passes miss defects — a CSS specificity bug once silently disabled two declared puzzle types on the secret layer only.
-- [ ] **Cross-tab session (system containers).** Log in, then open a search/result link (`target="_blank"`): the protected document must be unlocked in the new tab too. Close the browser, reopen: signed out. Per-tab `sessionStorage` fails the first half; a session cookie passes. `check-solvable.mjs` models identities as one global set and cannot see this — it reports green either way, so this manual test is the only catch (references/structure/tooling.md §3 item 7).
-- [ ] Anything the honor agreement claims is true in code: keyword tables and gate hashes really are hashed; system containers keep authenticated accounts in a **session cookie** (cross-tab, cleared when the browser closes) and say so; no page persists unlock state or reading progress across sessions. `grep -rn "localStorage\|sessionStorage" --include=*.js --include=*.html .` and confirm the wording matches what is actually stored.
+- [ ] **Cross-tab session (M3).** Log in, then open a search/result link (`target="_blank"`): the protected document must be unlocked in the new tab too. Close the browser, reopen: signed out. Per-tab `sessionStorage` fails the first half; a session cookie passes. `check-solvable.mjs` models identities as one global set and cannot see this — it reports green either way, so this manual test is the only catch (`references/structure/tooling.md` §3 item 7).
+- [ ] No page persists unlock state or reading progress across sessions, and no page explains its storage to the player. `grep -rn "localStorage\|sessionStorage" --include=*.js --include=*.html .` and confirm nothing but the documented session helper touches it.
 - [ ] Sensory puzzle hardware requirements are declared on the entry page, and nothing is declared that the site does not actually implement.
-- [ ] Secret-layer entry reskins the whole page: background, title, logo, footer.
+- [ ] When M5 is selected: entering the deep area restyles the whole page — background, title, logo, footer — and no theme shift fires in a project that did not select it.
 
 Baseline-test traps for this step: references/common-mistakes.md §8 — check them before returning the artifact.

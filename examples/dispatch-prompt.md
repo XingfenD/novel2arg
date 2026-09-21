@@ -11,8 +11,9 @@ You are executing step 4 (Reachability chain analysis) of the novel2arg skill.
    Prior artifacts: docs/deconstruction.md, docs/gdd.md (approved by the user).
 3. Deliverable: docs/reachability.md — one row per page:
    | 页面 | 触达方式（编号） | 来源页面 | 该来源为什么会放这个链接 | 从首页跳数 |
-   plus the reverse check, depth check, access check, keyword solvability, layer check,
-   badge check, and title check, each with a verdict. (Full definition: workflow/04-reachability.md.)
+   plus the reverse check, depth check, access check, keyword solvability, index scoping
+   check, locked-entry check, and title check, each with a verdict.
+   (Full definition: workflow/04-reachability.md.)
 4. Read first: workflow/04-reachability.md, references/guardrails.md (R7–R10),
    references/common-mistakes.md §4, examples/reachability-excerpt.md.
 5. Realism priority: realism outranks any check (references/guardrails.md R12). If realism forces

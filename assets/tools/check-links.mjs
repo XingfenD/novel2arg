@@ -2,9 +2,9 @@
 // the keyword tables and resolves them against the file tree.
 // Usage: node tools/check-links.mjs     (run from the project root; expect "0 dead")
 //
-// Also enforces the layer-scoping rule (R8) from references/structure/components.md §1: a table whose name
-// marks it as the surface index must never carry a layer-leak url (by default a secret-layer url) — otherwise
-// a public search hands the player a direct route into the secret layer, bypassing the gate.
+// Also enforces the audience-scoping rule (R8) from references/structure/components.md §1: a table whose name
+// marks it as the public index must never carry a restricted-area url (default `internal/`; the CONFIG.secretUrl
+// knob) — otherwise a public search hands the player a direct route past the gate.
 //
 // Project conventions live in the shared tools/config.mjs; a project that renames dirs or layer names edits
 // that one file instead of rewriting the checker (references/structure/tooling.md §2 lists the knobs,
