@@ -5,7 +5,8 @@
 //      "Step <number>" ("## Step 4 — …");
 //   3. rule-ID citations (Rn) are defined in the canonical table of references/guardrails.md;
 //   4. relative markdown links [text](path) resolve;
-//   5. no orphan docs: every workflow/, references/, examples/ file is reachable by name from SKILL.md.
+//   5. no orphan docs: every workflow/, references/, examples/ file is reachable by name from SKILL.md
+//      (_zh translation mirrors excepted — they ride on their routed source file).
 // Usage: node scripts/check-docs.mjs   (run from the repo root; also wired into .github/workflows/ci.yml)
 import { readFileSync, readdirSync, statSync, existsSync } from 'node:fs';
 import { dirname, join, relative, resolve } from 'node:path';
@@ -86,10 +87,11 @@ for (const [file, t] of text) {
 
 /* 5. orphan docs: every workflow/, references/, examples/ file must be named in SKILL.md */
 const skill = text.get('SKILL.md') ?? '';
-for (const file of text.keys()) {
-  if (!/^(workflow|references|examples)\//.test(file)) continue;
-  if (!skill.includes(file)) fail('SKILL.md', `orphan doc (never routed): ${file}`);
-}
+  for (const file of text.keys()) {
+    if (file.endsWith('_zh.md')) continue;   // translation mirror of a routed source file
+    if (!/^(workflow|references|examples)\//.test(file)) continue;
+    if (!skill.includes(file)) fail('SKILL.md', `orphan doc (never routed): ${file}`);
+  }
 
 if (fails.length) {
   console.error(`check-docs FAILED — ${fails.length} problem(s):`);

@@ -4,6 +4,9 @@ Higher versions on top. Each entry: English line, then Chinese line; entries sep
 
 ## Unreleased
 
+- Add a Chinese translation set for review — `SKILL_zh.md`, `workflow/*_zh.md`, and `references/**/*_zh.md` mirror the English canon as `_zh` sibling files; `scripts/check-docs.mjs` exempts `_zh` mirrors from the orphan-doc rule while still validating their citations.
+- 新增供审阅的中文译本：`SKILL_zh.md`、`workflow/*_zh.md`、`references/**/*_zh.md` 按 `_zh` 同名文件约定镜像英文原文；`scripts/check-docs.mjs` 对 `_zh` 镜像豁免孤儿文档规则，但仍校验其引用。
+
 - Restructure the skill around a selectable design-module catalog: optional mechanics (search, account login, layer reskin, progress numbering, collection carriers, staging) move out of the mandatory guardrails into `references/design-playbook.md` §2, step 2 now assembles the chosen modules into `docs/system-profile.md` with the user, and the GDD plus later steps adapt to that selection. Removes the honor-agreement copy, the mandatory clearance / `[Access denied]` search conventions, and the mandatory dual-skin and `secret/` directory naming (the restricted area takes the fiction's own word, e.g. `internal/`, via the `secretUrl` CONFIG knob); in-fiction carriers such as a notebook or evidence wall are no longer treated as a prohibited form.
 - 以可选设计模块目录重构本 skill：把可选机制（搜索、账号登录、换肤、进度编号、收集载体、分阶段演出）从强制护栏移入 `references/design-playbook.md` §2；步骤 2 与用户一起把选定模块组装成 `docs/system-profile.md`，GDD 与后续步骤按选择适配。移除 honor agreement 文案、强制的密级 / `[Access denied]` 搜索约定，以及强制的双皮肤与 `secret/` 目录命名（受限区域改用虚构自身的词，如 `internal/`，由 `secretUrl` 配置项指向）；虚构内的笔记本 / 证据墙等载体不再视为禁止形态。
 
