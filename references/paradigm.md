@@ -3,6 +3,8 @@
 Adapt a mystery/suspense novel into a multi-page static puzzle game disguised as a real website (ARG-lite).
 Success criterion: the player feels they are infiltrating a real website and uncovering material meant to stay private.
 
+**Priority — realism outranks the checks.** The simulated system behaves the way the real one would, even where that breaks a check rule (reachability, access, leak scan, a checker script). The four constraints below are not checks; they define the paradigm. The break is never silent: record the conflict — page, rule, what realism requires — and ask the user through the orchestrator. Silent rule-breaking and silent realism-bending are both defects.
+
 Four constraints (violating any one departs from this paradigm):
 
 1. **The site is the world**: each narrative location is a standalone HTML page — a document the player can open and select text in independently. The URL bar is a narrative device; long-form copy lives in real page text and canvas carries none.
@@ -55,6 +57,7 @@ Four constraints (violating any one departs from this paradigm):
 - An announcement or contract reads as game copy
 - Guidance text uses metaphor, personification, or adjectives piled for effect
 - Site copy uses contrast frames (是…不是… / 是…而是… / 不能…只能…)
+- A check is broken, or realism bent, without the conflict going to the user
 - "Let's get a demo running first"
 
 ## When not to use

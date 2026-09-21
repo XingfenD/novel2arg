@@ -29,7 +29,7 @@ Step 3 ends with a user review checkpoint: when the subagent returns `docs/gdd.m
 
 Steps 4 and 5 are gates. A GDD that fails either returns to step 3 before scaffolding starts.
 
-**Dispatch contract.** The orchestrator writes the prompt, reads the returned artifact, then dispatches the next step. It performs step 2 itself and delegates the rest. Every prompt carries: the novel text path, file paths of prior artifacts, that step's deliverable definition copied from its workflow file, the reference file paths that step cites, and the closing line "return the artifact plus unresolved questions; route questions back through the orchestrator." Subagents hold no conversation with the user.
+**Dispatch contract.** The orchestrator writes the prompt, reads the returned artifact, then dispatches the next step. It performs step 2 itself and delegates the rest. Every prompt carries: the novel text path, file paths of prior artifacts, that step's deliverable definition copied from its workflow file, the reference file paths that step cites, the realism priority (references/paradigm.md: realism outranks any check, and a conflict goes to the user through the orchestrator), and the closing line "return the artifact plus unresolved questions; route questions back through the orchestrator." Subagents hold no conversation with the user.
 
 ## References
 

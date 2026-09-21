@@ -19,6 +19,7 @@ subagent's dispatch prompt. Check the section before returning the step's artifa
 | A single ending, or an ending that is a score | A two-option moral dilemma ending + a fourth-wall close + a sequel hook |
 | No progress feedback | `NN/total` in each page footer; secret pages use anomalous numbering such as `ex/total` |
 | (Website form) one flat keyword index spanning both layers; (system forms) access maintained in the keyword JSONs | Website form: one index per layer. System forms: one index, and the account matrix on the pages decides what a hit opens — access never lives in the JSON (references/structure/form-system.md §1) |
+| (System forms) a colleague's login printed on a public page (`账号：chen.gd` in the roster) | Only the initial account may be printed; every other account is inferred from text clues (references/structure/form-system.md §1) |
 
 ## Step 4 — Reachability
 

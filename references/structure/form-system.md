@@ -21,6 +21,11 @@ on top of the shared base (tree, page skeleton, gate component, staging, skins, 
 - **Accounts accumulate in the tab** (a deliberate player-friendly simplification): once authenticated, an
   account stays available — no sign-out, no cross-visit persistence. Closing the tab clears everything.
   Finding each account is itself a puzzle beat, so the roster of identities is part of the clue graph.
+- **Accounts are inferred, not printed.** A publicly readable page carries no login string except the initial
+  account — the one the player starts with. Every other account is a puzzle beat: the player assembles it
+  from text clues (a name, a 工号, an entry year, an email in a signature) plus the account format the gate
+  posts. A roster column or notice printing a colleague's login collapses the access matrix into one page of
+  reading; workflow/05 Q4 scans for it.
 
 ### Search / query results obey the access matrix
 
@@ -53,7 +58,7 @@ matrix replaces them.
 ```
 
 The credential triad still applies (account clue on page A, password clue on page B, gate on page C). The
-account string in `data-grant` is the identity other pages will match against; it is not printed anywhere.
+account string in `data-grant` is the identity other pages will match against; it is not printed anywhere except the initial account (§1).
 
 ## 3. Protected page (`access` component)
 
@@ -121,3 +126,4 @@ persisted and no progress is saved. Never use `localStorage` for access state.
 | A shallow page's "related archives / files" link into a deep layer | Crosses depth with a link; reach must go through search, a gate, or an account |
 | `data-access` naming an account no gate grants | Dead private page; check-solvable reports it unreachable |
 | Access state in `localStorage` | Breaks the honor agreement and the session fiction |
+| A public page prints a colleague's login (`账号：chen.gd` in the roster) | Only the initial account may be printed; every other login is inferred from clues (workflow/05 Q4 scans for it) |

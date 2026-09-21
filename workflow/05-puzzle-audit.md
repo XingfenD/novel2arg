@@ -34,6 +34,7 @@ Search the gate page and every page in the inference chain for four things:
 | A restatement | `placeholder="例如 1977"`, help text spelling the credential |
 | The derivation rule | `初始密码为本人出生年份` posted under the form |
 | The answer's location | `答案在员工风采页`, `去老帖子里找本命年` |
+| A login string printed verbatim (system containers) | `账号：chen.gd` in the staff roster — only the initial account may appear |
 
 Scope covers `placeholder`, `<label>`, help text, empty states, failure hints, the surrounding body copy, and HTML comments. A failure hint points at the source obliquely and stops there — `密码错误 🎂` qualifies; `想想陈师傅的本命年` leaks the location.
 
