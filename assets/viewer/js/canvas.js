@@ -125,7 +125,6 @@ onAlpineInit(() => Alpine.data('canvas', () => ({
         const t4 = el('text', { x: NW - 9, y: 16, class: 'warn' }); t4.style.fill = 'var(--start)'; t4.textContent = '入口'; g.appendChild(t4);
       }
       g.addEventListener('pointerenter', () => this.hoverNode(n.id));
-      g.addEventListener('pointerleave', () => this.leaveNodes());
       g.addEventListener('click', () => { if (!this.moved) store.select('node', n); });
       svg.appendChild(g);
       this.nodeEls.set(n.id, g);
@@ -210,6 +209,10 @@ onAlpineInit(() => Alpine.data('canvas', () => ({
   },
 
   /* ── hover: one hop of context, everything else recedes ── */
+  // The clear happens ONLY when the pointer leaves the canvas (graph-viewer.html binds it on the
+  // wrap), never per node: any node-level leave flashes the whole graph bright at a card boundary —
+  // and a pause in the gutter between two cards defeats even a one-frame defer, so sweeping at
+  // normal speed flickers. While the pointer is anywhere on the canvas, the last card stays lit.
   hoverNode(id) {
     const keep = new Set([id]);
     for (const { from, to } of this.edgeEls) {

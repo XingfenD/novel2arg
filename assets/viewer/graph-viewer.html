@@ -34,6 +34,7 @@
        @pointerdown="dragStart($event)"
        @pointermove.window="dragMove($event)"
        @pointerup.window="dragEnd()"
+       @pointerleave="leaveNodes()"
        @dblclick="resetView()">
     <svg id="graph" role="img" aria-label="站点链接图"></svg>
   </div>
