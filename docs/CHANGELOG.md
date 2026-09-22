@@ -4,6 +4,12 @@ Higher versions on top. Each entry: English line, then Chinese line; entries sep
 
 ## Unreleased
 
+- Rewrite the root `README.md` as a full English landing page (positioning, what you get, install, usage, the eight-step workflow table, repository map, requirements, license and responsible use) and move the Chinese version into a new `README_zh.md` sibling, ending the root README's bilingual duplication.
+- 将根 `README.md` 重写为完整的英文落地页（定位、产出物、安装、用法、八步工作流表、仓库地图、运行要求、许可与合规），中文版移入新的 `README_zh.md` 同名单文件，根 README 不再中英并置。
+
+- Add a README header image: `assets/banner.webp`, a 1664×928 tech-noir key visual (open novel → one glowing login window under a magnifying glass → puzzle piece) carrying the tagline "Turn a novel into a puzzle website"; embedded at the top of the root `README.md` and `docs/README_zh.md`.
+- 新增 README 头图：`assets/banner.webp`，1664×928 的科技黑色电影风格主视觉（摊开的小说 → 放大镜下唯一的发光登录窗口 → 拼图），标语为 "Turn a novel into a puzzle website"；置于根 `README.md` 与 `docs/README_zh.md` 顶部。
+
 - Move the repo self-check instructions out of SKILL.md into AGENTS.md. SKILL.md is the skill's user-facing entry — an agent adapting a novel has no use for repo maintenance — while AGENTS.md already carries the repo's editing conventions (branch naming, commit rules, changelog) and is what an agent editing this repo loads. AGENTS.md also absorbs the earlier prose tightening of the References section.
 - 把仓库自检说明从 SKILL.md 移入 AGENTS.md。SKILL.md 是面向使用者的 skill 入口——改编小说的 agent 用不到仓库维护；AGENTS.md 已承载本仓库的编辑约定（分支命名、提交规则、CHANGELOG），且是编辑本仓库的 agent 实际加载的文件。AGENTS.md 同时收纳了此前对 References 段的压缩。
 

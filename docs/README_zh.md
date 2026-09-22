@@ -1,3 +1,5 @@
+![novel2arg——把小说变成解谜网站](../assets/banner.webp)
+
 # novel2arg
 
 [English](README.md) | [中文](README_zh.md)
