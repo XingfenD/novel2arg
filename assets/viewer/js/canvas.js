@@ -151,7 +151,16 @@ onAlpineInit(() => Alpine.data('canvas', () => ({
     view.fit = false;
     this.applyView();
   },
-  wheel(e) { this.zoomAt(e.clientX, e.clientY, e.deltaY < 0 ? 1.15 : 1 / 1.15); },
+  // macOS trackpad first: a plain wheel (two-finger swipe, or a mouse wheel) pans the canvas; only a
+  // pinch — which every browser delivers as ctrl+wheel — zooms. Prioritising the trackpad means a
+  // swipe is never hijacked into a zoom; the +/− buttons and 适应宽度 cover zoom for mouse users.
+  wheel(e) {
+    if (e.ctrlKey) { this.zoomAt(e.clientX, e.clientY, e.deltaY < 0 ? 1.15 : 1 / 1.15); return; }
+    view.fit = false;
+    view.panX -= e.deltaX;
+    view.panY -= e.deltaY;
+    this.applyView();
+  },
   zoomBy(f) {
     const r = this.$refs.wrap.getBoundingClientRect();
     this.zoomAt(r.left + r.width / 2, r.top + r.height / 2, f);
@@ -167,7 +176,9 @@ onAlpineInit(() => Alpine.data('canvas', () => ({
   dragMove(e) {
     if (!this.dragging) return;
     const dx = e.clientX - this.drag0.x, dy = e.clientY - this.drag0.y;
-    if (Math.abs(dx) + Math.abs(dy) > 4) this.moved = true;
+    // leave fit on the first real movement, not on pointerdown: a plain click on a node must not
+    // silently detach the canvas from fit-to-width, and a pan is meaningless while fit zeroes it
+    if (Math.abs(dx) + Math.abs(dy) > 4) { this.moved = true; view.fit = false; }
     view.panX = this.drag0.panX + dx; view.panY = this.drag0.panY + dy;
     this.applyView();
   },
