@@ -12,9 +12,13 @@ export const hash = (w) => createHash('md5').update(String(w).trim().toLowerCase
 const SKIP = /[\s<>"'`{}[\],.;:!?/\\|()（）「」『』·、。，；：！？—…]/;
 const EDGE = /^[^\p{L}\p{N}']+|[^\p{L}\p{N}']+$/gu;
 
+// Every *.html under `root`, minus the dev/ops directories (CONFIG.skipDirs): tools/, viewer/ (the graph
+// renderer template), docs/ (artifacts) and deploy/ hold no site page, so a walk that descends into them
+// invents vertices — and, worse, makes the page count change between two runs once site-graph has written
+// docs/site-graph.html. One skip list, shared with check-credentials.mjs (config.mjs).
 export function walkFiles(root, acc = []) {
   for (const name of readdirSync(root)) {
-    if (name === 'node_modules' || name.startsWith('.')) continue;
+    if (CONFIG.skipDirs.includes(name) || name.startsWith('.')) continue;
     const p = join(root, name);
     if (statSync(p).isDirectory()) walkFiles(p, acc);
     else acc.push(p);

@@ -37,9 +37,13 @@ Module marks (M1…M13) come from `references/design-playbook.md` §2 and appear
 │   ├── keywords.secret.json      # Deep hash table, fetched only by deep pages
 │   ├── forbidden.json            # M6 module (hashes + forbidden-state copy)
 │   └── credentials.src.json      # M2 derived-credential provenance (development only)
-├── tools/                        # the eight files copied from this skill's assets/tools/ at scaffold time
+├── tools/                        # the tool files copied from this skill's assets/tools/ at scaffold time
+├── viewer/                       # the graph renderer template copied at scaffold time (graph-viewer.html); never a site page
 └── README.md                     # How to run + GDD link + player notes
 ```
+
+`tools/`, `viewer/`, `docs/` and `deploy/` hold no site page: the page-walking tools skip them (`CONFIG.skipDirs`,
+`references/structure/tooling.md` §2), so a generated `docs/site-graph.html` can never inflate the page count.
 
 The tools ship under `assets/tools/` in this skill; scaffold copies them into `tools/` so the project stays
 self-contained and re-runnable. They run on Node built-ins only (`node:crypto`, `node:fs`, `node:path`,

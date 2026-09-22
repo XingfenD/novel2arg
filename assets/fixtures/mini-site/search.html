@@ -5,7 +5,11 @@
 <header><nav><a href="pages/home.html">首页</a> <a href="pages/news.html">新闻动态</a> <a href="pages/staff.html">员工名录</a></nav></header>
 <main id="results" x-data="search" data-index="data/keywords.surface.json" x-cloak>
   <h1>站内搜索</h1>
-  <input type="search" placeholder="Search...">
+  <form id="query-form" action="results.html" method="get">
+    <label for="q">关键词</label>
+    <input id="q" name="q" type="search" placeholder="Search...">
+    <button type="submit">检索</button>
+  </form>
 </main>
 <footer><small>© 焰溪镇供销社 <a href="pages/login.html">员工入口</a> <span class="progress">2/12</span></small></footer>
 </body>

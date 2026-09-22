@@ -7,6 +7,8 @@
 // data-next are followed — Alpine :href bindings are invisible; a derived credential is recorded
 // as rule + components, never as the assembled value; route claims are structural or heuristic,
 // and heuristic ones are confirmed by a human against docs/reachability.md.
+// Invariant: every page the walk reaches has an inbound edge here — a link form this tool fails to model
+// surfaces as a `walk-divergence` problem, never as a silent `unreachable` verdict.
 import { readFileSync, writeFileSync, mkdirSync, existsSync, mkdtempSync, rmSync } from 'node:fs';
 import { dirname, join, resolve, basename } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -71,21 +73,35 @@ function rangesOf(html) {
 }
 const inAny = (ranges, i) => ranges.some(([s, e]) => i >= s && i < e);
 
+// Every jump relation this tool can see, with where it sits on the page. Anchors and <form action> both
+// count: the walk (site-model linksOf) follows `href` and `action` alike, so a graph built from anchors
+// alone would call a form-reached page unreachable while the walk reaches it.
 function extractAnchors(root, file, html, rg) {
   const out = [];
-  const re = /<a\b([^>]*)>([\s\S]*?)<\/a>/gi;
+  const whereOf = (i) => inAny(rg.footer, i) ? 'footer'
+    : inAny(rg.header, i) || inAny(rg.nav, i) ? 'header'
+    : inAny(rg.unlocked, i) ? 'unlocked' : 'body';
+  const target = (raw) => {
+    if (!raw || raw.startsWith('#') || /^(https?:|mailto:|tel:|javascript:|data:)/i.test(raw)) return null;
+    const u = raw.split('?')[0].split('#')[0];
+    return u.endsWith('.html') ? u : null;
+  };
   let m;
+  const re = /<a\b([^>]*)>([\s\S]*?)<\/a>/gi;
   while ((m = re.exec(html))) {
     const h = m[1].match(/\bhref\s*=\s*["']([^"']*)["']/i);
     if (!h) continue;
-    const raw = h[1];
-    if (raw.startsWith('#') || /^(https?:|mailto:|tel:|javascript:|data:)/i.test(raw)) continue;
-    const u = raw.split('?')[0].split('#')[0];
-    if (!u.endsWith('.html')) continue;
-    const where = inAny(rg.footer, m.index) ? 'footer'
-      : inAny(rg.header, m.index) || inAny(rg.nav, m.index) ? 'header'
-      : inAny(rg.unlocked, m.index) ? 'unlocked' : 'body';
-    out.push({ to: relOf(root, join(dirname(file), u)), href: raw, text: visible(m[2]).trim(), where });
+    const u = target(h[1]);
+    if (!u) continue;
+    out.push({ to: relOf(root, join(dirname(file), u)), href: h[1], text: visible(m[2]).trim(), where: whereOf(m.index), form: false });
+  }
+  const fre = /<form\b([^>]*)>/gi;
+  while ((m = fre.exec(html))) {
+    const a = m[1].match(/\baction\s*=\s*["']([^"']*)["']/i);
+    if (!a) continue;
+    const u = target(a[1]);
+    if (!u) continue;
+    out.push({ to: relOf(root, join(dirname(file), u)), href: a[1], text: '', where: whereOf(m.index), form: true });
   }
   return out;
 }
@@ -121,6 +137,9 @@ function buildGraph(root) {
       else if (anc.where === 'footer') { kind = 'footer'; route = 3; chrome = true; }
       else if (anc.where === 'header') { kind = 'nav'; route = 1; chrome = true; }
       else if (anc.where === 'unlocked') { kind = 'post-unlock'; route = 5; }
+      // A body form is its own kind: the submission target is a structural jump the issuing page owns
+      // (a query form's result page is the listing that page serves — step-4 route 2).
+      else if (anc.form) { kind = 'form'; route = 2; }
       else if (BREADCRUMB_RE.test(anc.text)) { kind = 'breadcrumb'; route = 6; }
       if (kind) {
         // a free route into the restricted area is the R7/R8 defect: no legitimate route at all
@@ -227,6 +246,10 @@ function buildGraph(root) {
   /* ── problems ── */
   const problems = [];
   for (const n of nodes) if (!n.reachable) problems.push({ type: 'unreachable', detail: n.id });
+  // The design promise is that the graph can never disagree with the walk. Both read the same core, but
+  // this tool only draws edges it can classify: a jump form it does not model would leave a page the walk
+  // reaches sitting at hops:null here. Report that instead of hiding it behind a plausible-looking graph.
+  for (const v of visited) if (!hops.has(v)) problems.push({ type: 'walk-divergence', detail: v });
   for (const g of gatePages) {
     if (gateSrc.has(g)) continue;
     const fields = pages[g].fields.map((fld) => (fld.some((h) => [...visited].some((q) => q !== g && readableHits(q).has(h))) ? 'traceable' : 'NO CLUE'));
@@ -267,14 +290,28 @@ function selfTest() {
   const g = buildGraph(FIXTURE);
 
   ok(g.schema === SCHEMA, 'schema id');
-  ok(g.stats.pages === 13, `13 pages (got ${g.stats.pages})`);
-  ok(g.stats.reachable === 12, `12 reachable (got ${g.stats.reachable})`);
+  ok(g.stats.pages === 14, `14 pages (got ${g.stats.pages})`);
+  ok(g.stats.reachable === 13, `13 reachable (got ${g.stats.reachable})`);
   ok(g.stats.unreachable === 1, `1 unreachable (got ${g.stats.unreachable})`);
   ok(g.stats.gates === 2 && g.stats.gatesUnlocked === 1, `gates 2, unlocked 1 (got ${g.stats.gates}/${g.stats.gatesUnlocked})`);
-  ok(g.stats.progressCoverage === '12/13', `progress coverage 12/13 (got ${g.stats.progressCoverage})`);
+  ok(g.stats.progressCoverage === '12/14', `progress coverage 12/14 (got ${g.stats.progressCoverage})`);
 
   const kinds = new Set(g.edges.map((e) => e.kind));
-  for (const k of ['start', 'nav', 'footer', 'breadcrumb', 'list', 'body', 'gate-next', 'post-unlock', 'search']) ok(kinds.has(k), `kind present: ${k}`);
+  for (const k of ['start', 'nav', 'footer', 'breadcrumb', 'list', 'body', 'form', 'gate-next', 'post-unlock', 'search']) ok(kinds.has(k), `kind present: ${k}`);
+
+  // A page reachable only through a <form action> must be a vertex with an inbound edge: the walk follows
+  // action= (site-model linksOf), so a graph built from anchors alone would disagree with it.
+  const form = g.edges.find((e) => e.kind === 'form');
+  ok(form?.from === 'search.html' && form.to === 'results.html', 'form edge search → results');
+  ok(form.route === 2 && form.routeClaim === 'structural' && form.chrome === false, 'form edge route 2 structural, not chrome');
+  const resultsNode = g.nodes.find((n) => n.id === 'results.html');
+  ok(resultsNode?.reachable === true && resultsNode.hops === 3, 'form-reached results page reachable at 3 hops');
+  ok(g.nodes.find((n) => n.id === 'pages/news-01.html').reachable === true, 'pages behind the results list stay reachable');
+
+  // CONFIG.skipDirs: viewer/ (renderer template) and docs/ (artifacts) are never site pages. Without the
+  // skip, the fixture would report one extra vertex here and another on every re-run after an emit.
+  ok(!g.nodes.some((n) => n.id.startsWith('viewer/') || n.id.startsWith('docs/')), 'viewer/ and docs/ never become vertices');
+  ok(g.nodes.length === 14, 'no dev-dir file inflated the vertex set');
 
   const gateNext = g.edges.find((e) => e.kind === 'gate-next');
   ok(gateNext?.from === 'pages/login.html' && gateNext.to === 'pages/internal/s22-diary.html', 'gate-next edge login → s22');
@@ -298,7 +335,9 @@ function selfTest() {
   ok(JSON.stringify(search.guard.sources) === JSON.stringify([{ page: 'pages/news-01.html', afterGate: false }]), 'keyword read on news-01');
 
   const listEdges = g.edges.filter((e) => e.kind === 'list');
-  ok(listEdges.length === 3 && listEdges.every((e) => e.from === 'pages/news.html' && e.route === 2), 'three list edges, route 2');
+  ok(listEdges.length === 6 && listEdges.every((e) => e.route === 2), 'six list edges, route 2');
+  ok(listEdges.filter((e) => e.from === 'pages/news.html').length === 3, 'news.html lists three entries');
+  ok(listEdges.filter((e) => e.from === 'results.html').length === 3, 'results.html lists three entries');
   const bodyEdge = g.edges.find((e) => e.from === 'pages/staff.html' && e.kind === 'body');
   ok(bodyEdge?.route === 7 && bodyEdge.routeClaim === 'heuristic', 'single body link → route 7 heuristic');
   const crumb = g.edges.find((e) => e.kind === 'breadcrumb');
@@ -308,12 +347,13 @@ function selfTest() {
   const probs = g.problems.map((p) => p.type);
   ok(probs.includes('unreachable') && probs.includes('stuck-gate') && probs.includes('progress-mismatch'), 'planted defects reported');
   ok(!probs.includes('no-route'), 'every fixture edge claims a legitimate route');
+  ok(!probs.includes('walk-divergence'), 'the graph reaches exactly the pages the walk reaches');
   const stuck = g.problems.find((p) => p.type === 'stuck-gate');
   ok(stuck?.page === 'pages/internal/s22-diary.html' && stuck.fields[0] === 'NO CLUE', 's22 stuck, NO CLUE');
   const orphanNode = g.nodes.find((n) => n.id === 'pages/orphan.html');
   ok(orphanNode.reachable === false && orphanNode.hops === null, 'orphan unreachable, hops null');
-  const back = g.edges.find((e) => e.backJump);
-  ok(back?.from === 'pages/orphan.html' && back.progressDelta === -10, 'back-jump flagged on orphan → home');
+  const back = g.edges.find((e) => e.from === 'pages/orphan.html' && e.backJump);
+  ok(back?.to === 'pages/home.html' && back.progressDelta === -10, 'back-jump flagged on orphan → home');
   const anom = g.nodes.find((n) => n.id === 'pages/internal/s21-ledger.html');
   ok(anom.progress.anomalous === true && anom.progress.page === null, 'anomalous deep-page marker');
   ok(g.nodes.find((n) => n.id === 'search.html').progress.source === 'footer', 'footer-only progress');
@@ -327,7 +367,7 @@ function selfTest() {
     const { jsonPath, htmlPath } = emit(g, tmp, 'g');
     ok(existsSync(jsonPath) && existsSync(htmlPath), 'json + html emitted');
     const back2 = JSON.parse(readFileSync(jsonPath, 'utf8'));
-    ok(back2.schema === SCHEMA && back2.nodes.length === 13, 'emitted JSON round-trips');
+    ok(back2.schema === SCHEMA && back2.nodes.length === 14, 'emitted JSON round-trips');
     const html = readFileSync(htmlPath, 'utf8');
     ok(html.includes('pages/login.html'), 'JSON injected into the html');
     const js = html.match(/<script>\n([\s\S]*?)<\/script>/)[1];

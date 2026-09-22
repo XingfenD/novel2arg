@@ -27,7 +27,7 @@ public-page components; `check-reachability.mjs` proves the graph still unlocks 
 `hash.mjs` is a design-time helper (step 3/5, when computing a gate's `data-expect-hash` values);
 `vendor-alpine.mjs` runs once at scaffold time (step 6).
 
-`site-graph.mjs` shares `site-model.mjs` with `check-solvable.mjs`, so the graph can never disagree with the walk. It reports the same defects the checkers gate on (unreachable pages, stuck gates, dead targets, layer leaks) plus design-surface signals the checkers do not model: M7 progress extraction and mismatches, step-4 closed-list route claims per edge, and negative progress deltas on non-chrome edges (back-jumps). It exits 0 with problems — gating stays with the checkers.
+`site-graph.mjs` shares `site-model.mjs` with `check-solvable.mjs`, so the graph can never disagree with the walk. It draws the same jump relations the walk follows — including `<form action>` submissions, which the walk has always followed (`linksOf`) and which an anchor-only edge set would leave out, calling a form-reached results page unreachable. Should a jump form still escape the graph, the page the walk reaches shows up as a `walk-divergence` problem instead of a silent `unreachable` verdict. It reports the same defects the checkers gate on (unreachable pages, stuck gates, dead targets, layer leaks) plus design-surface signals the checkers do not model: M7 progress extraction and mismatches, step-4 closed-list route claims per edge, and negative progress deltas on non-chrome edges (back-jumps). It exits 0 with problems — gating stays with the checkers.
 
 ## 2. Shared config (tools/config.mjs)
 
@@ -47,7 +47,7 @@ file instead of rewriting a checker (a rewrite throws away the defects these che
 | `maxTokenLen` / `maxPhraseWords` / `maxPhraseLen` | 8 / 4 / 48 | check-solvable matcher |
 | `credTable` | `data/credentials.src.json` | check-credentials, check-reachability |
 | `derivedKinds` / `zeroPlaintextKinds` | `['account','secret']` / `['account']` | check-credentials |
-| `credSkipDirs` | `.git node_modules docs tools deploy` | check-credentials |
+| `skipDirs` | `.git node_modules tools viewer docs deploy` | the page walk (check-links, check-solvable, site-graph) · check-credentials |
 | `solver` | `tools/check-solvable.mjs` | check-reachability |
 
 `node tools/check-solvable.mjs --self-test` verifies the matcher (multi-word, long-word, HTML entity, CJK)

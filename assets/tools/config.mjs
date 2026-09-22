@@ -24,7 +24,7 @@ const CONFIG = {
   credTable: 'data/credentials.src.json',                         // dev-only provenance manifest (plaintext values; not deployed)
   derivedKinds: ['account', 'secret'],                            // kinds that must be assembled: no component may equal the whole value
   zeroPlaintextKinds: ['account'],                                // kinds whose full string must appear on no page (short numeric secrets collide with dates)
-  credSkipDirs: ['.git', 'node_modules', 'docs', 'tools', 'deploy'],  // dev/ops dirs never hold page text
+  skipDirs: ['.git', 'node_modules', 'tools', 'viewer', 'docs', 'deploy'],  // dev/ops dirs: never site pages, never page text
   solver: 'tools/check-solvable.mjs',                             // the walk check-reachability runs inside the rehearsal copy
 };
 

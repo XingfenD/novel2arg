@@ -12,7 +12,7 @@ An edge counts only if it belongs to this list. Anything else is a planted clue 
 
 0. Entry ritual page start button — the single edge from `index.html` into the public world
 1. Nav bar
-2. Index or listing page entry — news list, staff list, menu list, archive list, sitemap
+2. Index or listing page entry — news list, staff list, menu list, archive list, sitemap; a query form's result page counts as the listing the page carrying the form owns
 3. Footer link — 员工入口, 联系我们, 备案信息
 4. Search hit (M1) — keyword → hidden page, from the index of the audience the search surface belongs to
 5. Gate or login unlock (M2/M3) — a `data-next` target
