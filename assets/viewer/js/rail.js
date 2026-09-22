@@ -68,6 +68,7 @@ onAlpineInit(() => Alpine.data('rail', () => ({
   emptyHtml() {
     return `<p class="empty">点节点或边，看它的判据。</p>
       <p class="hint">触控板双指滑动 / 滚轮平移画布，捏合 / ctrl+滚轮缩放，<b>+ − 复位</b> 控制视图，<b>适应宽度</b> 可看全图。<br>
+      右下角<b>鸟瞰图</b>可点击或拖拽，把视图中心瞬移到对应位置。<br>
       左侧色条是页面的性质：粗红=门禁，蓝虚线=搜索页，红虚线=不可达。<br>
       右下角 <span style="font-family:var(--mono)">#n/总</span> 是 M7 的阅读顺序。</p>`;
   },

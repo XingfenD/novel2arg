@@ -1,9 +1,22 @@
 /* Site graph viewer — canvas: the SVG graph itself. Nodes read as document cards, edges as rules;
    hover dims everything but the hovered page's one hop. The wrap never scrolls natively — the
    canvas owns its pixel coordinates and the JS view transform (zoom/pan) replaces scrollbars. */
-#graphWrap { flex:1; min-width:0; overflow:hidden; touch-action:none; cursor:grab; }
+#graphWrap { flex:1; min-width:0; overflow:hidden; touch-action:none; cursor:grab; position:relative; }
 #graphWrap.dragging { cursor:grabbing; }
 #graphWrap svg { display:block; max-width:none; }
+
+/* ── minimap: the whole graph at a glance, the viewport on it ── */
+/* Solid paper, hairline rule: it must not compete with the canvas it overviews. Hidden when the
+   viewport already covers the whole graph (nothing to overview) and on phones (the canvas is short). */
+#minimapWrap { position:absolute; right:12px; bottom:12px; z-index:2; width:188px; height:124px; background:var(--paper); border:1px solid var(--rule); }
+#minimapWrap.hidden { display:none; }
+#minimap { display:block; width:188px; height:124px; cursor:crosshair; }
+.mmdot { fill:var(--ink-3); }
+.mmdot.entry { fill:var(--start); }
+.mmdot.gate { fill:var(--gate); }
+.mmdot.unreach { fill:var(--stamp); }
+#mmView { fill:rgba(31,92,139,.06); stroke:var(--search); stroke-width:1; vector-effect:non-scaling-stroke; }
+@media (max-width: 820px) { #minimapWrap { display:none; } }
 
 svg { background:var(--paper); }
 .grid { stroke:var(--wash); stroke-width:1; }

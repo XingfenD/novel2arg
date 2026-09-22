@@ -37,6 +37,7 @@
        @pointerleave="leaveNodes()"
        @dblclick="resetView()">
     <svg id="graph" role="img" aria-label="站点链接图"></svg>
+    <div id="minimapWrap" class="hidden"><svg id="minimap" role="img" aria-label="全图鸟瞰" @pointerdown="mmDown($event)" @pointermove.window="mmMove($event)" @pointerup.window="mmUp()"></svg></div>
   </div>
   <aside id="panel" x-data="rail" x-html="panel"></aside>
 </main>

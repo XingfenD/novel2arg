@@ -22,6 +22,7 @@ onAlpineInit(() => Alpine.data('canvas', () => ({
   nodeEls: new Map(),      // node id → <g> (current render)
   edgeEls: [],             // { el, from, to } (current render)
   dragging: false, moved: false, drag0: null,
+  mm: null, mmView: null, mmDrag: false,   // minimap: graph→minimap mapping, the viewport rect, drag state
 
   init() {
     const store = this.$store.graph;
@@ -131,6 +132,7 @@ onAlpineInit(() => Alpine.data('canvas', () => ({
     }
     this.syncSelection();
     this.applyView();
+    this.drawMinimap(width, height);
   },
 
   // selection only ever toggles classes — it must not rebuild the graph
@@ -152,6 +154,7 @@ onAlpineInit(() => Alpine.data('canvas', () => ({
     svg.style.transform = `translate(${view.panX}px, ${view.panY}px) scale(${view.zoom})`;
     svg.style.transformOrigin = '0 0';
     this.$store.graph.fitLabel = view.fit ? '原始大小' : '适应宽度';
+    this.updateMinimapView();
   },
   zoomAt(cx, cy, factor) {
     const r = this.$refs.wrap.getBoundingClientRect();
@@ -207,6 +210,67 @@ onAlpineInit(() => Alpine.data('canvas', () => ({
     view.panY = r.height / 2 - (p.y + NH / 2) * view.zoom;
     this.applyView();
   },
+
+  /* ── minimap: the whole graph at a glance, the viewport on it ── */
+  // The dots only change with the layout (drawMinimap runs from render); the viewport rect is four
+  // attribute writes per frame from applyView, so panning and zooming cost nothing measurable.
+  drawMinimap(width, height) {
+    const W = 188, H = 124, pad = 8;
+    const scale = Math.min((W - pad * 2) / width, (H - pad * 2) / height);
+    this.mm = { scale, ox: (W - width * scale) / 2, oy: (H - height * scale) / 2 };
+    const mm = $('#minimap');
+    mm.innerHTML = '';
+    mm.setAttribute('viewBox', `0 0 ${W} ${H}`);
+    for (const n of this.$store.graph.graph.nodes) {
+      const p = this.pos.get(n.id);
+      if (!p) continue;
+      const cls = !n.reachable ? 'unreach' : n.isEntry ? 'entry' : n.gate ? 'gate' : '';
+      mm.appendChild(el('rect', {
+        class: `mmdot ${cls}`.trim(),
+        x: this.mm.ox + p.x * scale, y: this.mm.oy + p.y * scale,
+        width: Math.max(2, NW * scale), height: Math.max(1.5, NH * scale),
+      }));
+    }
+    this.mmView = el('rect', { id: 'mmView' });
+    mm.appendChild(this.mmView);
+    this.updateMinimapView();
+  },
+  updateMinimapView() {
+    if (!this.mm) return;
+    const svg = $('#graph');
+    const graphW = Number(svg.getAttribute('width')), graphH = Number(svg.getAttribute('height'));
+    // the intersection of the wrap's view with the graph rectangle — the graph is usually wider
+    // than tall, so the raw view rect (wrap size ÷ zoom) overshoots vertically and would report
+    // full coverage even when zoomed in
+    const gx = -view.panX / view.zoom, gy = -view.panY / view.zoom;
+    const gw = this.$refs.wrap.clientWidth / view.zoom, gh = this.$refs.wrap.clientHeight / view.zoom;
+    const ix = Math.max(0, gx), iy = Math.max(0, gy);
+    const iw = Math.max(0, Math.min(gx + gw, graphW) - ix), ih = Math.max(0, Math.min(gy + gh, graphH) - iy);
+    $('#minimapWrap').classList.toggle('hidden', (iw * ih) / (graphW * graphH) >= 0.95);   // nothing to overview when it all fits
+    this.mmView.setAttribute('x', this.mm.ox + ix * this.mm.scale);
+    this.mmView.setAttribute('y', this.mm.oy + iy * this.mm.scale);
+    this.mmView.setAttribute('width', iw * this.mm.scale);
+    this.mmView.setAttribute('height', ih * this.mm.scale);
+  },
+  mmToGraph(e) {
+    const r = $('#minimap').getBoundingClientRect();
+    const mx = (e.clientX - r.left) * (188 / r.width), my = (e.clientY - r.top) * (124 / r.height);
+    return { x: (mx - this.mm.ox) / this.mm.scale, y: (my - this.mm.oy) / this.mm.scale };
+  },
+  mmCenter(g) {
+    view.fit = false;
+    const wrap = this.$refs.wrap;
+    view.panX = wrap.clientWidth / 2 - g.x * view.zoom;
+    view.panY = wrap.clientHeight / 2 - g.y * view.zoom;
+    this.applyView();
+  },
+  mmDown(e) {
+    e.stopPropagation();   // the minimap sits inside the canvas: don't start a canvas drag too
+    this.mmDrag = true;
+    this.mmCenter(this.mmToGraph(e));
+  },
+  mmMove(e) { if (this.mmDrag) this.mmCenter(this.mmToGraph(e)); },
+  mmUp() { this.mmDrag = false; },
 
   /* ── hover: one hop of context, everything else recedes ── */
   // The clear happens ONLY when the pointer leaves the canvas (graph-viewer.html binds it on the
