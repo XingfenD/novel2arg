@@ -4,6 +4,9 @@ Higher versions on top. Each entry: English line, then Chinese line; entries sep
 
 ## Unreleased
 
+- Move the README into `docs/`: the Chinese version becomes the default `docs/README.md`, the English version becomes `docs/README_en.md`, the old docs README index is merged into both, and the repository root no longer carries a README.
+- 将 README 移入 `docs/`：中文版成为默认的 `docs/README.md`，英文版为 `docs/README_en.md`，原 docs README 索引并入两份文档，仓库根目录不再有 README。
+
 - Rewrite the root `README.md` as a full English landing page (positioning, what you get, install, usage, the eight-step workflow table, repository map, requirements, license and responsible use) and move the Chinese version into a new `README_zh.md` sibling, ending the root README's bilingual duplication.
 - 将根 `README.md` 重写为完整的英文落地页（定位、产出物、安装、用法、八步工作流表、仓库地图、运行要求、许可与合规），中文版移入新的 `README_zh.md` 同名单文件，根 README 不再中英并置。
 
