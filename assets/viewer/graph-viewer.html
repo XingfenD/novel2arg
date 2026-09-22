@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Site Graph — novel2arg</title>
+<style>
+  :root { --ink:#1a1a1a; --chrome:#c8c8c8; --body:#555; --start:#1a7f37; --gate:#c0392b; --post:#e67e22; --search:#2471a3; --bg:#fafafa; }
+  * { box-sizing: border-box; }
+  body { margin:0; font:13px/1.45 -apple-system,"Segoe UI","Noto Sans SC",sans-serif; color:var(--ink); background:var(--bg); }
+  header { position:sticky; top:0; background:#fff; border-bottom:1px solid #ddd; padding:8px 12px; display:flex; gap:14px; align-items:center; flex-wrap:wrap; z-index:2; }
+  header h1 { font-size:14px; margin:0; }
+  .ctl { display:flex; gap:4px; align-items:center; }
+  .ctl label { display:flex; gap:3px; align-items:center; cursor:pointer; }
+  .dot { width:10px; height:10px; border-radius:2px; display:inline-block; }
+  #filter { padding:2px 6px; }
+  main { display:flex; height:calc(100vh - 41px); }
+  #graphWrap { flex:1; overflow:auto; }
+  aside { width:350px; border-left:1px solid #ddd; background:#fff; padding:12px; overflow:auto; }
+  aside h2 { font-size:13px; margin:0 0 8px; }
+  .empty { color:#888; }
+  .kv { margin:2px 0; } .kv b { color:#444; }
+  .src { cursor:pointer; color:var(--search); text-decoration:underline; }
+  .prob { color:var(--gate); cursor:pointer; margin:2px 0; }
+  svg { display:block; }
+  .node rect { fill:#fff; stroke:#666; stroke-width:1.2; }
+  .node.selected rect { stroke:#000; stroke-width:2.4; }
+  .node.pulse rect { stroke:var(--search); stroke-width:3; }
+  .node text { font-size:11px; fill:var(--ink); }
+  .badge { font-size:10px; fill:#666; }
+  .edge { fill:none; stroke-width:1.4; }
+  .elabel { font-size:10px; fill:#444; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Site graph</h1>
+  <span id="meta"></span>
+  <span class="ctl"><input type="checkbox" id="chromeCtl" checked> chrome edges</span>
+  <span id="kinds"></span>
+  <input id="filter" placeholder="filter path…">
+  <button id="problemsBtn">problems</button>
+</header>
+<main>
+  <div id="graphWrap"><svg id="graph"></svg></div>
+  <aside id="panel"><p class="empty">Click a node or an edge.</p></aside>
+</main>
+<script type="application/json" id="graph-data">__SITE_GRAPH_JSON__</script>
+<script>
+'use strict';
+const graph = JSON.parse(document.getElementById('graph-data').textContent);
+const KIND_STYLE = {
+  start:        { c: 'var(--start)',  w: 2.6 },
+  nav:          { c: 'var(--chrome)', w: 1 },
+  footer:       { c: 'var(--chrome)', w: 1 },
+  breadcrumb:   { c: 'var(--body)',   w: 1.2, dash: '3 3' },
+  list:         { c: 'var(--body)',   w: 1.4 },
+  body:         { c: 'var(--body)',   w: 1.4 },
+  'gate-next':  { c: 'var(--gate)',   w: 2 },
+  'post-unlock':{ c: 'var(--post)',   w: 1.8, dash: '6 3' },
+  search:       { c: 'var(--search)', w: 1.6, dash: '2 3' },
+};
+// Layout constants — module scope so both layout() and render() can read them.
+const NW = 170, NH = 46, GX = 26, GY = 88;
+const nodeById = new Map(graph.nodes.map((n) => [n.id, n]));
+const state = { kinds: new Set(Object.keys(KIND_STYLE)), chrome: true, filter: '' };
+const $ = (s) => document.querySelector(s);
+const NS = 'http://www.w3.org/2000/svg';
+const el = (t, attrs) => { const e = document.createElementNS(NS, t); for (const k in attrs) e.setAttribute(k, attrs[k]); return e; };
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+function visibleEdges() {
+  return graph.edges.filter((e) => {
+    if (!KIND_STYLE[e.kind]) return false;
+    if (e.chrome && !state.chrome) return false;
+    if (!state.kinds.has(e.kind)) return false;
+    if (state.filter && !(e.from.includes(state.filter) || e.to.includes(state.filter))) return false;
+    return nodeById.has(e.from) && nodeById.has(e.to);
+  });
+}
+
+// Layered layout: rank by hops (entry on top; unreachable in a trailing orphan rank), order
+// within a rank by M7 progress page (reading order), then two barycenter passes over the
+// currently visible edges to reduce crossings.
+function layout() {
+  const edges = visibleEdges();
+  const maxHops = Math.max(0, ...graph.nodes.map((n) => n.hops ?? 0));
+  const orphanRank = maxHops + 1;
+  const byRank = new Map();
+  for (const n of graph.nodes) {
+    const r = n.hops ?? orphanRank;
+    if (!byRank.has(r)) byRank.set(r, []);
+    byRank.get(r).push(n);
+  }
+  const order = new Map();
+  for (const list of byRank.values()) {
+    list.sort((a, b) => (a.progress.page ?? 1e9) - (b.progress.page ?? 1e9) || a.id.localeCompare(b.id));
+    list.forEach((n, i) => order.set(n.id, i));
+  }
+  for (let pass = 0; pass < 2; pass++) {
+    const sum = new Map(), cnt = new Map();
+    for (const e of edges) for (const [x, y] of [[e.from, e.to], [e.to, e.from]]) {
+      if (!order.has(x) || !order.has(y)) continue;
+      sum.set(x, (sum.get(x) ?? 0) + order.get(y)); cnt.set(x, (cnt.get(x) ?? 0) + 1);
+    }
+    for (const list of byRank.values()) {
+      list.sort((a, b) => {
+        const sa = sum.has(a.id) ? sum.get(a.id) / cnt.get(a.id) : order.get(a.id);
+        const sb = sum.has(b.id) ? sum.get(b.id) / cnt.get(b.id) : order.get(b.id);
+        return sa - sb || a.id.localeCompare(b.id);
+      });
+      list.forEach((n, i) => order.set(n.id, i));
+    }
+  }
+  const pos = new Map();
+  for (const [r, list] of byRank) list.forEach((n, i) => pos.set(n.id, { x: 20 + i * (NW + GX), y: 20 + r * (NH + GY) }));
+  const width = Math.max(60, ...[...byRank.values()].map((l) => 20 + l.length * (NW + GX)));
+  const height = 20 + (Math.max(...byRank.keys()) + 1) * (NH + GY);
+  return { pos, edges, width, height };
+}
+
+function render() {
+  const { pos, edges, width, height } = layout();
+  const svg = $('#graph');
+  svg.innerHTML = '';
+  svg.setAttribute('width', width); svg.setAttribute('height', height);
+  svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+  const defs = el('defs');
+  for (const [kind, s] of Object.entries(KIND_STYLE)) {
+    const m = el('marker', { id: `arr-${kind}`, viewBox: '0 0 10 10', refX: 9, refY: 5, markerWidth: 7, markerHeight: 7, orient: 'auto-start-reverse' });
+    const p = el('path', { d: 'M0,0 L10,5 L0,10 z' }); p.style.fill = s.c;
+    m.appendChild(p); defs.appendChild(m);
+  }
+  svg.appendChild(defs);
+
+  for (const e of edges) {
+    const a = pos.get(e.from), b = pos.get(e.to), s = KIND_STYLE[e.kind];
+    const x1 = a.x + NW / 2, y1 = a.y + NH, x2 = b.x + NW / 2, y2 = b.y;
+    let d;
+    if (y2 > y1 + 4) d = `M${x1},${y1} C${x1},${y1 + 44} ${x2},${y2 - 44} ${x2},${y2}`;
+    else { const mx = Math.max(x1, x2) + 70; d = `M${x1},${y1 - NH / 2} C${mx},${y1 - NH / 2} ${mx},${y2 + NH / 2} ${x2},${y2 + NH / 2}`; }
+    const p = el('path', { d, class: 'edge', 'marker-end': `url(#arr-${e.kind})` });
+    p.style.stroke = s.c; p.style.strokeWidth = s.w;
+    if (s.dash) p.setAttribute('stroke-dasharray', s.dash);
+    p.addEventListener('click', () => select('edge', e));
+    svg.appendChild(p);
+    const label = e.guard ? '🔒 ' + e.guard.type : e.kind === 'search' ? e.evidence : '';
+    if (label) {
+      const t = el('text', { x: (x1 + x2) / 2, y: (y1 + y2) / 2 - 4, class: 'elabel', 'text-anchor': 'middle' });
+      t.textContent = label.length > 30 ? label.slice(0, 29) + '…' : label;
+      svg.appendChild(t);
+    }
+  }
+
+  for (const n of graph.nodes) {
+    if (!pos.has(n.id)) continue;
+    const { x, y } = pos.get(n.id);
+    const g = el('g', { class: 'node', transform: `translate(${x},${y})` });
+    g.appendChild(el('rect', { width: NW, height: NH, rx: 6 }));
+    const t1 = el('text', { x: 8, y: 17 }); t1.textContent = n.id.replace(/^.*\//, ''); g.appendChild(t1);
+    const badges = [];
+    if (n.isEntry) badges.push('entry');
+    if (n.gate) badges.push('🔒 gate');
+    if (n.isSearch) badges.push('🔍');
+    if (n.access.length) badges.push('👤' + n.access.join(','));
+    if (n.progress.page != null) badges.push(`#${n.progress.page}/${n.progress.total ?? '?'}`);
+    if (!n.reachable) badges.push('UNREACHABLE');
+    const t2 = el('text', { x: 8, y: 32, class: 'badge' }); t2.textContent = badges.join(' '); g.appendChild(t2);
+    g.addEventListener('click', () => select('node', n));
+    svg.appendChild(g);
+  }
+}
+
+let pos0 = new Map();
+function pulse(id) {
+  const nodes = [...document.querySelectorAll('.node')];
+  const p = pos0.get(id);
+  if (!p) return;
+  const g = nodes.find((n) => n.getAttribute('transform') === `translate(${p.x},${p.y})`);
+  if (!g) return;
+  g.classList.add('pulse');
+  setTimeout(() => g.classList.remove('pulse'), 1600);
+}
+
+function guardHtml(guard) {
+  if (!guard) return '<div class="kv"><b>guard:</b> none — free traversal</div>';
+  let h = `<div class="kv"><b>guard:</b> ${esc(guard.type)}</div>`;
+  if (guard.type === 'credential') {
+    guard.fields.forEach((f, i) => {
+      if (f.via === 'verbatim') h += `<div class="kv">field ${i + 1}: ${esc(JSON.stringify(f.plain))} ← ${f.sources.map((s) => `<span class="src" data-page="${esc(s.page)}">${esc(s.page)}</span>${s.afterGate ? ' (after its own gate)' : ''}`).join(' + ')}</div>`;
+      else if (f.via === 'derived') h += `<div class="kv">field ${i + 1}: derived — rule: ${esc(f.rule)} ← ${f.components.map((c) => `<span class="src" data-page="${esc(c.page)}">${esc(c.text)} @ ${esc(c.page)}</span>`).join(' + ')}</div>`;
+      else h += `<div class="kv">field ${i + 1}: <b>NO CLUE</b></div>`;
+    });
+  }
+  if (guard.type === 'keyword') h += `<div class="kv">keyword: ${esc(guard.keyword ?? guard.hash)} ← ${guard.sources.map((s) => `<span class="src" data-page="${esc(s.page)}">${esc(s.page)}</span>`).join(' + ')}</div>`;
+  if (guard.requires?.length) h += `<div class="kv">requires: ${esc(guard.requires.join(', '))} (granted by ${(guard.grantedBy ?? []).map((g) => `<span class="src" data-page="${esc(g)}">${esc(g)}</span>`).join(', ') || 'nothing'})</div>`;
+  return h;
+}
+
+function select(kind, obj) {
+  pos0 = layout().pos;
+  let h = '';
+  if (kind === 'edge') {
+    const e = obj;
+    h = `<h2>${esc(e.from)} → ${esc(e.to)}</h2>
+      <div class="kv"><b>kind:</b> ${esc(e.kind)}${e.chrome ? ' (chrome)' : ''}</div>
+      <div class="kv"><b>evidence:</b> ${esc(e.evidence)}</div>
+      <div class="kv"><b>route:</b> ${e.route ?? '—'} (${esc(e.routeClaim)})</div>
+      <div class="kv"><b>progress Δ:</b> ${e.progressDelta ?? '—'}${e.backJump ? ' — back-jump, review' : ''}</div>
+      ${guardHtml(e.guard)}`;
+  } else {
+    const n = obj;
+    h = `<h2>${esc(n.id)}</h2>
+      <div class="kv"><b>title:</b> ${esc(n.title ?? '—')}</div>
+      <div class="kv"><b>role:</b> ${esc(n.role)} · hops: ${n.hops ?? '—'} · ${n.reachable ? 'reachable' : 'UNREACHABLE'}</div>
+      <div class="kv"><b>progress:</b> ${esc(n.progress.raw ?? '—')} (${esc(n.progress.source)}${n.progress.anomalous ? ', anomalous' : ''})</div>
+      ${n.gate ? `<div class="kv"><b>gate:</b> ${n.gate.fields.length} field(s), grants ${esc(n.gate.grants.join(', ') || '—')}</div>` : ''}
+      ${n.access.length ? `<div class="kv"><b>access:</b> ${esc(n.access.join(', '))}</div>` : ''}
+      ${n.supplies.length ? `<div class="kv"><b>supplies:</b></div>` + n.supplies.map((s) => `<div class="kv">· ${esc(s.kind)}: ${esc(JSON.stringify(s.plain))}${s.afterGate ? ' (after its own gate)' : ''}</div>`).join('') : ''}`;
+  }
+  $('#panel').innerHTML = h;
+  for (const s of document.querySelectorAll('.src')) s.addEventListener('click', () => pulse(s.dataset.page));
+  for (const g of document.querySelectorAll('.node')) g.classList.remove('selected');
+  if (kind === 'node') {
+    const p = pos0.get(obj.id);
+    const g = p && [...document.querySelectorAll('.node')].find((n) => n.getAttribute('transform') === `translate(${p.x},${p.y})`);
+    if (g) g.classList.add('selected');
+  }
+}
+
+function problemsPanel() {
+  const h = '<h2>Problems</h2>' + (graph.problems.length
+    ? graph.problems.map((p) => {
+        const id = p.page ?? p.node ?? p.detail ?? '';
+        const label = p.page ?? p.node ?? p.detail ?? p.edge ?? p.url ?? '';
+        return `<div class="prob" data-page="${esc(id)}">${esc(p.type)} — ${esc(label)}${p.fields ? ' [' + esc(p.fields.join(', ')) + ']' : ''}</div>`;
+      }).join('')
+    : '<p class="empty">none</p>');
+  $('#panel').innerHTML = h;
+  for (const p of document.querySelectorAll('.prob')) p.addEventListener('click', () => { const id = p.dataset.page; if (nodeById.has(id)) select('node', nodeById.get(id)); });
+}
+
+$('#chromeCtl').addEventListener('change', (ev) => { state.chrome = ev.target.checked; render(); });
+$('#filter').addEventListener('input', (ev) => { state.filter = ev.target.value.trim(); render(); });
+$('#problemsBtn').addEventListener('click', problemsPanel);
+for (const kind of Object.keys(KIND_STYLE)) {
+  const s = KIND_STYLE[kind];
+  const lab = document.createElement('label');
+  lab.innerHTML = `<input type="checkbox" checked><span class="dot" style="background:${s.c}"></span>${kind}`;
+  lab.querySelector('input').addEventListener('change', (ev) => { ev.target.checked ? state.kinds.add(kind) : state.kinds.delete(kind); render(); });
+  $('#kinds').appendChild(lab);
+}
+$('#meta').textContent = `${graph.stats.pages} pages · ${graph.stats.edges} edges · ${graph.stats.problems} problems · ${graph.generatedAt}`;
+render();
+</script>
+</body>
+</html>
