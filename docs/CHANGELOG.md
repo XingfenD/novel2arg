@@ -4,6 +4,9 @@ Higher versions on top. Each entry: English line, then Chinese line; entries sep
 
 ## Unreleased
 
+- Light copy-edit of `docs/README.md` and `docs/USAGE.md`: tighten stiff wording in place ("在规则层面被禁止" → "都被规则禁止"; drop the filler "进行" in "进行诽谤" and "进行商业使用"); no sentence or structure changes.
+- 轻度文案清理 `docs/README.md` 与 `docs/USAGE.md`：就地收紧生硬表达（"在规则层面被禁止"→"都被规则禁止"；删去"进行诽谤""进行商业使用"中不承载内容的"进行"）；未删句、未改结构。
+
 - Make the USAGE notice Chinese-default like the README pair: `docs/USAGE.md` becomes the Chinese default, the English version moves to `docs/USAGE_en.md`, and the old `docs/USAGE_zh.md` is removed; update every citation in `docs/README.md`, `docs/README_en.md`, and `AGENTS.md`.
 - 将 USAGE 使用须知改为与 README 一致的中文默认：`docs/USAGE.md` 成为中文默认版，英文版移至 `docs/USAGE_en.md`，删除旧的 `docs/USAGE_zh.md`；同步更新 `docs/README.md`、`docs/README_en.md` 与 `AGENTS.md` 中的全部引用。
 
