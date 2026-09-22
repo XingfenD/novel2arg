@@ -39,11 +39,26 @@ Module marks (M1…M13) come from `references/design-playbook.md` §2 and appear
 │   └── credentials.src.json      # M2 derived-credential provenance (development only)
 ├── tools/                        # the tool files copied from this skill's assets/tools/ at scaffold time
 ├── viewer/                       # the graph renderer template copied at scaffold time (graph-viewer.html); never a site page
+├── .gitignore                    # copied from assets/gitignore.template: development by-products stay out of history
+├── .dockerignore                 # copied from assets/dockerignore.template: plaintext sources / docs / dev trees stay out of the image
 └── README.md                     # How to run + GDD link + player notes
 ```
 
 `tools/`, `viewer/`, `docs/` and `deploy/` hold no site page: the page-walking tools skip them (`CONFIG.skipDirs`,
 `references/structure/tooling.md` §2), so a generated `docs/site-graph.html` can never inflate the page count.
+
+Two ignore files come with the tree, copied from this skill's `assets/gitignore.template` and
+`assets/dockerignore.template` at scaffold time (bodies: those files; do not retype them here). They answer two
+different questions and a project needs both:
+
+- **`.gitignore`** — what must never enter history. Development by-products: the plaintext `data/*.src.json`
+tables (the answer key, R3), the generated `docs/site-graph.{json,html}`, an agent's scratch `memory/`, editor
+and OS junk. Everything the site publishes stays tracked (`index.html`, `pages/`, `assets/`, `data/*.json`,
+`tools/`, `viewer/`, the `docs/*.md` artifacts).
+- **`.dockerignore`** (or the deploy script's rsync exclude list) — what must never reach a visitor. Deploying a
+static tree is a copy, so the same material is a second problem: the plaintext tables, the `docs/` artifacts
+(the GDD and reachability chain are the whole game in prose), and the `tools/` `viewer/` `deploy/` machinery.
+A plaintext source is listed in both files.
 
 The tools ship under `assets/tools/` in this skill; scaffold copies them into `tools/` so the project stays
 self-contained and re-runnable. They run on Node built-ins only (`node:crypto`, `node:fs`, `node:path`,

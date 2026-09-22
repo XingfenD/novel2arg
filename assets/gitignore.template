@@ -1,0 +1,38 @@
+# .gitignore template for a novel2arg game — copied into the project root at scaffold time (step 6),
+# alongside tools/ and viewer/. It keeps development by-products out of the repository while everything
+# the deploy needs (index.html, pages/, assets/, data/*.json, tools/, viewer/) stays tracked.
+#
+# Two different jobs, two different files: .gitignore keeps junk out of Git history, .dockerignore /
+# the rsync exclude list keeps development material out of the deployed image. A plaintext table must be
+# listed in both (it is worse than junk: it is the answer key, R3).
+
+# ── Development-only plaintext sources (R3): the answer key, never committed, never deployed ──
+data/*.src.json
+
+# ── dev/ops trees: no site page lives here (the tools skip them via CONFIG.skipDirs) ──
+docs/site-graph.html
+docs/site-graph.json
+memory/
+review_comments.md
+*.log
+
+# ── Novel text (copyright material; keep it locally, do not publish it) ──
+docs/novel.txt
+
+# ── OS files ──
+.DS_Store
+Thumbs.db
+
+# ── Editor / IDE ──
+.vscode/
+.idea/
+
+# ── Agent scratch dirs (an agent working in this repo writes its own logs here) ──
+.codex/
+.opencode/
+.claude/
+.superpowers/
+docs/superpowers/
+
+# ── Node (the tools need no install; a project that adds one gets node_modules) ──
+node_modules/
