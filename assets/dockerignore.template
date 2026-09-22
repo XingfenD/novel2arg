@@ -1,0 +1,26 @@
+# .dockerignore template for a novel2arg game — copied into the project root at scaffold time (step 6).
+# Deploying the static tree is a COPY, so this is the second half of the .gitignore job: what Git keeps
+# out of history, the image must keep out of the visitor's hands.
+#
+# What stays OUT of the image, and why:
+#   data/*.src.json  — plaintext keyword / credential tables: the answer key in a request away (R3).
+#   docs/            — the GDD, reachability chain, puzzle audit, site graph: every answer in prose.
+#   tools/ viewer/   — the checkers, config and renderer template: dev machinery, not pages.
+#   deploy/          — deploy scripts and manifests.
+#   .git/ node_modules/ — nothing a static host needs.
+#
+# Everything else ships: index.html, pages/ (or apps/), assets/ (css, js, img, audio, docs),
+# the hashed data/*.json tables, portal.html / query.html / results.html and README.md as desired.
+
+.git
+.gitignore
+.dockerignore
+Dockerfile*
+node_modules
+
+docs
+tools
+viewer
+deploy
+
+data/*.src.json

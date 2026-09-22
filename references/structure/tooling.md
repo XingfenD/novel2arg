@@ -14,6 +14,7 @@ node tools/check-links.mjs        # dead links + public-index leaks; expect "0 d
 node tools/check-solvable.mjs     # cold-start walk; expect "fixpoint in N round(s) · gates 4/4 unlocked · pages 28/28 reachable"
 node tools/check-credentials.mjs  # composite/derived credentials: parts + rule + zero-plaintext (run whenever data/credentials.src.json exists)
 node tools/check-reachability.mjs # rehearsal build: inject the credentials into a throwaway copy, then prove gates unlock + pages reachable
+node tools/site-graph.mjs       # writes docs/site-graph.json + the viewer tree docs/site-graph/ (reporting tool — exits 0 with problems)
 ```
 
 `check-solvable.mjs` automates the credential-provenance half of the manual walkthrough **for verbatim credentials**, so the manual pass only judges tone and pacing. It exits non-zero when a clue is deleted, a password changes, a clue is misplaced inside a page's own post-unlock block, or a listing entry is cut — run it after every content edit, not just before deploy. It reads gate conventions from components.md §3 (`data-expect-hash`, `x-show="unlocked"` / `<template x-if="unlocked">`, `x-data="search"`); a project that renames those markers edits `tools/config.mjs` (§2), then re-checks the matcher with `node tools/check-solvable.mjs --self-test`.
@@ -25,6 +26,8 @@ public-page components; `check-reachability.mjs` proves the graph still unlocks 
 
 `hash.mjs` is a design-time helper (step 3/5, when computing a gate's `data-expect-hash` values);
 `vendor-alpine.mjs` runs once at scaffold time (step 6).
+
+`site-graph.mjs` shares `site-model.mjs` with `check-solvable.mjs`, so the graph can never disagree with the walk. It draws the same jump relations the walk follows — including `<form action>` submissions, which the walk has always followed (`linksOf`) and which an anchor-only edge set would leave out, calling a form-reached results page unreachable. Should a jump form still escape the graph, the page the walk reaches shows up as a `walk-divergence` problem instead of a silent `unreachable` verdict. It reports the same defects the checkers gate on (unreachable pages, stuck gates, dead targets, layer leaks) plus design-surface signals the checkers do not model: M7 progress extraction and mismatches, step-4 closed-list route claims per edge, and negative progress deltas on non-chrome edges (back-jumps). It exits 0 with problems — gating stays with the checkers.
 
 ## 2. Shared config (tools/config.mjs)
 
@@ -44,7 +47,7 @@ file instead of rewriting a checker (a rewrite throws away the defects these che
 | `maxTokenLen` / `maxPhraseWords` / `maxPhraseLen` | 8 / 4 / 48 | check-solvable matcher |
 | `credTable` | `data/credentials.src.json` | check-credentials, check-reachability |
 | `derivedKinds` / `zeroPlaintextKinds` | `['account','secret']` / `['account']` | check-credentials |
-| `credSkipDirs` | `.git node_modules docs tools deploy` | check-credentials |
+| `skipDirs` | `.git node_modules tools viewer docs deploy` | the page walk (check-links, check-solvable, site-graph) · check-credentials |
 | `solver` | `tools/check-solvable.mjs` | check-reachability |
 
 `node tools/check-solvable.mjs --self-test` verifies the matcher (multi-word, long-word, HTML entity, CJK)
@@ -52,7 +55,7 @@ after a config edit.
 
 ## 3. What stays manual
 
-Nine things no static checker can see. Each has a manual method or a companion tool; skipping it is the leak path.
+Ten things no static checker can see. Each has a manual method or a companion tool; skipping it is the leak path.
 
 1. **Runtime bindings** — `:href`, `x-bind`, DOM assembled in JS. Both link checkers resolve static `href`, static `<form action>`, and gate `data-next` targets only. The manual method is the keyword tables (search-result routes live there; `data-index` tells the checker which table a search page can reach) and modelling session state as `data-grant` / `data-access` (`references/structure/form-system.md` §5).
 2. **Hubs that are their own database** — container B's plaintext `FILE_DATABASE`, container C's absolute cross-site links. Manual method: treat the hub as a listing page in the step-4 walk, then click every entry once during the step-8 chrome sweep.
@@ -63,6 +66,7 @@ Nine things no static checker can see. Each has a manual method or a companion t
 7. **Per-tab session vs. new-tab results** — check-solvable models identities as one global set, so it cannot see that `sessionStorage` is per-tab while results open `target="_blank"` in a fresh tab; it reports green while the browser shows the document locked. Manual method: the step-8 cross-tab test; structural fix: a session cookie (components.md §2–§3, `references/structure/form-system.md` §6).
 8. **Element-level permission masking** — a checker reads page *text*, not computed visibility; a credential hidden only by `x-show` / a CSS class / an element-level `data-access` is still in the HTML sent to every visitor, and client-side masking is not privacy (R12). Treat it as public: the step-8 chrome scan and `check-credentials`' zero-plaintext assertion catch it.
 9. **GDD-declared assets that were never landed** — an emblem / seal / scan / photo / mock-doc the manifest lists but no page references has no `src` to resolve, so neither checker complains. Manual method: the step-8 asset-manifest reconciliation — every declared asset exists under `assets/` and is referenced by at least one page.
+10. **Route claims and progress back-jumps** — `site-graph.mjs` classifies every edge with a step-4 closed-list route (`structural` where the machine can decide, `heuristic` for a body link read as a related-document reference) and flags non-chrome edges whose progress delta is negative. Confirm every `heuristic` claim and every back-jump against `docs/reachability.md` — the tool cannot judge whether the organization would really print the link.
 
 The matcher reads *page text*, not the DOM, for the same reason the player does: it proves a string was
 readable before the gate. A clue hidden in a `placeholder`, `title`, or JS string is invisible to both player

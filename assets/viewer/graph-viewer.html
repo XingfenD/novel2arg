@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Site Graph — novel2arg</title>
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/canvas.css">
+</head>
+<body>
+<header class="masthead" x-data="toolbar">
+  <div class="masthead-row">
+    <span class="title"><b>层级图</b> · site graph</span>
+    <span class="subtitle" x-text="$store.graph.meta"></span>
+  </div>
+  <div class="toolbar">
+    <label class="ctl"><input type="checkbox" x-model="$store.graph.chrome">框架边</label>
+    <span id="kinds">
+      <template x-for="k in kinds" :key="k.id">
+        <label class="ctl"><input type="checkbox" checked :aria-label="'显示 ' + k.label" @change="$store.graph.toggleKind(k.id, $event.target.checked)"><span class="dot" :style="'background:' + k.c"></span><span x-text="k.label"></span></label>
+      </template>
+    </span>
+    <input id="filter" x-model="$store.graph.filter" placeholder="筛选路径…" aria-label="按路径筛选">
+    <span class="zoomctl">
+      <button @click="zoomBy(1.25)" aria-label="放大">+</button>
+      <button @click="zoomBy(1/1.25)" aria-label="缩小">−</button>
+      <button @click="toggleFit()" x-text="$store.graph.fitLabel"></button>
+    </span>
+    <button @click="showProblems()">问题清单 <span x-text="$store.graph.problems.length"></span></button>
+  </div>
+</header>
+<main>
+  <div id="graphWrap" x-data="canvas" x-ref="wrap" @resize.window="syncHead()"
+       @wheel.prevent="wheel($event)"
+       @pointerdown="dragStart($event)"
+       @pointermove.window="dragMove($event)"
+       @pointerup.window="dragEnd()"
+       @pointerleave="leaveNodes()"
+       @dblclick="resetView()">
+    <svg id="graph" role="img" aria-label="站点链接图"></svg>
+    <div id="minimapWrap" class="hidden"><svg id="minimap" role="img" aria-label="全图鸟瞰" @pointerdown="mmDown($event)" @pointermove.window="mmMove($event)" @pointerup.window="mmUp()"></svg></div>
+  </div>
+  <aside id="panel" x-data="rail" x-html="panel"></aside>
+</main>
+<script type="application/json" id="graph-data">__SITE_GRAPH_JSON__</script>
+<script src="js/lib/dom.js"></script>
+<script src="js/lib/legend.js"></script>
+<script src="js/lib/layout.js"></script>
+<script src="js/lib/store.js"></script>
+<script src="js/canvas.js"></script>
+<script src="js/rail.js"></script>
+<script src="js/toolbar.js"></script>
+<script src="js/vendor/alpine.js"></script>
+</body>
+</html>

@@ -11,5 +11,10 @@ Desktop.ini
 .codex/
 .opencode/
 .claude/
+.superpowers/
+docs/superpowers/
 
 review_comments.md
+
+# Worktrees
+.worktrees/

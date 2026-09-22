@@ -16,3 +16,5 @@ jobs:
         run: node scripts/check-docs.mjs
       - name: Matcher self-test
         run: node assets/tools/check-solvable.mjs --self-test
+      - name: Site-graph self-test (fixture)
+        run: node assets/tools/site-graph.mjs --self-test
