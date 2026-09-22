@@ -4,6 +4,9 @@ Higher versions on top. Each entry: English line, then Chinese line; entries sep
 
 ## Unreleased
 
+- Retune the `docs/README.md` tagline: replace the definition-style colon in "一个 agent 技能：……" with a comma so the sentence reads as an introduction instead of a dictionary entry.
+- 调整 `docs/README.md` 首句：把「一个 agent 技能：……」的词条式冒号改为逗号，让句子读作介绍而非释义。
+
 - Light copy-edit of `docs/README.md` and `docs/USAGE.md`: tighten stiff wording in place ("在规则层面被禁止" → "都被规则禁止"; drop the filler "进行" in "进行诽谤" and "进行商业使用"); no sentence or structure changes.
 - 轻度文案清理 `docs/README.md` 与 `docs/USAGE.md`：就地收紧生硬表达（"在规则层面被禁止"→"都被规则禁止"；删去"进行诽谤""进行商业使用"中不承载内容的"进行"）；未删句、未改结构。
 
