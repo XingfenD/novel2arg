@@ -17,7 +17,7 @@ import { analyze, hash, relOf, visible, nextOf } from './site-model.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const TEMPLATE_PATH = join(HERE, '..', 'viewer', 'graph-viewer.html');
-const FIXTURE = join(HERE, 'fixtures', 'mini-site');
+const FIXTURE = join(HERE, '..', 'fixtures', 'mini-site');
 const SCHEMA = 'novel2arg/site-graph/v1';
 
 const BREADCRUMB_RE = /^\s*(返回|back to|«|←|‹)/i;
