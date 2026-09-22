@@ -13,15 +13,24 @@
   .ctl label { display:flex; gap:3px; align-items:center; cursor:pointer; }
   .dot { width:10px; height:10px; border-radius:2px; display:inline-block; }
   #filter { padding:2px 6px; }
-  main { display:flex; height:calc(100vh - 41px); }
-  #graphWrap { flex:1; overflow:auto; }
-  aside { width:350px; border-left:1px solid #ddd; background:#fff; padding:12px; overflow:auto; }
-  aside h2 { font-size:13px; margin:0 0 8px; }
+  /* dvh tracks the mobile URL bar; 100vh does not, and a wrapped header makes the guess wrong anyway. */
+  main { display:flex; height:calc(100dvh - var(--head, 41px)); }
+  #graphWrap { flex:1; min-width:0; overflow:auto; }
+  aside { width:350px; flex:0 0 350px; border-left:1px solid #ddd; background:#fff; padding:12px; overflow:auto; }
+  @media (max-width: 820px) {
+    /* One column on a phone: the panel sits under the canvas instead of squeezing it to nothing. */
+    main { display:block; height:auto; }
+    #graphWrap { height:58dvh; }
+    aside { width:auto; flex:none; border-left:0; border-top:1px solid #ddd; max-height:42dvh; }
+  }
   .empty { color:#888; }
   .kv { margin:2px 0; } .kv b { color:#444; }
   .src { cursor:pointer; color:var(--search); text-decoration:underline; }
   .prob { color:var(--gate); cursor:pointer; margin:2px 0; }
-  svg { display:block; }
+  /* The graph keeps its own pixel canvas — the viewer pans and zooms inside it, so a wide graph
+     stays readable on a narrow screen instead of being scaled down to dust. */
+  svg { display:block; max-width:none; touch-action:pan-x pan-y; cursor:grab; }
+  #graphWrap.zoomed svg { cursor:grabbing; }
   .node rect { fill:#fff; stroke:#666; stroke-width:1.2; }
   .node.selected rect { stroke:#000; stroke-width:2.4; }
   .node.pulse rect { stroke:var(--search); stroke-width:3; }
@@ -29,6 +38,8 @@
   .badge { font-size:10px; fill:#666; }
   .edge { fill:none; stroke-width:1.4; }
   .elabel { font-size:10px; fill:#444; }
+  aside h2 { font-size:13px; margin:0 0 8px; }
+  .hint { font-size:12px; color:#666; }
 </style>
 </head>
 <body>
@@ -39,10 +50,11 @@
   <span id="kinds"></span>
   <input id="filter" placeholder="filter path…">
   <button id="problemsBtn">problems</button>
+  <button id="fitBtn">fit</button>
 </header>
 <main>
   <div id="graphWrap"><svg id="graph"></svg></div>
-  <aside id="panel"><p class="empty">Click a node or an edge.</p></aside>
+  <aside id="panel"><p class="empty">Click a node or an edge.<br><span class="hint">Drag or scroll to pan · pinch / ctrl-scroll to zoom · “fit” shows the whole graph.</span></p></aside>
 </main>
 <script type="application/json" id="graph-data">__SITE_GRAPH_JSON__</script>
 <script>
@@ -119,11 +131,25 @@ function layout() {
   return { pos, edges, width, height };
 }
 
+// Fit-to-width: the full canvas is wide, so on a narrow screen the viewer opens scaled down, centered,
+// and the reader zooms into what matters. Zoomed in, the canvas pans by drag or scroll.
+// The canvas owns its pixel coordinates; fit() only writes width/height, so pointer positions need no math.
+function fit() {
+  const wrap = $('#graphWrap'), svg = $('#graph'), btn = $('#fitBtn');
+  const cw = svg.dataset.cw, ch = svg.dataset.ch;
+  const natural = svg.getAttribute('width') === cw;
+  if (natural) { svg.setAttribute('width', '100%'); svg.setAttribute('height', 'auto'); btn.textContent = 'fit'; }
+  else { svg.setAttribute('width', cw); svg.setAttribute('height', ch); btn.textContent = '100%'; }
+  wrap.classList.toggle('zoomed', !natural);
+}
+
 function render() {
   const { pos, edges, width, height } = layout();
   const svg = $('#graph');
   svg.innerHTML = '';
-  svg.setAttribute('width', width); svg.setAttribute('height', height);
+  svg.dataset.cw = width; svg.dataset.ch = height;
+  if ($('#fitBtn').textContent === '100%') { svg.setAttribute('width', width); svg.setAttribute('height', height); }
+  else { svg.setAttribute('width', '100%'); svg.setAttribute('height', 'auto'); }
   svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
   const defs = el('defs');
   for (const [kind, s] of Object.entries(KIND_STYLE)) {
@@ -241,6 +267,12 @@ function problemsPanel() {
 }
 
 $('#chromeCtl').addEventListener('change', (ev) => { state.chrome = ev.target.checked; render(); });
+$('#fitBtn').addEventListener('click', fit);
+// Keep the sticky-header height honest: the controls wrap on a narrow screen, and 100dvh minus a
+// hard-coded 41px would hide the bottom of the canvas behind the fold.
+function syncHead() { document.documentElement.style.setProperty('--head', `${document.querySelector('header').offsetHeight}px`); }
+addEventListener('resize', syncHead);
+syncHead();
 $('#filter').addEventListener('input', (ev) => { state.filter = ev.target.value.trim(); render(); });
 $('#problemsBtn').addEventListener('click', problemsPanel);
 for (const kind of Object.keys(KIND_STYLE)) {
