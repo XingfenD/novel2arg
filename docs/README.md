@@ -58,7 +58,7 @@ agent 会把仓库放进对应的 skills 目录。
 - `scripts/check-docs.mjs` — 仓库自检（路径、§ 引用、规则编号、链接、孤儿文档），由 CI（`.github/workflows/ci.yml`）运行
 - `docs/CHANGELOG.md` — 变更日志（每条中英文各一行）
 - `LICENSE` / `LICENSE.docs` — 双许可：代码与工具用 MIT，文档与提示词内容用 CC BY-SA 4.0
-- `docs/USAGE.md` / `docs/USAGE_zh.md` — 使用须知中英文版（改编有版权的小说、欺骗性使用边界）；属政策声明，不是许可证的一部分
+- `docs/USAGE.md` / `docs/USAGE_en.md` — 使用须知中文默认版与英文译版（改编有版权的小说、欺骗性使用边界）；属政策声明，不是许可证的一部分
 
 ## 运行要求
 
@@ -68,9 +68,9 @@ Node.js 20+ 用于运行检查器工具。生成的游戏本身是纯静态 HTML
 
 双许可：代码与工具为 [MIT](../LICENSE)，文档与 prompt 内容为 [CC BY-SA 4.0](../LICENSE.docs)。你用本技能产出的游戏归你所有，不受两份许可证约束。
 
-改编受版权保护的小说或公开部署游戏前，请先读[使用须知](USAGE_zh.md)（[English](USAGE.md)）：改编需要权利人许可，产出物不得用于钓鱼、冒充真实机构或诽谤。
+改编受版权保护的小说或公开部署游戏前，请先读[使用须知](USAGE.md)（[English](USAGE_en.md)）：改编需要权利人许可，产出物不得用于钓鱼、冒充真实机构或诽谤。
 
 ## 文档
 
 - 更新日志：[CHANGELOG.md](CHANGELOG.md)
-- 负责任使用说明：[USAGE_zh.md](USAGE_zh.md)（[English](USAGE.md)）
+- 负责任使用说明：[USAGE.md](USAGE.md)（[English](USAGE_en.md)）

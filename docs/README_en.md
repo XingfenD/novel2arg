@@ -58,7 +58,7 @@ The skill runs an eight-step workflow. Steps 4 and 5 gate scaffolding, and step 
 - `scripts/check-docs.mjs` — repo self-check (paths, section citations, rule IDs, links, orphans), run by CI (`.github/workflows/ci.yml`)
 - `docs/CHANGELOG.md` — change log (English + Chinese per entry)
 - `LICENSE` / `LICENSE.docs` — dual license: MIT for code & tooling, CC BY-SA 4.0 for docs & prompt content
-- `docs/USAGE.md` / `docs/USAGE_zh.md` — responsible-use notice in English and Chinese (adapting copyrighted novels, deception boundaries); a policy statement, not part of the licenses
+- `docs/USAGE.md` / `docs/USAGE_en.md` — responsible-use notice, Chinese by default with an English translation (adapting copyrighted novels, deception boundaries); a policy statement, not part of the licenses
 
 ## Requirements
 
@@ -68,9 +68,9 @@ Node.js 20+ runs the checker tools. The generated game itself is plain static HT
 
 Dual-licensed: code and tooling under [MIT](../LICENSE), docs and prompt content under [CC BY-SA 4.0](../LICENSE.docs). Outputs you generate with this skill are yours and are not covered by either license.
 
-Before adapting a copyrighted novel or deploying a game publicly, read [USAGE.md](USAGE.md) ([中文](USAGE_zh.md)): adapting a copyrighted novel requires the rightsholder's permission, and outputs must never be used for phishing, impersonation of real organizations, or defamation.
+Before adapting a copyrighted novel or deploying a game publicly, read [USAGE_en.md](USAGE_en.md) ([中文](USAGE.md)): adapting a copyrighted novel requires the rightsholder's permission, and outputs must never be used for phishing, impersonation of real organizations, or defamation.
 
 ## Documentation
 
 - Changelog: [CHANGELOG.md](CHANGELOG.md)
-- Responsible use: [USAGE.md](USAGE.md) ([中文](USAGE_zh.md))
+- Responsible use: [USAGE_en.md](USAGE_en.md) ([中文](USAGE.md))

@@ -4,6 +4,9 @@ Higher versions on top. Each entry: English line, then Chinese line; entries sep
 
 ## Unreleased
 
+- Make the USAGE notice Chinese-default like the README pair: `docs/USAGE.md` becomes the Chinese default, the English version moves to `docs/USAGE_en.md`, and the old `docs/USAGE_zh.md` is removed; update every citation in `docs/README.md`, `docs/README_en.md`, and `AGENTS.md`.
+- 将 USAGE 使用须知改为与 README 一致的中文默认：`docs/USAGE.md` 成为中文默认版，英文版移至 `docs/USAGE_en.md`，删除旧的 `docs/USAGE_zh.md`；同步更新 `docs/README.md`、`docs/README_en.md` 与 `AGENTS.md` 中的全部引用。
+
 - Move the README into `docs/`: the Chinese version becomes the default `docs/README.md`, the English version becomes `docs/README_en.md`, the old docs README index is merged into both, and the repository root no longer carries a README.
 - 将 README 移入 `docs/`：中文版成为默认的 `docs/README.md`，英文版为 `docs/README_en.md`，原 docs README 索引并入两份文档，仓库根目录不再有 README。
 
