@@ -10,8 +10,7 @@
 data/*.src.json
 
 # ── dev/ops trees: no site page lives here (the tools skip them via CONFIG.skipDirs) ──
-docs/site-graph.html
-docs/site-graph.json
+docs/site-graph*
 memory/
 review_comments.md
 *.log

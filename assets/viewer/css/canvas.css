@@ -1,0 +1,35 @@
+/* Site graph viewer — canvas: the SVG graph itself. Nodes read as document cards, edges as rules;
+   hover dims everything but the hovered page's one hop. The wrap never scrolls natively — the
+   canvas owns its pixel coordinates and the JS view transform (zoom/pan) replaces scrollbars. */
+#graphWrap { flex:1; min-width:0; overflow:hidden; touch-action:none; cursor:grab; }
+#graphWrap.dragging { cursor:grabbing; }
+#graphWrap svg { display:block; max-width:none; }
+
+svg { background:var(--paper); }
+.grid { stroke:var(--wash); stroke-width:1; }
+.edge { fill:none; stroke-width:1.3; transition:opacity .12s ease; }
+.edge.dim { opacity:.06; }
+.elabel { font:10px var(--mono); fill:var(--ink-3); }
+.lock { font:9px var(--sans); fill:var(--gate); }
+.node { cursor:pointer; transition:opacity .12s ease; }
+.node.dim { opacity:.12; }
+.node .card { fill:var(--paper); stroke:var(--rule); stroke-width:1; }
+.node .file { font:12.5px var(--serif); fill:var(--ink); }
+.node .path { font:10px var(--sans); fill:var(--ink-3); letter-spacing:.02em; }
+/* the ink bar sits on the left edge and carries span count / query fields — the site-map margin mark */
+.node .bar { fill:var(--rule); }
+.node .meta { font:10px var(--sans); fill:var(--ink-2); }
+/* progress reads like a court docket: the ordering the fiction expects, typed as a number */
+.node .docket { font:11px var(--mono); fill:var(--ink-3); text-anchor:end; }
+.node .warn { font:10px var(--sans); fill:var(--stamp); text-anchor:end; letter-spacing:.04em; }
+.node.gate .card { stroke-width:1.6; }
+.node.gate .bar { fill:var(--gate); }
+.node.search .card { stroke-dasharray:1 2; }
+.node.search .bar { fill:var(--search); }
+.node.unreach .card { stroke:var(--stamp); stroke-dasharray:2 2; }
+.node.unreach .bar { fill:var(--stamp); }
+.node.selected .card { stroke:var(--ink); stroke-width:2; }
+.node.selected .bar { fill:var(--ink); }
+.node.pulse .card { stroke:var(--search); stroke-width:3; }
+.rank-label { font:10px var(--mono); fill:var(--ink-3); }
+@media (prefers-reduced-motion: reduce) { * { animation:none !important; transition:none !important; } }

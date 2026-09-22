@@ -1,7 +1,7 @@
 // Site graph builder — vertices are HTML files, edges are the jump relations between them.
-// The JSON is the data contract (for agents); graph-viewer.html is the rendering framework (for
-// humans); this script emits both. Reporting tool: it exits 0 even when it finds problems —
-// check-solvable.mjs / check-links.mjs remain the gatekeepers.
+// The JSON is the data contract (for agents); the graph-viewer tree renders it (for humans); this
+// script emits the JSON plus that tree as a self-contained folder. Reporting tool: it exits 0 even
+// when it finds problems — check-solvable.mjs / check-links.mjs remain the gatekeepers.
 //
 // Ceilings (same as check-solvable.mjs, which shares this core): only static href / action /
 // data-next are followed — Alpine :href bindings are invisible; a derived credential is recorded
@@ -9,8 +9,8 @@
 // and heuristic ones are confirmed by a human against docs/reachability.md.
 // Invariant: every page the walk reaches has an inbound edge here — a link form this tool fails to model
 // surfaces as a `walk-divergence` problem, never as a silent `unreachable` verdict.
-import { readFileSync, writeFileSync, mkdirSync, existsSync, mkdtempSync, rmSync } from 'node:fs';
-import { dirname, join, resolve, basename } from 'node:path';
+import { readFileSync, writeFileSync, copyFileSync, mkdirSync, existsSync, mkdtempSync, rmSync, cpSync } from 'node:fs';
+import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { tmpdir } from 'node:os';
 
@@ -18,7 +18,8 @@ import CONFIG from './config.mjs';
 import { analyze, hash, relOf, visible, nextOf } from './site-model.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
-const TEMPLATE_PATH = join(HERE, '..', 'viewer', 'graph-viewer.html');
+const VIEWER_DIR = join(HERE, '..', 'viewer');
+const TEMPLATE_PATH = join(VIEWER_DIR, 'graph-viewer.html');
 const FIXTURE = join(HERE, '..', 'fixtures', 'mini-site');
 const SCHEMA = 'novel2arg/site-graph/v1';
 
@@ -364,27 +365,58 @@ function selfTest() {
 
   const tmp = mkdtempSync(join(tmpdir(), 'site-graph-'));
   try {
-    const { jsonPath, htmlPath } = emit(g, tmp, 'g');
-    ok(existsSync(jsonPath) && existsSync(htmlPath), 'json + html emitted');
+    const { jsonPath, htmlPath } = emit(g, FIXTURE, join(tmp, 'g'));
+    ok(existsSync(jsonPath) && existsSync(htmlPath), 'json + viewer index emitted');
     const back2 = JSON.parse(readFileSync(jsonPath, 'utf8'));
     ok(back2.schema === SCHEMA && back2.nodes.length === 14, 'emitted JSON round-trips');
     const html = readFileSync(htmlPath, 'utf8');
-    ok(html.includes('pages/login.html'), 'JSON injected into the html');
-    const js = html.match(/<script>\n([\s\S]*?)<\/script>/)[1];
-    new Function(js);   // parse-only: SyntaxError means the viewer JS is broken
-    ok(true, 'viewer JS parses');
+    ok(html.includes('pages/login.html'), 'JSON injected into the viewer');
+    // self-contained folder: every relative ref (css/, js/, js/vendor/) resolves inside the artifact
+    const refs = [...html.matchAll(/(?:src|href)="([^"]+)"/g)].map((m) => m[1]);
+    const set = join(tmp, 'g');
+    ok(refs.length === 10 && refs.every((r) => !/^([a-z]+:|\/)/.test(r) && existsSync(join(set, r))), `all ${refs.length} tree refs emitted into the viewer folder`);
+    for (const r of refs.filter((r) => r.endsWith('.js'))) new Function(readFileSync(join(set, r), 'utf8'));   // parse-only: SyntaxError means a viewer file is broken
+    ok(true, 'every emitted js parses');
+    ok(readFileSync(join(set, 'css/base.css'), 'utf8').includes('.masthead') && readFileSync(join(set, 'css/canvas.css'), 'utf8').includes('.node'), 'both stylesheets emitted');
+    ok(existsSync(join(set, 'js/vendor/alpine.js')), 'vendored runtime copied into the artifact');
+
+    // the pure layout core is behavior-tested in node — no DOM needed
+    const core = new Function(['js/lib/dom.js', 'js/lib/legend.js', 'js/lib/layout.js'].map((f) => readFileSync(join(VIEWER_DIR, f), 'utf8')).join('\n')
+      + '\nreturn { visibleEdges, layout, KIND_STYLE };')();
+    const allKinds = Object.fromEntries(Object.keys(core.KIND_STYLE).map((k) => [k, true]));
+    const edges = core.visibleEdges(g, { chrome: true, kinds: allKinds, filter: '' });
+    const L = core.layout(g.nodes, edges);
+    ok(L.pos.get('index.html')?.x === 34 && L.pos.get('index.html')?.y === 34, 'entry sits at the layout origin');
+    ok(L.byRank.get(0).length === 1 && L.byRank.get(0)[0].id === 'index.html', 'hop-0 rank holds only the entry');
+    const orphanRank = Math.max(...L.byRank.keys());
+    ok(L.byRank.get(orphanRank).some((n) => n.id === 'pages/orphan.html'), 'unreachable pages form the trailing orphan rank');
+    ok(core.visibleEdges(g, { chrome: false, kinds: allKinds, filter: '' }).length < edges.length, 'chrome-off shrinks the visible edge set');
   } finally { rmSync(tmp, { recursive: true, force: true }); }
 
   console.log(fail ? `\nself-test FAILED — ${fail} check(s)` : '\nself-test ok — graph builds, provenance resolves, defects surface');
   process.exit(fail ? 1 : 0);
 }
 
-function emit(graph, outDir, name) {
+// The viewer is a tree: the template html references its assets by plain relative paths
+// (css/base.css, js/lib/dom.js, js/vendor/alpine.js), so emit copies the whole tree into the
+// output folder and only injects the JSON. The vendored Alpine runtime (pinned + sha256-verified
+// by tools/vendor-alpine.mjs, never a CDN) is copied into the artifact's own js/vendor/ — a
+// relative src pointing outside would escape the server root the moment docs/ itself is served,
+// which is exactly how the artifact gets opened.
+function emit(graph, root, outDir, { json = true, html = true } = {}) {
   mkdirSync(outDir, { recursive: true });
-  const jsonPath = join(outDir, `${name}.json`);
-  const htmlPath = join(outDir, `${name}.html`);
-  writeFileSync(jsonPath, JSON.stringify(graph, null, 1));
-  writeFileSync(htmlPath, readFileSync(TEMPLATE_PATH, 'utf8').replace('__SITE_GRAPH_JSON__', JSON.stringify(graph).replace(/</g, '\\u003c')));
+  const jsonPath = `${outDir}.json`;            // the agent-facing contract sits beside the viewer folder
+  const htmlPath = join(outDir, 'index.html');
+  if (json) writeFileSync(jsonPath, JSON.stringify(graph, null, 1));
+  if (html) {
+    writeFileSync(htmlPath, readFileSync(TEMPLATE_PATH, 'utf8').replace('__SITE_GRAPH_JSON__', JSON.stringify(graph).replace(/</g, '\\u003c')));
+    cpSync(VIEWER_DIR, outDir, { recursive: true, filter: (src) => !src.endsWith('graph-viewer.html') });
+    const runtime = join(root, 'assets/js/vendor/alpine.min.js');
+    if (existsSync(runtime)) {
+      mkdirSync(join(outDir, 'js', 'vendor'), { recursive: true });
+      copyFileSync(runtime, join(outDir, 'js', 'vendor', 'alpine.js'));
+    } else console.error(`! vendored Alpine not found at ${relOf(root, runtime)} — run node tools/vendor-alpine.mjs; the viewer will show a banner instead of the graph`);
+  }
   return { jsonPath, htmlPath };
 }
 
@@ -399,16 +431,13 @@ function main() {
   const noHtml = process.argv.includes('--no-html');
   if (noJson && noHtml) { console.error('ERROR  --no-json with --no-html writes nothing'); process.exit(1); }
   const graph = buildGraph(root);
-  const outAbs = resolve(root, val('--out') ?? 'docs/site-graph');
-  const outDir = dirname(outAbs), name = basename(outAbs);
-  const jsonPath = join(outDir, `${name}.json`), htmlPath = join(outDir, `${name}.html`);
-  if (!noJson) { mkdirSync(outDir, { recursive: true }); writeFileSync(jsonPath, JSON.stringify(graph, null, 1)); }
-  if (!noHtml) { mkdirSync(outDir, { recursive: true }); writeFileSync(htmlPath, readFileSync(TEMPLATE_PATH, 'utf8').replace('__SITE_GRAPH_JSON__', JSON.stringify(graph).replace(/</g, '\\u003c'))); }
+  const outDir = resolve(root, val('--out') ?? 'docs/site-graph');
+  const { jsonPath, htmlPath } = emit(graph, root, outDir, { json: !noJson, html: !noHtml });
   const s = graph.stats;
   console.log(`site-graph — ${s.pages} pages · ${s.edges} edges · gates ${s.gatesUnlocked}/${s.gates} · unreachable ${s.unreachable} · problems ${s.problems}`);
   for (const p of graph.problems) console.log(`  ! ${p.type}${p.page ? ' — ' + p.page : ''}${p.node ? ' — ' + p.node : ''}${p.detail ? ' — ' + p.detail : ''}`);
   if (!noJson) console.log(`wrote ${relOf(root, jsonPath)}`);
-  if (!noHtml) console.log(`wrote ${relOf(root, htmlPath)}`);
+  if (!noHtml) console.log(`wrote ${relOf(root, htmlPath)} — viewer tree under ${relOf(root, outDir)}/`);
   process.exit(0);   // reporting tool: problems are data, not failure
 }
 main();

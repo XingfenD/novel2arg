@@ -14,7 +14,7 @@ node tools/check-links.mjs        # dead links + public-index leaks; expect "0 d
 node tools/check-solvable.mjs     # cold-start walk; expect "fixpoint in N round(s) · gates 4/4 unlocked · pages 28/28 reachable"
 node tools/check-credentials.mjs  # composite/derived credentials: parts + rule + zero-plaintext (run whenever data/credentials.src.json exists)
 node tools/check-reachability.mjs # rehearsal build: inject the credentials into a throwaway copy, then prove gates unlock + pages reachable
-node tools/site-graph.mjs       # writes docs/site-graph.json + docs/site-graph.html (reporting tool — exits 0 with problems)
+node tools/site-graph.mjs       # writes docs/site-graph.json + the viewer tree docs/site-graph/ (reporting tool — exits 0 with problems)
 ```
 
 `check-solvable.mjs` automates the credential-provenance half of the manual walkthrough **for verbatim credentials**, so the manual pass only judges tone and pacing. It exits non-zero when a clue is deleted, a password changes, a clue is misplaced inside a page's own post-unlock block, or a listing entry is cut — run it after every content edit, not just before deploy. It reads gate conventions from components.md §3 (`data-expect-hash`, `x-show="unlocked"` / `<template x-if="unlocked">`, `x-data="search"`); a project that renames those markers edits `tools/config.mjs` (§2), then re-checks the matcher with `node tools/check-solvable.mjs --self-test`.
