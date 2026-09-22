@@ -6,6 +6,16 @@
 // fit = scale-to-wrap; once the reader zooms or pans, fit releases and zoom/panX/panY are theirs.
 const view = { fit: true, zoom: 1, panX: 0, panY: 0 };
 const BAR = 2.5;            // the ink bar on the node's left edge
+// Clip to the pixel budget between two x offsets (per = px per half-width unit); CJK counts double.
+const clip = (s, from, to, per) => {
+  let out = '', w = 0;
+  for (const c of s) {
+    const u = c.charCodeAt(0) > 0x2e80 ? 2 : 1;
+    if ((w + u) * per > to - from) return out + '…';
+    w += u; out += c;
+  }
+  return out;
+};
 
 onAlpineInit(() => Alpine.data('canvas', () => ({
   pos: new Map(),          // node id → layout position (current render)
@@ -32,7 +42,7 @@ onAlpineInit(() => Alpine.data('canvas', () => ({
   render() {
     const store = this.$store.graph;
     const edges = visibleEdges(store.graph, store);
-    const { pos, byRank, rankY, width, height } = layout(store.graph.nodes, edges);
+    const { pos, byRank, rankY, width, height, paths } = layout(store.graph.nodes, edges);
     this.pos = pos;
     const svg = $('#graph');
     svg.innerHTML = '';
@@ -58,12 +68,9 @@ onAlpineInit(() => Alpine.data('canvas', () => ({
     for (const e of edges) {
       const a = pos.get(e.from), b = pos.get(e.to), s = KIND_STYLE[e.kind];
       const x1 = a.x + NW / 2, y1 = a.y + NH, x2 = b.x + NW / 2, y2 = b.y;
-      let d;
-      if (y2 > y1 + 4) d = `M${x1},${y1} C${x1},${y1 + 44} ${x2},${y2 - 44} ${x2},${y2}`;
-      else { const mx = Math.max(x1, x2) + 70; d = `M${x1},${y1 - NH / 2} C${mx},${y1 - NH / 2} ${mx},${y2 + NH / 2} ${x2},${y2 + NH / 2}`; }
       const quiet = e.chrome;
       const p = el('path', {
-        d, class: 'edge', 'marker-end': `url(#arr-${e.kind})`, 'marker-start': quiet ? '' : `url(#arr-${e.kind})`,
+        d: paths.get(e), class: 'edge', 'marker-end': `url(#arr-${e.kind})`, 'marker-start': quiet ? '' : `url(#arr-${e.kind})`,
         'stroke-opacity': quiet ? '.35' : '1',
       });
       p.style.stroke = s.c; p.style.strokeWidth = quiet ? 1 : s.w;
@@ -93,14 +100,20 @@ onAlpineInit(() => Alpine.data('canvas', () => ({
       g.appendChild(el('rect', { class: 'card', width: NW, height: NH, rx: 2 }));
       g.appendChild(el('rect', { class: 'bar', x: 0, y: 0, width: BAR, height: NH, rx: 1 }));
       const { file, dir } = splitId(n.id);
-      const t1 = el('text', { x: BAR + 9, y: 21, class: 'file' }); t1.textContent = file.length > 24 ? file.slice(0, 23) + '…' : file; g.appendChild(t1);
-      const bits = [`hop ${n.hops ?? '—'}`];
-      if (dir) bits.push(dir);
+      // the card's right edge carries stamps — 不可达/入口 at the top, the M7 docket at the bottom —
+      // so each line is clipped to the width actually left of them; a flat character cap used to run
+      // the second line under the docket. CJK glyphs count double.
+      const stampW = !n.reachable || n.isEntry ? 36 : 0;
+      const t1 = el('text', { x: BAR + 9, y: 21, class: 'file' }); t1.textContent = clip(file, BAR + 9, NW - 6 - stampW, 6.4); g.appendChild(t1);
+      const bits = [];
+      if (n.hops != null) bits.push(`hop ${n.hops}`);
+      if (dir) bits.push('…/' + dir.split('/').pop());
       if (n.role === 'search') bits.push('搜索页');
       if (n.gate) bits.push(n.gate.fields.length ? `门禁 ${n.gate.fields.length} 项` : '门禁');
       if (n.access.length) bits.push('账号 ' + n.access.join('/'));
       if (n.supplies.length) bits.push(`供给 ${n.supplies.length}`);
-      const t2 = el('text', { x: BAR + 9, y: 38, class: 'path' }); t2.textContent = bits.join(' · ').slice(0, 40); g.appendChild(t2);
+      const docketW = n.progress.page != null ? 48 : 0;
+      const t2 = el('text', { x: BAR + 9, y: 38, class: 'path' }); t2.textContent = clip(bits.join(' · '), BAR + 9, NW - 6 - docketW, 5.6); g.appendChild(t2);
       if (n.progress.page != null) {
         const t3 = el('text', { x: NW - 9, y: NH - 9, class: 'docket' });
         t3.textContent = `#${n.progress.page}/${n.progress.total ?? '?'}`;

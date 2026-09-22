@@ -382,7 +382,7 @@ function selfTest() {
 
     // the pure layout core is behavior-tested in node — no DOM needed
     const core = new Function(['js/lib/dom.js', 'js/lib/legend.js', 'js/lib/layout.js'].map((f) => readFileSync(join(VIEWER_DIR, f), 'utf8')).join('\n')
-      + '\nreturn { visibleEdges, layout, KIND_STYLE };')();
+      + '\nreturn { visibleEdges, layout, edgePath, KIND_STYLE };')();
     const allKinds = Object.fromEntries(Object.keys(core.KIND_STYLE).map((k) => [k, true]));
     const edges = core.visibleEdges(g, { chrome: true, kinds: allKinds, filter: '' });
     const L = core.layout(g.nodes, edges);
@@ -391,6 +391,14 @@ function selfTest() {
     const orphanRank = Math.max(...L.byRank.keys());
     ok(L.byRank.get(orphanRank).some((n) => n.id === 'pages/orphan.html'), 'unreachable pages form the trailing orphan rank');
     ok(core.visibleEdges(g, { chrome: false, kinds: allKinds, filter: '' }).length < edges.length, 'chrome-off shrinks the visible edge set');
+    // routing: forward drops rank to rank, same-rank arcs the gap above the rank, back edges take the margin bus
+    ok(core.edgePath({ x: 34, y: 34 }, { x: 34, y: 180 }) === 'M130,88 C130,132 130,136 130,180', 'forward edge drops rank to rank');
+    ok(core.edgePath({ x: 34, y: 180 }, { x: 262, y: 180 }) === 'M130,180 C130,134 358,134 358,180', 'same-rank edge arcs through the gap above the rank');
+    ok(core.edgePath({ x: 34, y: 400 }, { x: 34, y: 34 }, 900) === 'M226,427 C900,427 900,61 226,61', 'back edge runs the margin bus into the target side');
+    const back = edges.find((e) => e.from === 'pages/orphan.html' && e.to === 'pages/home.html');
+    const maxRight = Math.max(...g.nodes.map((n) => (L.pos.get(n.id)?.x ?? 0) + 192));
+    const busX = Math.max(...[...L.paths.get(back).matchAll(/[C ](\d+(?:\.\d+)?),/g)].map((m) => Number(m[1])));
+    ok(busX > maxRight, 'the orphan back edge runs clear of every card, in the right margin');
   } finally { rmSync(tmp, { recursive: true, force: true }); }
 
   console.log(fail ? `\nself-test FAILED — ${fail} check(s)` : '\nself-test ok — graph builds, provenance resolves, defects surface');
