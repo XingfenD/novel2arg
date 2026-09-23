@@ -40,7 +40,7 @@ next step. It performs step 2 itself and delegates the rest. Subagents hold no c
 Every subagent prompt carries all six items below (a filled sample: examples/dispatch-prompt.md):
 
 1. the novel text path — step 1 always; step 3 only as a fallback when `docs/deconstruction.md` lacks a life trace the GDD needs (the prompt says so explicitly); no other step receives it, and their prompts state that the novel must not be read;
-2. the project root (convention above) and the file paths of prior artifacts;
+2. the project root (convention above) and the file paths of prior artifacts — naming the sections the step file specifies (e.g. `docs/gdd.md` sections 1, 2, 4), never a whole file where a section list exists;
 3. that step's deliverable definition, copied from its workflow file;
 4. the reference file paths that step cites, plus that step's example file from the table above when one exists;
 5. the realism-priority line — references/guardrails.md R12: realism outranks any check, and a conflict goes to the user through the orchestrator;

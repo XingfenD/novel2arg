@@ -8,7 +8,7 @@ You are executing step 4 (Reachability chain analysis) of the novel2arg skill.
 
 1. Novel text: none — step 4 works from docs/gdd.md; do not read the novel.
 2. Project root: «/path/to/chunshui-lou-arg/» (all docs/ paths below are relative to it).
-   Prior artifacts: docs/deconstruction.md, docs/gdd.md (approved by the user).
+   Prior artifacts: docs/gdd.md sections 1, 2, 4 (approved by the user).
 3. Deliverable: docs/reachability.md — one row per page:
    | 页面 | 触达方式（编号） | 来源页面 | 该来源为什么会放这个链接 | 从首页跳数 |
    plus the reverse check, depth check, access check, keyword solvability, index scoping
