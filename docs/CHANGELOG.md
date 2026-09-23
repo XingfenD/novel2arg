@@ -4,6 +4,9 @@ Higher versions on top. Each entry: English line, then Chinese line; entries sep
 
 ## Unreleased
 
+- Move the repo self-check instructions out of SKILL.md into AGENTS.md. SKILL.md is the skill's user-facing entry — an agent adapting a novel has no use for repo maintenance — while AGENTS.md already carries the repo's editing conventions (branch naming, commit rules, changelog) and is what an agent editing this repo loads. AGENTS.md also absorbs the earlier prose tightening of the References section.
+- 把仓库自检说明从 SKILL.md 移入 AGENTS.md。SKILL.md 是面向使用者的 skill 入口——改编小说的 agent 用不到仓库维护；AGENTS.md 已承载本仓库的编辑约定（分支命名、提交规则、CHANGELOG），且是编辑本仓库的 agent 实际加载的文件。AGENTS.md 同时收纳了此前对 References 段的压缩。
+
 - Ignore `.worktrees/` so a linked worktree (e.g. for the existing `docs/rewrite-readme` branch) never shows up in `git status` or gets committed into the repo.
 - 忽略 `.worktrees/`，链接的 worktree（如既有分支 `docs/rewrite-readme` 的工作区）不再出现在 `git status` 里、也不会被提交进仓库。
 
