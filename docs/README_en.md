@@ -4,6 +4,9 @@
 
 [English](README_en.md) | [中文](README.md)
 
+> [!NOTE]
+> Want to deploy your web game to the public internet? Click [here](https://www.rainyun.com/fendy_) to register at Rainyun.
+
 An agent skill that adapts mystery/suspense novels into multi-page static web puzzle games disguised as real websites (ARG-lite).
 
 The player never sees a game. They open what looks like a real organization's website — a company intranet, an archive, a login portal — read its documents, search its index, and find the passwords hidden in its people's life traces. Realism is the product; every rule in this skill exists to protect it.

@@ -4,6 +4,9 @@ Higher versions on top. Each entry: English line, then Chinese line; entries sep
 
 ## Unreleased
 
+- Add a GitHub note block at the top of both READMEs (after the language switcher, before the intro) promoting Rainyun.
+- 在两份 README 顶部（语言切换行之后、首段之前）新增 GitHub note 块推广雨云。
+
 - Retune the `docs/README.md` tagline: replace the definition-style colon in "一个 agent 技能：……" with a comma so the sentence reads as an introduction instead of a dictionary entry.
 - 调整 `docs/README.md` 首句：把「一个 agent 技能：……」的词条式冒号改为逗号，让句子读作介绍而非释义。
 
