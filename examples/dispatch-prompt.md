@@ -6,7 +6,7 @@ Slot values in «guillemets» change per project; everything else is copied verb
 ```text
 You are executing step 4 (Reachability chain analysis) of the novel2arg skill.
 
-1. Novel text: «/path/to/novel.txt»
+1. Novel text: none — step 4 works from docs/gdd.md; do not read the novel.
 2. Project root: «/path/to/chunshui-lou-arg/» (all docs/ paths below are relative to it).
    Prior artifacts: docs/deconstruction.md, docs/gdd.md (approved by the user).
 3. Deliverable: docs/reachability.md — one row per page:
