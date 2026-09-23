@@ -4,6 +4,9 @@ Higher versions on top. Each entry: English line, then Chinese line; entries sep
 
 ## Unreleased
 
+- Correct the changelog entry for the README repository-map removal: the map was dropped from the README outright, not moved into a new `docs/CONTRIBUTING.md` that was never created; the README's dangling 贡献指南 link to that file goes with it.
+- 修正 README 仓库地图移除的变更日志条目：地图是从 README 直接去掉的，并未移入从未被创建的 `docs/CONTRIBUTING.md`；README 中指向该文件的失效「贡献指南」链接一并删除。
+
 - Add `about.html` to the starter and link it from the entry shell: a plain page that says what the project is and that it came from the novel2arg skill (eight-step workflow, repo link, how the static site is built and run, where the design docs live). The entry is the threshold, not the fiction, so the about page sits there rather than inside the site; it carries no plot and no M7 progress number.
 - 在起点项目中新增 `about.html` 并由入口外壳链接：一页朴素的说明——这个项目是什么、它源于 novel2arg 技能（八步工作流、仓库地址、静态站点怎么搭怎么跑、设计文档在哪）。入口是阈值而非虚构本身，所以关于页挂在这里而不是站点里；它不写剧情，也不带 M7 进度号。
 
@@ -13,8 +16,8 @@ Higher versions on top. Each entry: English line, then Chinese line; entries sep
 - Add a chapter to the README addressed to the installing agent: once installation completes, the agent tells the user the deliverable will carry a link back to this repository at the game entry and asks them to keep it.
 - 在 README 中新增致安装 agent 的一章：安装完成后，agent 向用户说明产物会在游戏入口带上指向本仓库的链接，并请用户保留该链接。
 
-- Move the repository map out of the README into a new `docs/CONTRIBUTING.md`: the file-by-file layout is contributor-facing detail that a skill user never acts on, so it now lives next to the branch/commit/changelog conventions and the repo self-check commands, with the README linking to it.
-- 把仓库地图从 README 移入新的 `docs/CONTRIBUTING.md`：逐文件布局是面向贡献者的细节，skill 使用者不会据此做任何动作；地图现与分支 / 提交 / CHANGELOG 约定及仓库自检命令放在一处，README 保留指向它的链接。
+- Drop the repository map from the README: the file-by-file layout is contributor-facing detail that a skill user never acts on, so the section leaves the user-facing doc entirely instead of moving to a new file.
+- 把仓库地图从 README 中移除：逐文件布局是面向贡献者的细节，skill 使用者不会据此做任何动作；该节直接从面向使用者的文档中去掉，不另立新文件。
 
 - Expand the README's "你会得到什么" section from one bullet to four, spelling out the output's characteristics: a structured static site, a site that passes as a real organization's website, a directly hostable zero-build artifact, and playability backed by the two pre-scaffold gates plus the link / solvability / credential / reachability checkers.
 - 将 README 的「你会得到什么」从一条扩为四条，写清产出物的特点：结构化静态站点、以假乱真的真实机构网站、零构建可直接托管的成品、以及由脚手架前两道闸门与链接 / 可解性 / 凭据 / 可达性检查器保障的可玩性。
