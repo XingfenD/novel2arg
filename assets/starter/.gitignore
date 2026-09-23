@@ -1,6 +1,7 @@
-# .gitignore template for a novel2arg game — copied into the project root at scaffold time (step 6),
-# alongside tools/ and viewer/. It keeps development by-products out of the repository while everything
-# the deploy needs (index.html, pages/, assets/, data/*.json, tools/, viewer/) stays tracked.
+# .gitignore for a novel2arg game. It ships inside assets/starter/, so it lands in the project
+# root when the starter tree is copied at scaffold time (step 6) — no rename, no second copy step.
+# It keeps development by-products out of the repository while everything the deploy needs
+# (index.html, pages/, assets/, data/*.json, tools/, viewer/) stays tracked.
 #
 # Two different jobs, two different files: .gitignore keeps junk out of Git history, .dockerignore /
 # the rsync exclude list keeps development material out of the deployed image. A plaintext table must be

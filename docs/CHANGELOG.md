@@ -4,14 +4,25 @@ Higher versions on top. Each entry: English line, then Chinese line; entries sep
 
 ## Unreleased
 
+## Unreleased
+
+- Correct the changelog entry for the README repository-map removal: the map was dropped from the README outright, not moved into a new `docs/CONTRIBUTING.md` that was never created; the README's dangling 贡献指南 link to that file goes with it.
+- 修正 README 仓库地图移除的变更日志条目：地图是从 README 直接去掉的，并未移入从未被创建的 `docs/CONTRIBUTING.md`；README 中指向该文件的失效「贡献指南」链接一并删除。
+
+- Add `about.html` to the starter and link it from the entry shell: a plain page that says what the project is and that it came from the novel2arg skill (eight-step workflow, repo link, how the static site is built and run, where the design docs live). The entry is the threshold, not the fiction, so the about page sits there rather than inside the site; it carries no plot and no M7 progress number.
+- 在起点项目中新增 `about.html` 并由入口外壳链接：一页朴素的说明——这个项目是什么、它源于 novel2arg 技能（八步工作流、仓库地址、静态站点怎么搭怎么跑、设计文档在哪）。入口是阈值而非虚构本身，所以关于页挂在这里而不是站点里；它不写剧情，也不带 M7 进度号。
+
+- Add `assets/starter/`, the starting project every generated game is based on: step 6a copies the tree into `<cwd>/<game-name>/` instead of rebuilding it, so the entry shell, the shared CSS skeleton and skin, the `components.js` kernel (md5 + `hash()` + session store, byte-identical to `tools/hash.mjs`), the two ignore files and the project README exist once and are filled per `docs/system-profile.md`. The starter carries the invariant files only — everything module-marked (`search.html`, `data/`, `secret.css`, the restricted area) is created at 6a when the profile selects it — while `tools/` and `viewer/` keep their single homes under `assets/` and are assembled at scaffold time, never forked into the starter. The two ignore files move into it as real `.gitignore` / `.dockerignore`, replacing `assets/gitignore.template` and `assets/dockerignore.template`: copying the starter now lands both at the project root with no rename step, and `references/structure/base.md` §1 annotates the tree accordingly.
+- 新增 `assets/starter/` 起点项目：所有生成的项目都以它为起点——step 6a 把这棵树复制到 `<cwd>/<game-name>/`，不再从零搭建，入口外壳、共用 CSS 骨架与皮肤、`components.js` 内核（md5 + `hash()` + session store，与 `tools/hash.mjs` 逐字节一致）、两份忽略文件与项目 README 只存在一份，按 `docs/system-profile.md` 填充。起点项目只带**不随模块变化**的文件——所有带模块标记的内容（`search.html`、`data/`、`secret.css`、受限区域）在 6a 按 profile 选中时才创建；`tools/` 与 `viewer/` 仍以 `assets/` 下的唯一出处为准，在脚手架阶段拼装，不在起点项目里分叉。两份忽略文件移入起点项目成为真正的 `.gitignore` / `.dockerignore`，取代 `assets/gitignore.template` 与 `assets/dockerignore.template`：复制起点项目即让两者落到项目根，省去改名一步，`references/structure/base.md` §1 的目录树标注随之更新。
+
 - Cut subagent input cost across the workflow: the dispatch contract grants the novel text per step (step 1 always, step 3 only as a fallback when the deconstruction lacks a needed life trace) and names artifact sections instead of whole files; the entity registry ships as its own `docs/registry.md` so step-7 phases load it without the GDD; step-7 phases read the project's own `components.js` and a per-phase reference table instead of the full reference stack; step 8 fans out into three parallel lanes (structure + reachability / puzzle integrity + consistency / neutrality + copy + presentation) merged by the orchestrator; step 1 gains a chunked-reading convention for novels past roughly 150,000 tokens.
 - 全面压低各步子代理的输入成本：dispatch 契约按步授予小说全文（仅步骤 1 必给、步骤 3 作兜底）并指定 artifact 小节而非整本文件；实体登记表独立为 `docs/registry.md`，步骤 7 各 phase 无需拖整本 GDD；步骤 7 各 phase 改读项目自身的 `components.js` 与按 phase 裁剪的引用表；步骤 8 拆为三条并行 lane（结构+触达 / 谜题+一致性 / 中性度+文案+呈现）由编排器合并；步骤 1 增加约 15 万 token 以上小说的分块读取约定。
 
 - Add a chapter to the README addressed to the installing agent: once installation completes, the agent tells the user the deliverable will carry a link back to this repository at the game entry and asks them to keep it.
 - 在 README 中新增致安装 agent 的一章：安装完成后，agent 向用户说明产物会在游戏入口带上指向本仓库的链接，并请用户保留该链接。
 
-- Move the repository map out of the README into a new `docs/CONTRIBUTING.md`: the file-by-file layout is contributor-facing detail that a skill user never acts on, so it now lives next to the branch/commit/changelog conventions and the repo self-check commands, with the README linking to it.
-- 把仓库地图从 README 移入新的 `docs/CONTRIBUTING.md`：逐文件布局是面向贡献者的细节，skill 使用者不会据此做任何动作；地图现与分支 / 提交 / CHANGELOG 约定及仓库自检命令放在一处，README 保留指向它的链接。
+- Drop the repository map from the README: the file-by-file layout is contributor-facing detail that a skill user never acts on, so the section leaves the user-facing doc entirely instead of moving to a new file.
+- 把仓库地图从 README 中移除：逐文件布局是面向贡献者的细节，skill 使用者不会据此做任何动作；该节直接从面向使用者的文档中去掉，不另立新文件。
 
 - Expand the README's "你会得到什么" section from one bullet to four, spelling out the output's characteristics: a structured static site, a site that passes as a real organization's website, a directly hostable zero-build artifact, and playability backed by the two pre-scaffold gates plus the link / solvability / credential / reachability checkers.
 - 将 README 的「你会得到什么」从一条扩为四条，写清产出物的特点：结构化静态站点、以假乱真的真实机构网站、零构建可直接托管的成品、以及由脚手架前两道闸门与链接 / 可解性 / 凭据 / 可达性检查器保障的可玩性。

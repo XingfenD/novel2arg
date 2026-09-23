@@ -57,4 +57,3 @@ Node.js 20+ 用于运行检查器工具。生成的游戏本身是纯静态 HTML
 
 - 更新日志：[CHANGELOG.md](CHANGELOG.md)
 - 使用须知：[USAGE.md](USAGE.md)
-- 贡献指南：[CONTRIBUTING.md](CONTRIBUTING.md)

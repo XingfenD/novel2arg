@@ -1,0 +1,130 @@
+/* base.css — the shared skeleton of a novel2arg project.
+ *
+ * Structure only: the persistent top bar, the page column, the document kit, the gate form, the
+ * entry shell, x-cloak. Every colour, font and surface lives in surface.css (and secret.css on
+ * deep pages, M5) — a project edits the skin, never this file's layout, per page.
+ *
+ * Conventions this file owes the rest of the system:
+ *   · header is sticky and opaque, site-wide, deep pages included (base.md §2)
+ *   · every input names its field; nothing here hints at an answer (R4)
+ *   · .hidden-text / .blurred are the M11 texture kit: black-on-black selectable text, redaction
+ *     as a clue. Client-side masking is not privacy — anything hidden this way is public (R12)
+ */
+
+/* ── Alpine: hide a component until it initializes, so no raw template flashes ── */
+[x-cloak] { display: none !important; }
+
+/* ── Reset ── */
+* { box-sizing: border-box; }
+body { margin: 0; }
+img { max-width: 100%; }
+ul, ol { padding-left: 1.4em; }
+
+/* ── Persistent top bar ─────────────────────────────────────────────────────────
+   Sticky to the viewport top; background must stay opaque so long-page body text never shows
+   through. The nav links are this organization's own IA — together with the footer links (and the
+   M1 search box) they are the only cross-page links a public page carries (R7). */
+header {
+  position: sticky; top: 0; z-index: 10;
+  background: var(--bar, #f3e2d0);
+  border-bottom: 1px solid var(--rule, #d8c4b0);
+}
+header nav {
+  max-width: 60rem; margin: 0 auto; padding: .55rem 1rem;
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: .2rem 1.1rem;
+  font-family: var(--sans, system-ui, sans-serif); font-size: .9rem;
+}
+header nav a { color: var(--ink, #4a4a4a); text-decoration: none; }
+header nav a:hover { color: var(--accent, #c1440e); text-decoration: underline; }
+header nav .brand { font-weight: 700; letter-spacing: .02em; }
+header nav form { display: flex; gap: .35rem; margin-left: auto; }
+
+/* ── Page column: one document per page ── */
+main {
+  max-width: 60rem; margin: 0 auto; padding: 1.6rem 1rem 3rem;
+  line-height: 1.75;
+}
+main > h1 { font-size: 1.5rem; margin: 0 0 1rem; }
+main > h2 { font-size: 1.15rem; margin: 1.8rem 0 .6rem; }
+main p { margin: .6rem 0; }
+
+/* ── Footer: the site's own links + the M7 progress number ── */
+footer {
+  border-top: 1px solid var(--rule, #d8c4b0);
+  font-family: var(--sans, system-ui, sans-serif); font-size: .8rem; color: var(--ink-2, #6b6b6b);
+}
+footer .footer-inner { max-width: 60rem; margin: 0 auto; padding: .9rem 1rem; display: flex; flex-wrap: wrap; gap: .3rem 1rem; }
+footer a { color: var(--ink-2, #6b6b6b); }
+.progress { margin-left: auto; font-family: var(--mono, monospace); letter-spacing: .04em; }
+
+/* ── Document kit: what a real system prints ─────────────────────────────────────
+   .sheet is a formal document (R6: issuing body, number, date, addressee, body, seal,
+   distribution list); .narrow tightens it to a memo or a single record. */
+.sheet { border: 1px solid var(--rule, #d8c4b0); background: var(--paper-2, #fffdf9); padding: 1.4rem 1.6rem; }
+.sheet.narrow { max-width: 34rem; margin: 0 auto; }
+.sheet .doc-head { border-bottom: 2px solid var(--ink, #4a4a4a); padding-bottom: .5rem; margin-bottom: 1rem; }
+.sheet .doc-no { float: right; font-family: var(--mono, monospace); font-size: .85rem; }
+.sheet .doc-meta { font-size: .85rem; color: var(--ink-2, #6b6b6b); }
+.sheet .doc-seal { margin-top: 1.2rem; text-align: right; color: var(--stamp, #a11212); font-weight: 700; letter-spacing: .15em; }
+.sheet table { width: 100%; border-collapse: collapse; margin: .8rem 0; }
+.sheet th, .sheet td { border: 1px solid var(--rule, #d8c4b0); padding: .35rem .6rem; text-align: left; }
+.sheet th { background: var(--wash, #f7f1e8); }
+.doc-list { list-style: none; padding: 0; }
+.doc-list li { display: flex; gap: .8rem; padding: .35rem 0; border-bottom: 1px dashed var(--rule, #d8c4b0); }
+.doc-list time { color: var(--ink-2, #6b6b6b); font-family: var(--mono, monospace); font-size: .85rem; white-space: nowrap; }
+
+/* ── M11 world texture ── */
+.handwrite { font-family: var(--hand, "Kaiti SC", "STKaiti", cursive); color: var(--stamp, #a11212); }
+.hidden-text { background: #000; color: #000; user-select: text; }
+.hidden-text::selection { color: #f00; background: #333; }   /* visible only when selected */
+.blurred { filter: blur(6px); user-select: none; }           /* redaction is itself a clue */
+.spacer { height: 180px; }                                   /* whitespace as pacing */
+
+/* ── Gate form (M2) ─────────────────────────────────────────────────────────────
+   The input names its field and stops there: a placeholder that carries the answer leaks it (R4).
+   Failure copy points at the source obliquely ("密码错误 🎂"), never at the derivation. */
+.gate { max-width: 22rem; margin: 2rem auto; }
+.gate label { display: block; font-family: var(--sans, system-ui, sans-serif); font-size: .85rem; margin: .9rem 0 .25rem; }
+.gate input, .gate select {
+  width: 100%; padding: .45rem .6rem; font: inherit;
+  border: 1px solid var(--rule, #d8c4b0); background: var(--paper-2, #fffdf9); color: var(--ink, #4a4a4a);
+}
+.gate input:focus-visible, .gate select:focus-visible { outline: 2px solid var(--accent, #c1440e); outline-offset: 1px; }
+.gate-error { color: var(--stamp, #a11212); font-size: .85rem; min-height: 1.2em; margin: .5rem 0 0; }
+.btn {
+  display: inline-block; padding: .45rem 1.4rem; font: inherit; cursor: pointer;
+  border: 1px solid var(--accent, #c1440e); background: var(--accent, #c1440e); color: var(--paper, #f9ebde);
+  text-decoration: none;
+}
+.btn:hover { filter: brightness(1.08); }
+.btn.ghost { background: transparent; color: var(--accent, #c1440e); }
+
+/* ── Entry shell (M9): the cover before the site ───────────────────────────────
+   No site header here — the player has not entered yet. Copy stays light: role assignment, the
+   system's own one-liner, and the start button. */
+.entry { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 2rem 1rem; }
+.entry h1 { font-size: 2rem; margin: 0 0 .6rem; letter-spacing: .04em; }
+.entry .entry-lede { max-width: 30rem; color: var(--ink-2, #6b6b6b); margin: 0 0 2rem; }
+.entry .entry-role { font-family: var(--sans, system-ui, sans-serif); font-size: .9rem; color: var(--ink-2, #6b6b6b); margin: -1rem 0 2rem; }
+/* The entry's about link: quiet, below the start button. */
+.entry .entry-meta { margin: 1.4rem 0 0; font-family: var(--sans, system-ui, sans-serif); font-size: .78rem; }
+.entry .entry-meta a { color: var(--ink-2, #6b6b6b); }
+
+/* ── About page: a plain column, no document pretense ── */
+.about { max-width: 40rem; }
+.about h2 { font-size: 1.05rem; margin: 1.8rem 0 .5rem; }
+.about p { margin: .6rem 0; }
+
+/* ── Staging (M12): full-page overlays own the viewport while they hold it ── */
+.blackout {
+  position: fixed; inset: 0; z-index: 100; display: flex; align-items: center; justify-content: center;
+  background: #000; color: #bbb; font-family: var(--mono, monospace); letter-spacing: .1em;
+}
+
+/* ── Small screens: the bar wraps, the column narrows, nothing clips ── */
+@media (max-width: 820px) {
+  header nav { gap: .2rem .7rem; }
+  header nav form { margin-left: 0; width: 100%; }
+  main { padding: 1.1rem .9rem 2.4rem; }
+  .sheet { padding: 1rem; }
+}

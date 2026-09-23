@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><!-- set to the language the novel's pages are written in -->
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>《组织名称》</title>
+  <link rel="stylesheet" href="assets/css/base.css">
+  <link rel="stylesheet" href="assets/css/surface.css"><!-- M5: deep pages link secret.css instead -->
+  <script defer src="assets/js/components.js"></script><!-- shared kernel: hash() + session store; runs before the Alpine runtime -->
+  <script defer src="assets/js/vendor/alpine.min.js"></script><!-- vendored Alpine v3 core; written by `node tools/vendor-alpine.mjs` at scaffold time, never edited, never a CDN -->
+</head>
+<body>
+  <!-- Entry shell (M9). The cover before the site: no header nav, no footer — the player has not
+       entered yet. Copy stays light and stays in the system's own words; rules appear only where
+       the fiction really needs them, and their copy lands in step 7 phase 7. -->
+  <main class="entry">
+    <h1>《组织名称》</h1>
+    <p class="entry-lede">《这个系统对外怎么介绍自己：一句它自己会说的话》</p>
+    <!-- M9 role assignment, when the fiction frames one: <p class="entry-role">《你将以什么身份进入》</p> -->
+    <!-- M9 rules, only where the fiction needs them (headphones, an external search, a time of day).
+         No implementation talk, no game meta, no honor agreement. -->
+    <p><a class="btn" href="pages/home.html">《进入》</a></p>
+    <!-- 入口的"关于"链接。删掉它与 about.html 即可，站点不受影响。 -->
+    <p class="entry-meta"><a href="about.html">关于此项目</a></p>
+  </main>
+</body>
+</html>
