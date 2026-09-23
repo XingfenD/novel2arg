@@ -29,7 +29,7 @@ The Example column names the artifact-shape anchor included in that step's dispa
 | 5 Puzzle design audit 谜题设计分析 | workflow/05-puzzle-audit.md | `docs/puzzle-audit.md` with dispositions | examples/puzzle-audit-excerpt.md | subagent |
 | 6 Scaffold | workflow/06-scaffold.md | framework + every page skeletoned | — | 6a framework (plot-blind) → 6b skeletons (plot-aware) |
 | 7 Implementation | workflow/07-implementation.md | finished site | — | one subagent per phase |
-| 8 Self-check | workflow/08-self-check.md | `docs/self-check.md`, pass/fail per item | — | subagent |
+| 8 Self-check | workflow/08-self-check.md | `docs/self-check.md`, pass/fail per item | — | 3 parallel subagents (lanes A/B/C) + merge |
 
 Step 3 ends with a user review checkpoint: when the subagent returns `docs/gdd.md` and `docs/registry.md`, the orchestrator presents them to the user and asks for review before dispatching steps 4 and 5. Approval is required; requested changes go back to step 3.
 

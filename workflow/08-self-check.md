@@ -1,6 +1,18 @@
 # Step 8 — Self-Check
 
-**Input:** the finished site plus all `docs/` artifacts. **Output:** a pass/fail line per item, written to `docs/self-check.md`. Every item must pass. This checklist is canonical — references/structure/tooling.md covers only the cadence, the shared CONFIG, and the manual methods; commands are not duplicated there.
+**Input:** the finished site plus all `docs/` artifacts — each lane below reads only its own subset. **Output:** a pass/fail line per item, written to `docs/self-check.md`. Every item must pass. This checklist is canonical — references/structure/tooling.md covers only the cadence, the shared CONFIG, and the manual methods; commands are not duplicated there.
+
+## Dispatch — three parallel lanes
+
+One subagent per lane, dispatched together; the orchestrator merges the three reports into `docs/self-check.md` — one pass/fail line per checklist item, in checklist order. A fail in any lane sends the step back; the orchestrator decides whether the fix re-runs one lane or all three.
+
+| Lane | Checklist sections | Reads |
+|---|---|---|
+| A Structure + reachability | Structure; Reachability | the built tree via the checkers; gdd sections 1, 2, 4; `docs/reachability.md`; both keyword tables |
+| B Puzzle integrity + consistency | Puzzle integrity; Consistency | gate and inference-chain pages; gdd sections 4, 5; `docs/registry.md`; `docs/puzzle-audit.md` |
+| C Neutrality + copy + presentation | Diegetic neutrality; Copy register; Presentation | public pages, the entry page, endings; `references/design-playbook.md` §4; `references/guardrails.md` |
+
+Lane A runs the checkers first and quotes their output verbatim. Lanes B and C give the file and line for every fail. The chrome sweep (Presentation) is browser work, not reading — it needs no docs beyond the page list.
 
 ## Structure
 
