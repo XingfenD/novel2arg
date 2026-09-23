@@ -48,18 +48,3 @@ Every subagent prompt carries all six items below (a filled sample: examples/dis
 
 The one exception is step 6a: its prompt carries `docs/system-profile.md` and the infrastructure references
 only — no novel text, no plot-bearing artifacts.
-
-## References
-
-- **references/guardrails.md**: four constraints, canonical rules R1–R12 (single home of every rule stated in more than one file — `(Rn)` citations elsewhere point here), prohibited forms, rationalizations, red flags, when not to use.
-- **references/design-playbook.md**: step-2 module catalog (13 selectable modules), core loop, 13-type puzzle taxonomy, copy rules. Read at steps 2 and 3.
-- **references/structure/base.md**: shared front-end base — module-marked directory tree + page skeleton. Step 6.
-- **references/structure/components.md**: Alpine reference components — keyword hash build, search engine, password gates, staging, reskin, progress. Steps 6 and 7.
-- **references/structure/form-website.md**: container A, the fake official website — search hub, audience-scoped indexes, gates as the only access. Steps 3 and 6 when A is chosen.
-- **references/structure/form-system.md**: containers B/C/D, system fictions — account login, per-account access (RBAC-style), desktop / simulated-internet / archive shells, checker conventions. Steps 3 and 6 when a system container is chosen.
-- **references/structure/tooling.md**: check cadence, shared `tools/config.mjs` knobs, the nine manual methods no static checker replaces. Step 8.
-- **references/common-mistakes.md**: baseline-test traps by workflow step; each step file cites its section.
-- **examples/**: artifact excerpts for the expected shape of steps 1/3/4/5, plus a filled dispatch-prompt sample.
-- **assets/tools/**: dependency-free Node files copied into every project at step 6 — `config.mjs` (shared conventions every checker imports; the one file a renamed project edits), `hash.mjs` (design-time gate hashes, steps 3/5), `build-keywords.mjs` (plaintext tables → hash tables; re-run after every src edit), `check-links.mjs` (dead links + public-index leaks), `check-solvable.mjs` (cold-start walk: reachable + solvable + search earned), `check-credentials.mjs` (composite/derived credentials: parts + rule + zero-plaintext — the half `check-solvable` cannot model), `check-reachability.mjs` (rehearsal build: inject credentials into a throwaway copy, prove gates unlock + pages reachable), `vendor-alpine.mjs` (pinned Alpine runtime download, sha256-verified, step 6). `site-model.mjs` is the shared parsing + walk core every site-reading tool imports. `site-graph.mjs` builds `docs/site-graph.json` (vertices are pages, edges carry guard and credential provenance), injects it into the `assets/viewer/` renderer tree, emits the self-contained `docs/site-graph/` folder — a reporting tool, not a gate. Steps 7 and 8 run build-keywords, check-links, check-solvable; derived credentials or a system container also run check-credentials and check-reachability. Canonical pass/fail checklist: workflow/08-self-check.md.
-- **assets/viewer/**: `graph-viewer.html` — dependency-free SVG renderer framework `site-graph.mjs` injects the graph JSON into; copied to each project's `viewer/` at step 6 (resolved at `../viewer/graph-viewer.html`).
-- **assets/fixtures/**: `mini-site/` — the miniature site `site-graph.mjs --self-test` builds from: reachable pages, one stuck gate, one orphan, both credential kinds. Stays in the skill repo, never copied into a project.
