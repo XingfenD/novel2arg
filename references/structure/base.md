@@ -39,16 +39,24 @@ Module marks (M1…M13) come from `references/design-playbook.md` §2 and appear
 │   └── credentials.src.json      # M2 derived-credential provenance (development only)
 ├── tools/                        # the tool files copied from this skill's assets/tools/ at scaffold time
 ├── viewer/                       # the graph renderer tree copied at scaffold time (graph-viewer.html + css/ + js/); never a site page
-├── .gitignore                    # copied from assets/gitignore.template: development by-products stay out of history
-├── .dockerignore                 # copied from assets/dockerignore.template: plaintext sources / docs / dev trees stay out of the image
+├── .gitignore                    # ships inside assets/starter/: development by-products stay out of history
+├── .dockerignore                 # ships inside assets/starter/: plaintext sources / docs / dev trees stay out of the image
 └── README.md                     # How to run + GDD link + player notes
 ```
 
 `tools/`, `viewer/`, `docs/` and `deploy/` hold no site page: the page-walking tools skip them (`CONFIG.skipDirs`,
 `references/structure/tooling.md` §2), so a generated `docs/site-graph/` tree can never inflate the page count.
 
-Two ignore files come with the tree, copied from this skill's `assets/gitignore.template` and
-`assets/dockerignore.template` at scaffold time (bodies: those files; do not retype them here). They answer two
+The tree is materialized by **`assets/starter/`**, the starting project every game is based on: it ships the
+invariant files — the entry shell, `base.css` + `surface.css`, the `components.js` kernel, the two ignore files
+above, and the project README — so a project starts from a real tree instead of an empty directory. Everything
+module-marked (`search.html`, `data/`, `secret.css`, the restricted area, the ending pages) and the assembled
+infrastructure (`tools/`, `viewer/`) are added at scaffold time per `docs/system-profile.md`
+(`workflow/06-scaffold.md`). The starter therefore ships no `data/*.src.json`: its own `.gitignore` would ignore
+them, and a plaintext table is created at 6a only when the profile selects the module that needs it.
+
+Two ignore files come with the tree: they live in `assets/starter/` as `.gitignore` and `.dockerignore` (bodies:
+those files; do not retype them here), so copying the starter lands both at the project root. They answer two
 different questions and a project needs both:
 
 - **`.gitignore`** — what must never enter history. Development by-products: the plaintext `data/*.src.json`

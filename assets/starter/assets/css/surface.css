@@ -1,0 +1,48 @@
+/* surface.css — the public skin of a novel2arg project.
+ *
+ * The ONE file that carries the fiction's palette and type; base.css above stays structure-only.
+ * Set these tokens from the system's own era and register (a county gazette, a hospital intranet, a
+ * 1990s BBS), then leave them alone — a page that needs its own colour is a page that has left the
+ * disguise. Deep pages link secret.css instead (M5); when the profile did not select M5, this file
+ * is the whole skin.
+ *
+ * Palette vocabulary, shared with the site-graph viewer so a generated graph reads as the same
+ * paper: --paper --ink --rule --stamp. */
+
+:root {
+  --paper:   #f9ebde;   /* page ground */
+  --paper-2: #fffdf9;   /* document ground, one step off the page */
+  --wash:    #f7f1e8;   /* table headers, quiet fills */
+  --ink:     #4a4a4a;   /* body text */
+  --ink-2:   #6b6b6b;   /* secondary text, footer */
+  --rule:    #d8c4b0;   /* hairlines and borders */
+  --accent:  #c1440e;   /* links, buttons, the one warm accent */
+  --stamp:   #a11212;   /* seals, warnings, forbidden-state copy */
+  --bar:     #f3e2d0;   /* sticky header ground — must stay opaque */
+
+  --serif: "Songti SC", "SimSun", "Noto Serif CJK SC", Georgia, serif;            /* prose */
+  --sans:  "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", system-ui, sans-serif; /* nav, data, UI */
+  --mono:  ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;           /* numbers, dockets */
+  --hand:  "Kaiti SC", "STKaiti", "KaiTi", cursive;                              /* hand-copied notes */
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: var(--accent); }
+a:hover { text-decoration: none; }
+
+/* Headings sit in the same serif as the body: a real system does not set its own notices in a
+   display face. Weight and size carry the hierarchy instead. */
+h1, h2, h3 { font-weight: 700; line-height: 1.35; }
+
+/* Quiet, tabular figures anywhere the system prints a number: dockets, dates, counts. */
+time, .num, .progress, .doc-no { font-family: var(--mono, monospace); font-variant-numeric: tabular-nums; }
+
+/* Selection keeps the paper register; the M11 black-on-black text overrides it deliberately. */
+::selection { background: var(--rule); color: var(--ink); }
