@@ -1,14 +1,14 @@
-# Changelog
+# Changelog / 更新日志
 
-Higher versions on top. Each entry: English line, then Chinese line; entries separated by a blank line.
+All notable changes to this skill should be documented in this file.
+本 skill 的重要变更建议统一记录在此文件中。
 
-## Unreleased
+The format loosely follows Keep a Changelog and can be adapted to the team's habits.
+本文档参考了 Keep a Changelog 的思路，也可以根据团队习惯调整。
 
-- Replace 闸门 with 门禁 in the README's workflow description: steps 4 and 5 are the two 门禁 before scaffolding, and the reachability / puzzle-audit rows in the step table carry the word in their deliverable column — the old term read like translated dev-speak rather than native Chinese. The same pass fixes a login failure hint in `references/structure/form-system.md`, where 口令 becomes 密码.
-- 把 README 工作流描述里的「闸门」改为「门禁」：第 4、5 步是脚手架前的两道门禁，步骤表中触达链分析 / 谜题设计分析两行的交付物一栏同步替换——旧词更像译制过来的开发术语，不是原生中文。同一轮清理还把 `references/structure/form-system.md` 登录失败提示里的「口令」改为「密码」。
+## [0.1.0] - 2026-09-23
 
-- Correct the changelog entry for the README repository-map removal: the map was dropped from the README outright, not moved into a new `docs/CONTRIBUTING.md` that was never created; the README's dangling 贡献指南 link to that file goes with it.
-- 修正 README 仓库地图移除的变更日志条目：地图是从 README 直接去掉的，并未移入从未被创建的 `docs/CONTRIBUTING.md`；README 中指向该文件的失效「贡献指南」链接一并删除。
+### Added / 新增
 
 - Add `about.html` to the starter and link it from the entry shell: a plain page that says what the project is and that it came from the novel2arg skill (eight-step workflow, repo link, how the static site is built and run, where the design docs live). The entry is the threshold, not the fiction, so the about page sits there rather than inside the site; it carries no plot and no M7 progress number.
 - 在起点项目中新增 `about.html` 并由入口外壳链接：一页朴素的说明——这个项目是什么、它源于 novel2arg 技能（八步工作流、仓库地址、静态站点怎么搭怎么跑、设计文档在哪）。入口是阈值而非虚构本身，所以关于页挂在这里而不是站点里；它不写剧情，也不带 M7 进度号。
@@ -16,29 +16,55 @@ Higher versions on top. Each entry: English line, then Chinese line; entries sep
 - Add `assets/starter/`, the starting project every generated game is based on: step 6a copies the tree into `<cwd>/<game-name>/` instead of rebuilding it, so the entry shell, the shared CSS skeleton and skin, the `components.js` kernel (md5 + `hash()` + session store, byte-identical to `tools/hash.mjs`), the two ignore files and the project README exist once and are filled per `docs/system-profile.md`. The starter carries the invariant files only — everything module-marked (`search.html`, `data/`, `secret.css`, the restricted area) is created at 6a when the profile selects it — while `tools/` and `viewer/` keep their single homes under `assets/` and are assembled at scaffold time, never forked into the starter. The two ignore files move into it as real `.gitignore` / `.dockerignore`, replacing `assets/gitignore.template` and `assets/dockerignore.template`: copying the starter now lands both at the project root with no rename step, and `references/structure/base.md` §1 annotates the tree accordingly.
 - 新增 `assets/starter/` 起点项目：所有生成的项目都以它为起点——step 6a 把这棵树复制到 `<cwd>/<game-name>/`，不再从零搭建，入口外壳、共用 CSS 骨架与皮肤、`components.js` 内核（md5 + `hash()` + session store，与 `tools/hash.mjs` 逐字节一致）、两份忽略文件与项目 README 只存在一份，按 `docs/system-profile.md` 填充。起点项目只带**不随模块变化**的文件——所有带模块标记的内容（`search.html`、`data/`、`secret.css`、受限区域）在 6a 按 profile 选中时才创建；`tools/` 与 `viewer/` 仍以 `assets/` 下的唯一出处为准，在脚手架阶段拼装，不在起点项目里分叉。两份忽略文件移入起点项目成为真正的 `.gitignore` / `.dockerignore`，取代 `assets/gitignore.template` 与 `assets/dockerignore.template`：复制起点项目即让两者落到项目根，省去改名一步，`references/structure/base.md` §1 的目录树标注随之更新。
 
-- Cut subagent input cost across the workflow: the dispatch contract grants the novel text per step (step 1 always, step 3 only as a fallback when the deconstruction lacks a needed life trace) and names artifact sections instead of whole files; the entity registry ships as its own `docs/registry.md` so step-7 phases load it without the GDD; step-7 phases read the project's own `components.js` and a per-phase reference table instead of the full reference stack; step 8 fans out into three parallel lanes (structure + reachability / puzzle integrity + consistency / neutrality + copy + presentation) merged by the orchestrator; step 1 gains a chunked-reading convention for novels past roughly 150,000 tokens.
-- 全面压低各步子代理的输入成本：dispatch 契约按步授予小说全文（仅步骤 1 必给、步骤 3 作兜底）并指定 artifact 小节而非整本文件；实体登记表独立为 `docs/registry.md`，步骤 7 各 phase 无需拖整本 GDD；步骤 7 各 phase 改读项目自身的 `components.js` 与按 phase 裁剪的引用表；步骤 8 拆为三条并行 lane（结构+触达 / 谜题+一致性 / 中性度+文案+呈现）由编排器合并；步骤 1 增加约 15 万 token 以上小说的分块读取约定。
-
 - Add a chapter to the README addressed to the installing agent: once installation completes, the agent tells the user the deliverable will carry a link back to this repository at the game entry and asks them to keep it.
 - 在 README 中新增致安装 agent 的一章：安装完成后，agent 向用户说明产物会在游戏入口带上指向本仓库的链接，并请用户保留该链接。
 
-- Drop the repository map from the README: the file-by-file layout is contributor-facing detail that a skill user never acts on, so the section leaves the user-facing doc entirely instead of moving to a new file.
-- 把仓库地图从 README 中移除：逐文件布局是面向贡献者的细节，skill 使用者不会据此做任何动作；该节直接从面向使用者的文档中去掉，不另立新文件。
+- Add a GitHub note block at the top of both READMEs (after the language switcher, before the intro) promoting Rainyun.
+- 在两份 README 顶部（语言切换行之后、首段之前）新增 GitHub note 块推广雨云。
+
+- Add a README header image: `assets/banner.webp`, a 1664×928 tech-noir key visual (open novel → one glowing login window under a magnifying glass → puzzle piece) carrying the tagline "Turn a novel into a puzzle website"; embedded at the top of the root `README.md` and `docs/README_zh.md`.
+- 新增 README 头图：`assets/banner.webp`，1664×928 的科技黑色电影风格主视觉（摊开的小说 → 放大镜下唯一的发光登录窗口 → 拼图），标语为 "Turn a novel into a puzzle website"；置于根 `README.md` 与 `docs/README_zh.md` 顶部。
+
+- Ship the two ignore-file templates with the scaffold: `assets/gitignore.template` and `assets/dockerignore.template` are copied into the project root at step 6 as `.gitignore` / `.dockerignore`. They keep the development by-products out of history and out of the deployed image — the plaintext `data/*.src.json` tables (the answer key, R3), the generated `docs/site-graph.{json,html}`, an agent's scratch `memory/`, and the `docs/` `tools/` `viewer/` `deploy/` machinery — while everything the site publishes stays tracked. `references/structure/base.md` §1 lists both files and explains why a static-tree deploy is a second, different leak path; the step-8 checklist gains a content check (`git check-ignore -v` plus the deploy exclude list).
+- 随脚手架下发两份忽略文件模板：step 6 把 `assets/gitignore.template` 与 `assets/dockerignore.template` 复制到项目根作为 `.gitignore` / `.dockerignore`，把开发副产物挡在历史与镜像之外——明文 `data/*.src.json` 表（答案本身，R3）、生成的 `docs/site-graph.{json,html}`、agent 的暂存 `memory/`，以及 `docs/` `tools/` `viewer/` `deploy/` 这些机制文件——同时站点要发布的内容仍保持可追踪。`references/structure/base.md` §1 列出这两个文件并说明「静态树部署是第二条泄漏路径」；step 8 清单新增一条按内容校验（`git check-ignore -v` 加部署排除清单）。
+
+- Add the site-graph tool: `assets/tools/site-graph.mjs` builds `docs/site-graph.json` — vertices are the site's HTML files, edges are the jump relations between them, each carrying its guard (password / keyword / account) and the provenance of the credential (which pages supply it, verbatim or derived-as-rule-plus-components) — and injects that JSON into the new `assets/viewer/graph-viewer.html` framework to render a self-contained `docs/site-graph.html` (layered SVG, edge styles per kind, provenance panel, problems panel). The shared parsing + walk core moves into `assets/tools/site-model.mjs`, imported by both this tool and `check-solvable.mjs` (behavior-preserving); edges also carry M7 progress, step-4 closed-list route claims, and negative-delta back-jump flags. Ships with `assets/fixtures/mini-site/`, the fixture `site-graph.mjs --self-test` builds its graph from.
+- 新增站点图工具：`assets/tools/site-graph.mjs` 生成 `docs/site-graph.json`——顶点为站点的 HTML 文件，边为页面间跳转关系，每条边携带其守卫（密码 / 关键词 / 账号）与凭据溯源（哪些页提供、逐字还是派生即规则加部件）——并把该 JSON 注入新的 `assets/viewer/graph-viewer.html` 渲染框架，产出自包含的 `docs/site-graph.html`（分层 SVG、按边型着色、溯源面板、问题面板）。共享的解析与走图核心移入 `assets/tools/site-model.mjs`，由本工具与 `check-solvable.mjs` 共同导入（行为保持）；边还携带 M7 进度、第 4 步闭合清单的 route 声明与负进度跳变标记。随附 `assets/fixtures/mini-site/`，供 `site-graph.mjs --self-test` 建图。
+
+- Add canonical rule IDs R1–R12 in `guardrails.md` as the single home of every duplicated rule; workflow, reference, and example files now cite `(Rn)` instead of restating rules freely, and `workflow/08-self-check.md` becomes the single canonical deploy checklist (the duplicate list carried by the pre-split base.md is removed).
+- 在 `guardrails.md` 增加权威规则编号 R1–R12，作为所有重复规则的唯一出处；workflow、reference、example 文件改为引用 `(Rn)`；`workflow/08-self-check.md` 成为唯一权威部署清单（删除拆分前 base.md 里的重复清单）。
+
+- Add repo self-checks: `scripts/check-docs.mjs` (validates file paths, `§N`/`§N.M` citations, rule IDs, markdown links, orphan docs) wired into `.github/workflows/ci.yml` together with `check-solvable.mjs --self-test`.
+- 新增仓库自检：`scripts/check-docs.mjs`（校验文件路径、`§N`/`§N.M` 引用、规则编号、markdown 链接、孤儿文档），与 `check-solvable.mjs --self-test` 一起接入 `.github/workflows/ci.yml`。
+
+- Tools: extract the shared conventions into `assets/tools/config.mjs` (imported by every checker and build-keywords, so a renamed project edits one file); add `assets/tools/vendor-alpine.mjs` (downloads the pinned Alpine runtime and verifies its sha256).
+- 工具：共享约定抽到 `assets/tools/config.mjs`（所有检查器与 build-keywords 共同导入，项目改名只需改一处）；新增 `assets/tools/vendor-alpine.mjs`（下载固定版本 Alpine 运行时并校验 sha256）。
+
+- Add `examples/` with artifact-shape excerpts for steps 1/3/4/5 plus a filled dispatch-prompt sample; SKILL.md turns the dispatch contract into a six-item checklist and records the output project-root convention.
+- 新增 `examples/`：步骤 1/3/4/5 的产物形状示例与一份填好的派发 prompt 样例；SKILL.md 将派发契约改为六项清单，并记录产出项目根目录约定。
+
+- Add a root `README.md` pointing at `docs/README*.md`; note in `common-mistakes.md` why the Step-2 section is intentionally absent.
+- 新增根 `README.md` 指向 `docs/README*.md`；`common-mistakes.md` 说明步骤 2 小节为何刻意缺省。
+
+### Changed / 变更
+
+- Replace 闸门 with 门禁 in the README's workflow description: steps 4 and 5 are the two 门禁 before scaffolding, and the reachability / puzzle-audit rows in the step table carry the word in their deliverable column — the old term read like translated dev-speak rather than native Chinese. The same pass fixes a login failure hint in `references/structure/form-system.md`, where 口令 becomes 密码.
+- 把 README 工作流描述里的「闸门」改为「门禁」：第 4、5 步是脚手架前的两道门禁，步骤表中触达链分析 / 谜题设计分析两行的交付物一栏同步替换——旧词更像译制过来的开发术语，不是原生中文。同一轮清理还把 `references/structure/form-system.md` 登录失败提示里的「口令」改为「密码」。
+
+- Correct the changelog entry for the README repository-map removal: the map was dropped from the README outright, not moved into a new `docs/CONTRIBUTING.md` that was never created; the README's dangling 贡献指南 link to that file goes with it.
+- 修正 README 仓库地图移除的变更日志条目：地图是从 README 直接去掉的，并未移入从未被创建的 `docs/CONTRIBUTING.md`；README 中指向该文件的失效「贡献指南」链接一并删除。
+
+- Cut subagent input cost across the workflow: the dispatch contract grants the novel text per step (step 1 always, step 3 only as a fallback when the deconstruction lacks a needed life trace) and names artifact sections instead of whole files; the entity registry ships as its own `docs/registry.md` so step-7 phases load it without the GDD; step-7 phases read the project's own `components.js` and a per-phase reference table instead of the full reference stack; step 8 fans out into three parallel lanes (structure + reachability / puzzle integrity + consistency / neutrality + copy + presentation) merged by the orchestrator; step 1 gains a chunked-reading convention for novels past roughly 150,000 tokens.
+- 全面压低各步子代理的输入成本：dispatch 契约按步授予小说全文（仅步骤 1 必给、步骤 3 作兜底）并指定 artifact 小节而非整本文件；实体登记表独立为 `docs/registry.md`，步骤 7 各 phase 无需拖整本 GDD；步骤 7 各 phase 改读项目自身的 `components.js` 与按 phase 裁剪的引用表；步骤 8 拆为三条并行 lane（结构+触达 / 谜题+一致性 / 中性度+文案+呈现）由编排器合并；步骤 1 增加约 15 万 token 以上小说的分块读取约定。
 
 - Expand the README's "你会得到什么" section from one bullet to four, spelling out the output's characteristics: a structured static site, a site that passes as a real organization's website, a directly hostable zero-build artifact, and playability backed by the two pre-scaffold gates plus the link / solvability / credential / reachability checkers.
 - 将 README 的「你会得到什么」从一条扩为四条，写清产出物的特点：结构化静态站点、以假乱真的真实机构网站、零构建可直接托管的成品、以及由脚手架前两道门禁与链接 / 可解性 / 凭据 / 可达性检查器保障的可玩性。
-
-- Drop the English translations: `docs/README_en.md` and `docs/USAGE_en.md` are removed and the repo's docs become Chinese-only; the language-switcher lines and every `_en` citation in `docs/README.md`, `docs/USAGE.md`, and `AGENTS.md` go with them.
-- 删除英文译版：移除 `docs/README_en.md` 与 `docs/USAGE_en.md`，仓库文档改为纯中文；两份中文文档与 `AGENTS.md` 中的语言切换行及全部 `_en` 引用随之移除。
 
 - State the link-back request in `LICENSE` itself: projects built with the skill (games, GDDs, deconstructions, and other outputs) stay the user's own work under neither license, but the author's one request — keep a link back to this repository in those projects, e.g. in the project README or the site footer — now lives in the license statement, not only in the docs.
 - 把保留链接引用的请求写进 `LICENSE` 本身：用本技能搭建的项目（游戏、GDD、拆解文档等产出物）仍归使用者所有、不受两份许可证约束，但作者唯一的请求——在这些项目中保留到本仓库的链接引用（如放在项目 README 或站点页脚）——现在落在许可证声明里，不再只存在于文档中。
 
 - Relicense the code and tooling from MIT to GNU General Public License v3.0 (GPL-3.0); the docs and prompt content stay under CC BY-SA 4.0, so the repo keeps its dual license with only the code half changed. `LICENSE` now carries the dual-license statement plus the full GPL-3.0 text, and every MIT citation in the READMEs and the USAGE notices now reads GPL-3.0.
 - 将代码与工具的许可证从 MIT 改为 GNU General Public License v3.0（GPL-3.0）；文档与提示词内容仍为 CC BY-SA 4.0，仓库保持双许可、只换代码半边。`LICENSE` 现为双许可声明加 GPL-3.0 全文，两份 README 与 USAGE 须知中的 MIT 引用同步改为 GPL-3.0。
-
-- Add a GitHub note block at the top of both READMEs (after the language switcher, before the intro) promoting Rainyun.
-- 在两份 README 顶部（语言切换行之后、首段之前）新增 GitHub note 块推广雨云。
 
 - Retune the `docs/README.md` tagline: replace the definition-style colon in "一个 agent 技能：……" with a comma so the sentence reads as an introduction instead of a dictionary entry.
 - 调整 `docs/README.md` 首句：把「一个 agent 技能：……」的词条式冒号改为逗号，让句子读作介绍而非释义。
@@ -55,9 +81,6 @@ Higher versions on top. Each entry: English line, then Chinese line; entries sep
 - Rewrite the root `README.md` as a full English landing page (positioning, what you get, install, usage, the eight-step workflow table, repository map, requirements, license and responsible use) and move the Chinese version into a new `README_zh.md` sibling, ending the root README's bilingual duplication.
 - 将根 `README.md` 重写为完整的英文落地页（定位、产出物、安装、用法、八步工作流表、仓库地图、运行要求、许可与合规），中文版移入新的 `README_zh.md` 同名单文件，根 README 不再中英并置。
 
-- Add a README header image: `assets/banner.webp`, a 1664×928 tech-noir key visual (open novel → one glowing login window under a magnifying glass → puzzle piece) carrying the tagline "Turn a novel into a puzzle website"; embedded at the top of the root `README.md` and `docs/README_zh.md`.
-- 新增 README 头图：`assets/banner.webp`，1664×928 的科技黑色电影风格主视觉（摊开的小说 → 放大镜下唯一的发光登录窗口 → 拼图），标语为 "Turn a novel into a puzzle website"；置于根 `README.md` 与 `docs/README_zh.md` 顶部。
-
 - Move the repo self-check instructions out of SKILL.md into AGENTS.md. SKILL.md is the skill's user-facing entry — an agent adapting a novel has no use for repo maintenance — while AGENTS.md already carries the repo's editing conventions (branch naming, commit rules, changelog) and is what an agent editing this repo loads. AGENTS.md also absorbs the earlier prose tightening of the References section.
 - 把仓库自检说明从 SKILL.md 移入 AGENTS.md。SKILL.md 是面向使用者的 skill 入口——改编小说的 agent 用不到仓库维护；AGENTS.md 已承载本仓库的编辑约定（分支命名、提交规则、CHANGELOG），且是编辑本仓库的 agent 实际加载的文件。AGENTS.md 同时收纳了此前对 References 段的压缩。
 
@@ -70,17 +93,8 @@ Higher versions on top. Each entry: English line, then Chinese line; entries sep
 - Give the graph viewer the register of the site it draws. It borrows the project's own paper-and-ink palette (`--ink` `--paper` `--rule` `--stamp`), sets prose in a serif and data in CJK sans, and routes the hop distance through margin rules and `hop n` labels; every routing kind now uses one dimmed register hue, so the 378 chrome edges recede to 1px at 35% opacity with no arrowheads while the fiction's own routes — and the stamp red on a gate or an unreachable page — carry the ink. Nodes read as files: an ink bar on the left edge marks the page's nature, the file name carries identity with its directory demoted below, and the M7 read order sits in the corner as a docket number. The rail is a ledger sheet (`h2` + caption + `dt`/`dd` rows) instead of stacked key-value lines, ties each guard field to its sources, and anchors its labels and empty state.
 - 把图的观看界面换成它所画站点的语汇。它借用项目自己的纸墨色调（`--ink` `--paper` `--rule` `--stamp`），正文用宋体、数据用中文无衬线，把跳数做成页边分隔线与 `hop n` 边注；每种跳转边只用一支压暗的火漆色，信息架构的 378 条框架边因此退成 1px、35% 不透明、无箭头，让剧情自己的路线——以及门禁与不可达页上那记印章红——占住墨色。节点当作卷宗卡片读：左缘墨条标页面性质，文件名承载身份、目录降为副行，M7 阅读顺序以编目号落在角上。右侧栏改成账簿页（`h2` + 说明行 + `dt`/`dd` 字段行），不再堆叠键值行；每条守卫字段都挂上它的来源，标签与空状态也给足了对照。
 
-- Ship the two ignore-file templates with the scaffold: `assets/gitignore.template` and `assets/dockerignore.template` are copied into the project root at step 6 as `.gitignore` / `.dockerignore`. They keep the development by-products out of history and out of the deployed image — the plaintext `data/*.src.json` tables (the answer key, R3), the generated `docs/site-graph.{json,html}`, an agent's scratch `memory/`, and the `docs/` `tools/` `viewer/` `deploy/` machinery — while everything the site publishes stays tracked. `references/structure/base.md` §1 lists both files and explains why a static-tree deploy is a second, different leak path; the step-8 checklist gains a content check (`git check-ignore -v` plus the deploy exclude list).
-- 随脚手架下发两份忽略文件模板：step 6 把 `assets/gitignore.template` 与 `assets/dockerignore.template` 复制到项目根作为 `.gitignore` / `.dockerignore`，把开发副产物挡在历史与镜像之外——明文 `data/*.src.json` 表（答案本身，R3）、生成的 `docs/site-graph.{json,html}`、agent 的暂存 `memory/`，以及 `docs/` `tools/` `viewer/` `deploy/` 这些机制文件——同时站点要发布的内容仍保持可追踪。`references/structure/base.md` §1 列出这两个文件并说明「静态树部署是第二条泄漏路径」；step 8 清单新增一条按内容校验（`git check-ignore -v` 加部署排除清单）。
-
-- Fix the two site-graph defects a real project exposed. The graph now draws `<form action>` jumps as a `form` edge kind (step-4 route 2), so a page reachable only through a query form — container D's `query.html` → `results.html` list, the form being a first-class shape of this skill — stops reading as `unreachable` while `check-solvable` reaches it, and a page the walk reaches but the graph still cannot draw is reported as a `walk-divergence` problem instead of a silent `unreachable` verdict; the shared page walk skips the dev/ops directories (`CONFIG.skipDirs`, renamed from `credSkipDirs` and now shared with `check-credentials`, adding `viewer/`), so the renderer template and a previously written `docs/site-graph.html` no longer count as site pages and the page count is identical on a re-run. `references/structure/base.md` §1 gains `viewer/` and the skip rule; the fixture gains a form-reached results page plus `viewer/` and `docs/` stubs that must never become vertices.
-- 修复真实项目暴露的两个站点图缺陷。图现在把 `<form action>` 跳转画成 `form` 边型（第 4 步 route 2），因此仅通过查询表单到达的页面——容器 D 的 `query.html` → `results.html` 列表，表单是本 skill 的一等形态——不再被判为 `unreachable` 而 `check-solvable` 却能走到；走图能到而图仍画不出的页面改为报 `walk-divergence` 问题，而不是静默的 `unreachable` 结论；共享的走图跳过开发/运维目录（`CONFIG.skipDirs`，由 `credSkipDirs` 改名并与 `check-credentials` 共用，新增 `viewer/`），渲染模板与先前生成的 `docs/site-graph.html` 不再算作站点页面，重跑页数完全一致。`references/structure/base.md` §1 补入 `viewer/` 与跳过规则；夹具新增一个由表单到达的 results 页，以及 `viewer/` 与 `docs/` 两个不得进入顶点集的桩文件。
-
 - Make the graph viewer usable on a phone: the sticky-header height is measured into `--head` (a wrapped mobile header is taller than the hard-coded 41px), the layout drops to one column under 820px with the provenance panel below the canvas, and the canvas opens fit-to-width with a `fit` / `100%` toggle — at 100% a drag or scroll pans and a pinch zooms, so a wide graph stays readable instead of being scaled to dust.
 - 让站点图在手机上可用：粘性头部高度实测写入 `--head`（手机端头部换行后高于写死的 41px），≤820px 降为单列、溯源面板移到画布下方，画布默认按宽度自适应并提供 `fit` / `100%` 切换——100% 时可拖拽或滚动平移、捏合缩放，宽图不再被缩成一粒沙。
-
-- Add the site-graph tool: `assets/tools/site-graph.mjs` builds `docs/site-graph.json` — vertices are the site's HTML files, edges are the jump relations between them, each carrying its guard (password / keyword / account) and the provenance of the credential (which pages supply it, verbatim or derived-as-rule-plus-components) — and injects that JSON into the new `assets/viewer/graph-viewer.html` framework to render a self-contained `docs/site-graph.html` (layered SVG, edge styles per kind, provenance panel, problems panel). The shared parsing + walk core moves into `assets/tools/site-model.mjs`, imported by both this tool and `check-solvable.mjs` (behavior-preserving); edges also carry M7 progress, step-4 closed-list route claims, and negative-delta back-jump flags. Ships with `assets/fixtures/mini-site/`, the fixture `site-graph.mjs --self-test` builds its graph from.
-- 新增站点图工具：`assets/tools/site-graph.mjs` 生成 `docs/site-graph.json`——顶点为站点的 HTML 文件，边为页面间跳转关系，每条边携带其守卫（密码 / 关键词 / 账号）与凭据溯源（哪些页提供、逐字还是派生即规则加部件）——并把该 JSON 注入新的 `assets/viewer/graph-viewer.html` 渲染框架，产出自包含的 `docs/site-graph.html`（分层 SVG、按边型着色、溯源面板、问题面板）。共享的解析与走图核心移入 `assets/tools/site-model.mjs`，由本工具与 `check-solvable.mjs` 共同导入（行为保持）；边还携带 M7 进度、第 4 步闭合清单的 route 声明与负进度跳变标记。随附 `assets/fixtures/mini-site/`，供 `site-graph.mjs --self-test` 建图。
 
 - Restructure the skill around a selectable design-module catalog: optional mechanics (search, account login, layer reskin, progress numbering, collection carriers, staging) move out of the mandatory guardrails into `references/design-playbook.md` §2, step 2 now assembles the chosen modules into `docs/system-profile.md` with the user, and the GDD plus later steps adapt to that selection. Removes the honor-agreement copy, the mandatory clearance / `[Access denied]` search conventions, and the mandatory dual-skin and `secret/` directory naming (the restricted area takes the fiction's own word, e.g. `internal/`, via the `secretUrl` CONFIG knob); in-fiction carriers such as a notebook or evidence wall are no longer treated as a prohibited form.
 - 以可选设计模块目录重构本 skill：把可选机制（搜索、账号登录、换肤、进度编号、收集载体、分阶段演出）从强制护栏移入 `references/design-playbook.md` §2；步骤 2 与用户一起把选定模块组装成 `docs/system-profile.md`，GDD 与后续步骤按选择适配。移除 honor agreement 文案、强制的密级 / `[Access denied]` 搜索约定，以及强制的双皮肤与 `secret/` 目录命名（受限区域改用虚构自身的词，如 `internal/`，由 `secretUrl` 配置项指向）；虚构内的笔记本 / 证据墙等载体不再视为禁止形态。
@@ -100,17 +114,20 @@ Higher versions on top. Each entry: English line, then Chinese line; entries sep
 - Restructure references: rename `paradigm.md` → `guardrails.md` and `design-paradigms.md` → `design-playbook.md`; split `structure/base.md` into `base.md` (directory tree + page skeleton), `components.md` (Alpine component reference implementations), and `tooling.md` (check cadence, shared config, manual methods).
 - 重构 references：`paradigm.md` 改名 `guardrails.md`、`design-paradigms.md` 改名 `design-playbook.md`；`structure/base.md` 拆分为 `base.md`（目录树+页面骨架）、`components.md`（Alpine 组件参考实现）、`tooling.md`（检查节奏、共享配置、人工方法）。
 
-- Add canonical rule IDs R1–R12 in `guardrails.md` as the single home of every duplicated rule; workflow, reference, and example files now cite `(Rn)` instead of restating rules freely, and `workflow/08-self-check.md` becomes the single canonical deploy checklist (the duplicate list carried by the pre-split base.md is removed).
-- 在 `guardrails.md` 增加权威规则编号 R1–R12，作为所有重复规则的唯一出处；workflow、reference、example 文件改为引用 `(Rn)`；`workflow/08-self-check.md` 成为唯一权威部署清单（删除拆分前 base.md 里的重复清单）。
+### Removed / 移除
 
-- Add repo self-checks: `scripts/check-docs.mjs` (validates file paths, `§N`/`§N.M` citations, rule IDs, markdown links, orphan docs) wired into `.github/workflows/ci.yml` together with `check-solvable.mjs --self-test`.
-- 新增仓库自检：`scripts/check-docs.mjs`（校验文件路径、`§N`/`§N.M` 引用、规则编号、markdown 链接、孤儿文档），与 `check-solvable.mjs --self-test` 一起接入 `.github/workflows/ci.yml`。
+- Drop the repository map from the README: the file-by-file layout is contributor-facing detail that a skill user never acts on, so the section leaves the user-facing doc entirely instead of moving to a new file.
+- 把仓库地图从 README 中移除：逐文件布局是面向贡献者的细节，skill 使用者不会据此做任何动作；该节直接从面向使用者的文档中去掉，不另立新文件。
 
-- Tools: extract the shared conventions into `assets/tools/config.mjs` (imported by every checker and build-keywords, so a renamed project edits one file); add `assets/tools/vendor-alpine.mjs` (downloads the pinned Alpine runtime and verifies its sha256).
-- 工具：共享约定抽到 `assets/tools/config.mjs`（所有检查器与 build-keywords 共同导入，项目改名只需改一处）；新增 `assets/tools/vendor-alpine.mjs`（下载固定版本 Alpine 运行时并校验 sha256）。
+- Drop the English translations: `docs/README_en.md` and `docs/USAGE_en.md` are removed and the repo's docs become Chinese-only; the language-switcher lines and every `_en` citation in `docs/README.md`, `docs/USAGE.md`, and `AGENTS.md` go with them.
+- 删除英文译版：移除 `docs/README_en.md` 与 `docs/USAGE_en.md`，仓库文档改为纯中文；两份中文文档与 `AGENTS.md` 中的语言切换行及全部 `_en` 引用随之移除。
 
-- Add `examples/` with artifact-shape excerpts for steps 1/3/4/5 plus a filled dispatch-prompt sample; SKILL.md turns the dispatch contract into a six-item checklist and records the output project-root convention.
-- 新增 `examples/`：步骤 1/3/4/5 的产物形状示例与一份填好的派发 prompt 样例；SKILL.md 将派发契约改为六项清单，并记录产出项目根目录约定。
+### Fixed / 修复
 
-- Add a root `README.md` pointing at `docs/README*.md`; note in `common-mistakes.md` why the Step-2 section is intentionally absent.
-- 新增根 `README.md` 指向 `docs/README*.md`；`common-mistakes.md` 说明步骤 2 小节为何刻意缺省。
+- Fix the two site-graph defects a real project exposed. The graph now draws `<form action>` jumps as a `form` edge kind (step-4 route 2), so a page reachable only through a query form — container D's `query.html` → `results.html` list, the form being a first-class shape of this skill — stops reading as `unreachable` while `check-solvable` reaches it, and a page the walk reaches but the graph still cannot draw is reported as a `walk-divergence` problem instead of a silent `unreachable` verdict; the shared page walk skips the dev/ops directories (`CONFIG.skipDirs`, renamed from `credSkipDirs` and now shared with `check-credentials`, adding `viewer/`), so the renderer template and a previously written `docs/site-graph.html` no longer count as site pages and the page count is identical on a re-run. `references/structure/base.md` §1 gains `viewer/` and the skip rule; the fixture gains a form-reached results page plus `viewer/` and `docs/` stubs that must never become vertices.
+- 修复真实项目暴露的两个站点图缺陷。图现在把 `<form action>` 跳转画成 `form` 边型（第 4 步 route 2），因此仅通过查询表单到达的页面——容器 D 的 `query.html` → `results.html` 列表，表单是本 skill 的一等形态——不再被判为 `unreachable` 而 `check-solvable` 却能走到；走图能到而图仍画不出的页面改为报 `walk-divergence` 问题，而不是静默的 `unreachable` 结论；共享的走图跳过开发/运维目录（`CONFIG.skipDirs`，由 `credSkipDirs` 改名并与 `check-credentials` 共用，新增 `viewer/`），渲染模板与先前生成的 `docs/site-graph.html` 不再算作站点页面，重跑页数完全一致。`references/structure/base.md` §1 补入 `viewer/` 与跳过规则；夹具新增一个由表单到达的 results 页，以及 `viewer/` 与 `docs/` 两个不得进入顶点集的桩文件。
+
+### Notes / 说明
+
+- Version 0.1.0 consolidates every change since the repository began; there was no versioned release before it. Later changes go into a new version section above this one (or an `## [Unreleased]` section that a release renames), each entry an English line followed by its Chinese line.
+- 0.1.0 汇总自仓库建立以来的全部变更，此前没有带版本号的发布。此后的新变更写在它上方的版本小节（或先写在 `## [Unreleased]`、发布时收成版本号），每条目中英各一行。
