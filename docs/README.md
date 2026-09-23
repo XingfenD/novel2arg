@@ -1,13 +1,11 @@
-![novel2arg——把小说变成解谜网站](../assets/banner.webp)
+![novel2arg——把小说变成网页解密游戏](../assets/banner.webp)
 
 # novel2arg
 
-[中文](README.md) | [English](README_en.md)
-
 > [!NOTE]
-> 想将您的网页游戏部署到公网？点击[这里](https://www.rainyun.com/fendy_)注册雨云.
+> 想将您的网页游戏部署到公网？点击[这里](https://www.rainyun.com/fendy_)注册雨云。雨云将为您提供上云的全链路高性价比服务。
 
-一个 agent 技能，把悬疑 / 推理小说改编成伪装成真实网站的多页静态解谜游戏（ARG-lite）。
+一个把悬疑 / 推理小说改编成伪装成真实网站的网页解密游戏（ARG）的 agent 技能。
 
 玩家看到的不是一个游戏。他们打开的是一个看起来像真实机构网站的站点——公司内网、档案馆、登录门户——阅读其中的公文，检索站内索引，从人物的生活痕迹里找出密码。真实感就是产品本身，本技能的每一条规则都在保护它。
 
@@ -60,8 +58,8 @@ agent 会把仓库放进对应的 skills 目录。
 - `assets/tools/` — 随项目复制的零依赖 Node 文件：`config.mjs`（所有检查脚本共享的约定，项目改名时只改这一个文件）、`hash.mjs`、`build-keywords.mjs`、`check-links.mjs`、`check-solvable.mjs`、`check-credentials.mjs`（组合 / 派生凭据：部件 + 规则 + 零明文）、`check-reachability.mjs`（演算副本可达性）、`vendor-alpine.mjs`；`check-solvable.mjs --self-test` 可自检文本匹配器
 - `scripts/check-docs.mjs` — 仓库自检（路径、§ 引用、规则编号、链接、孤儿文档），由 CI（`.github/workflows/ci.yml`）运行
 - `docs/CHANGELOG.md` — 变更日志（每条中英文各一行）
-- `LICENSE` / `LICENSE.docs` — 双许可：代码与工具用 MIT，文档与提示词内容用 CC BY-SA 4.0
-- `docs/USAGE.md` / `docs/USAGE_en.md` — 使用须知中文默认版与英文译版（改编有版权的小说、欺骗性使用边界）；属政策声明，不是许可证的一部分
+- `LICENSE` / `LICENSE.docs` — 双许可：代码与工具用 GPL-3.0，文档与提示词内容用 CC BY-SA 4.0
+- `docs/USAGE.md` — 使用须知（改编有版权的小说、欺骗性使用边界）；属政策声明，不是许可证的一部分
 
 ## 运行要求
 
@@ -69,11 +67,11 @@ Node.js 20+ 用于运行检查器工具。生成的游戏本身是纯静态 HTML
 
 ## 许可与合规
 
-双许可：代码与工具为 [MIT](../LICENSE)，文档与 prompt 内容为 [CC BY-SA 4.0](../LICENSE.docs)。你用本技能产出的游戏归你所有，不受两份许可证约束。
+双许可：代码与工具为 [GPL-3.0](../LICENSE)，文档与 prompt 内容为 [CC BY-SA 4.0](../LICENSE.docs)。您用本技能产出的游戏归你所有，不受本项目许可证的约束，但是需要在项目中保留到本仓库的链接引用。
 
-改编受版权保护的小说或公开部署游戏前，请先读[使用须知](USAGE.md)（[English](USAGE_en.md)）：改编需要权利人许可，产出物不得用于钓鱼、冒充真实机构或诽谤。
+改编受版权保护的小说或公开部署游戏前，请先读[使用须知](USAGE.md)：改编需要权利人许可，产出物不得用于钓鱼、冒充真实机构或诽谤。
 
 ## 文档
 
 - 更新日志：[CHANGELOG.md](CHANGELOG.md)
-- 负责任使用说明：[USAGE.md](USAGE.md)（[English](USAGE_en.md)）
+- 使用须知：[USAGE.md](USAGE.md)

@@ -4,6 +4,15 @@ Higher versions on top. Each entry: English line, then Chinese line; entries sep
 
 ## Unreleased
 
+- Drop the English translations: `docs/README_en.md` and `docs/USAGE_en.md` are removed and the repo's docs become Chinese-only; the language-switcher lines and every `_en` citation in `docs/README.md`, `docs/USAGE.md`, and `AGENTS.md` go with them.
+- 删除英文译版：移除 `docs/README_en.md` 与 `docs/USAGE_en.md`，仓库文档改为纯中文；两份中文文档与 `AGENTS.md` 中的语言切换行及全部 `_en` 引用随之移除。
+
+- State the link-back request in `LICENSE` itself: projects built with the skill (games, GDDs, deconstructions, and other outputs) stay the user's own work under neither license, but the author's one request — keep a link back to this repository in those projects, e.g. in the project README or the site footer — now lives in the license statement, not only in the docs.
+- 把保留链接引用的请求写进 `LICENSE` 本身：用本技能搭建的项目（游戏、GDD、拆解文档等产出物）仍归使用者所有、不受两份许可证约束，但作者唯一的请求——在这些项目中保留到本仓库的链接引用（如放在项目 README 或站点页脚）——现在落在许可证声明里，不再只存在于文档中。
+
+- Relicense the code and tooling from MIT to GNU General Public License v3.0 (GPL-3.0); the docs and prompt content stay under CC BY-SA 4.0, so the repo keeps its dual license with only the code half changed. `LICENSE` now carries the dual-license statement plus the full GPL-3.0 text, and every MIT citation in the READMEs and the USAGE notices now reads GPL-3.0.
+- 将代码与工具的许可证从 MIT 改为 GNU General Public License v3.0（GPL-3.0）；文档与提示词内容仍为 CC BY-SA 4.0，仓库保持双许可、只换代码半边。`LICENSE` 现为双许可声明加 GPL-3.0 全文，两份 README 与 USAGE 须知中的 MIT 引用同步改为 GPL-3.0。
+
 - Add a GitHub note block at the top of both READMEs (after the language switcher, before the intro) promoting Rainyun.
 - 在两份 README 顶部（语言切换行之后、首段之前）新增 GitHub note 块推广雨云。
 
