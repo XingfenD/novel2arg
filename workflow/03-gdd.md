@@ -6,9 +6,11 @@ catalog) plus `references/design-playbook.md` §4 (copy rules). A sample of the 
 `examples/gdd-excerpt.md`.
 
 The GDD carries a front-matter block plus eight sections; sections marked *conditional* are written only when
-the system profile selects the module they belong to, else they get one line saying so.
+the system profile selects the module they belong to, else they get one line saying so. The entity registry is
+not one of the eight — it ships separately as `docs/registry.md` (item 0b).
 
-0. **Front matter — asset manifest + entity registry.** The manifest lists every non-text asset (emblem, seals, scans, photos, mock documents, audio): filename under `assets/`, referencing page(s), in-world caption. Step 7 phase 4 lands exactly this list; step 8 reconciles it (`references/structure/tooling.md` §3 item 9). The registry is the single source of truth for every shared entity — person names, IDs, account strings and their derivation rules, page titles, document numbers, key dates; every page copies it verbatim. Most cross-page contradictions are registry violations.
+0. **Front matter — asset manifest.** The manifest lists every non-text asset (emblem, seals, scans, photos, mock documents, audio): filename under `assets/`, referencing page(s), in-world caption. Step 7 phase 4 lands exactly this list; step 8 reconciles it (`references/structure/tooling.md` §3 item 9).
+0b. **`docs/registry.md` — the entity registry.** The single source of truth for every shared entity — person names, IDs, account strings and their derivation rules, page titles, document numbers, key dates; every page copies it verbatim, and most cross-page contradictions are registry violations. It ships as its own file so a step-7 phase can load the registry without loading the whole GDD.
 1. **Numbered page map** — every page, its area (public / restricted / nested system), and its unlock source.
 2. **Site information architecture** — the nav bar, index and listing pages, sitemap, and footer links that organization would really publish, plus the entry points of the selected reach modules (search surface, gates, login). List them explicitly; step 4 audits against this list.
 3. **Register split** — the pages that address the player, normally the entry page and the endings; every other page is in-world only.
@@ -22,12 +24,12 @@ Sections 2–4 are the inputs step 4 audits, and 4–5 the inputs step 5 audits.
 both audits fail.
 
 **Self-consistency scan (before the user checkpoint).** Re-read for: a page named two ways (page map vs. nav vs.
-its own title); an entity the registry forbids on a page the same GDD requires it to carry; a worked example
+its own title); an entity `docs/registry.md` forbids on a page the same GDD requires it to carry; a worked example
 that violates its own stated rule (sample account `wang00□□` against a "pinyin initials" rule); two sections
 assigning the same fact different values. Fix each in the GDD or the contradiction ships.
 
 **User review checkpoint.** When the subagent returns `docs/gdd.md`, the orchestrator presents the asset
-manifest, entity registry, page map, IA, register split, access inventory, puzzle allocation, and ending plan to
+manifest, `docs/registry.md`, page map, IA, register split, access inventory, puzzle allocation, and ending plan to
 the user; steps 4 and 5 start only after approval, and requested changes go back to step 3.
 
 Baseline-test traps for this step: `references/common-mistakes.md` §3 — check them before returning the artifact.

@@ -1,7 +1,15 @@
 # Example — GDD Excerpt (Step 3)
 
-Shape anchor for `docs/gdd.md` (eight sections; workflow/03-gdd.md defines them all). Rows are
+Shape anchor for `docs/gdd.md` and `docs/registry.md` (workflow/03-gdd.md defines both). Rows are
 illustrative, from the same hypothetical restaurant novel as the other examples.
+
+## 0. Front matter + `docs/registry.md` (shape)
+
+| 实体 | 值 | 派生规则 | 出现页 |
+|---|---|---|---|
+| 陈国栋 | 工号 `chen.gd` | 拼音首字母 + 姓 | pages/roster.html, pages/internal/s21-ledger.html |
+
+Account strings carry their derivation rule; only the initial account may be printed (R10).
 
 ## 1. Numbered page map (excerpt)
 

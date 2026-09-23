@@ -16,7 +16,7 @@ Phase 7 lands last because its copy has to describe the game that now exists. Ph
 detail of phases 1–3: a declared emblem / seal / scan / photo that no phase owns is exactly what gets dropped,
 and neither checker catches it (an `<img>` that was never written has no `src` to resolve — references/structure/tooling.md §3 item 9).
 
-Each phase subagent receives: the file paths of `docs/gdd.md`, `docs/reachability.md`, and `docs/puzzle-audit.md`; the reference files it must load — `references/guardrails.md`, `references/design-playbook.md` §4 for the copy rules, `references/structure/base.md`, `references/structure/components.md`, and the chosen container's form doc (`references/structure/form-website.md` for A, `references/structure/form-system.md` for B/C/D); and the list of pages it owns. It returns the changed file list plus unresolved questions.
+Each phase subagent receives: the file paths of `docs/gdd.md`, `docs/registry.md`, `docs/reachability.md`, and `docs/puzzle-audit.md`; the reference files it must load — `references/guardrails.md`, `references/design-playbook.md` §4 for the copy rules, `references/structure/base.md`, `references/structure/components.md`, and the chosen container's form doc (`references/structure/form-website.md` for A, `references/structure/form-system.md` for B/C/D); and the list of pages it owns. It returns the changed file list plus unresolved questions.
 
 ## Standing rules for every phase
 
@@ -31,7 +31,7 @@ Each phase subagent receives: the file paths of `docs/gdd.md`, `docs/reachabilit
 - **Inputs name the field (R4).** `placeholder="工号"`, `placeholder="站内搜索…"`. The gate page may post the account format; the password derivation stays off it.
 - **Copy is declarative (R11).** See references/design-playbook.md §4.14 before writing any sentence.
 - **Keywords get hashed (R3).** Run `node tools/build-keywords.mjs` after any change to either `data/keywords.<layer>.src.json`.
-- **Shared entities stay identical.** A person name, ID, account, page title, or date that appears on more than one page is copied from the GDD entity registry (workflow/03), never re-typed; the registry is the single source of truth.
+- **Shared entities stay identical.** A person name, ID, account, page title, or date that appears on more than one page is copied from `docs/registry.md` (written at step 3), never re-typed; the registry is the single source of truth.
 
 At the end of each phase, re-run the leak scan from workflow/05-puzzle-audit.md Q4 over the files that phase touched.
 

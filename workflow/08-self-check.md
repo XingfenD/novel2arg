@@ -38,9 +38,9 @@
 - [ ] No single page co-locates two components of one credential (a "zero-jump" solve): if the 工号 and the year print on the same page, the player copies both without inferring. Split them per the GDD puzzle allocation table.
 - [ ] Result titles in both keyword tables are catalog entries; none summarizes the document's content.
 
-## Consistency (GDD entity registry vs. the built tree)
+## Consistency (`docs/registry.md` vs. the built tree)
 
-- [ ] Every shared entity — person name, ID / license number, account, page title, nav label, document number, key date — is byte-identical across the GDD entity registry and every page that carries it. A roster missing a person who appears on a duty schedule, or a page answering to two titles (nav vs. its own `<title>` vs. body references), fails here.
+- [ ] Every shared entity — person name, ID / license number, account, page title, nav label, document number, key date — is byte-identical across `docs/registry.md` and every page that carries it. A roster missing a person who appears on a duty schedule, or a page answering to two titles (nav vs. its own `<title>` vs. body references), fails here.
 - [ ] Every worked example satisfies the rule it illustrates. A sample account must obey the stated derivation (a "pinyin initials" rule cannot be exemplified by a full-pinyin string), and its shape must match real values (length, separators, mask).
 - [ ] No GDD self-contradiction survived into the pages: a value one GDD line forbids is not required by another line on the same page (the registry is the tiebreaker).
 
