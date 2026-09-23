@@ -4,7 +4,8 @@ Higher versions on top. Each entry: English line, then Chinese line; entries sep
 
 ## Unreleased
 
-## Unreleased
+- Replace 闸门 with 门禁 in the README's workflow description: steps 4 and 5 are the two 门禁 before scaffolding, and the reachability / puzzle-audit rows in the step table carry the word in their deliverable column — the old term read like translated dev-speak rather than native Chinese. The same pass fixes a login failure hint in `references/structure/form-system.md`, where 口令 becomes 密码.
+- 把 README 工作流描述里的「闸门」改为「门禁」：第 4、5 步是脚手架前的两道门禁，步骤表中触达链分析 / 谜题设计分析两行的交付物一栏同步替换——旧词更像译制过来的开发术语，不是原生中文。同一轮清理还把 `references/structure/form-system.md` 登录失败提示里的「口令」改为「密码」。
 
 - Correct the changelog entry for the README repository-map removal: the map was dropped from the README outright, not moved into a new `docs/CONTRIBUTING.md` that was never created; the README's dangling 贡献指南 link to that file goes with it.
 - 修正 README 仓库地图移除的变更日志条目：地图是从 README 直接去掉的，并未移入从未被创建的 `docs/CONTRIBUTING.md`；README 中指向该文件的失效「贡献指南」链接一并删除。
@@ -25,7 +26,7 @@ Higher versions on top. Each entry: English line, then Chinese line; entries sep
 - 把仓库地图从 README 中移除：逐文件布局是面向贡献者的细节，skill 使用者不会据此做任何动作；该节直接从面向使用者的文档中去掉，不另立新文件。
 
 - Expand the README's "你会得到什么" section from one bullet to four, spelling out the output's characteristics: a structured static site, a site that passes as a real organization's website, a directly hostable zero-build artifact, and playability backed by the two pre-scaffold gates plus the link / solvability / credential / reachability checkers.
-- 将 README 的「你会得到什么」从一条扩为四条，写清产出物的特点：结构化静态站点、以假乱真的真实机构网站、零构建可直接托管的成品、以及由脚手架前两道闸门与链接 / 可解性 / 凭据 / 可达性检查器保障的可玩性。
+- 将 README 的「你会得到什么」从一条扩为四条，写清产出物的特点：结构化静态站点、以假乱真的真实机构网站、零构建可直接托管的成品、以及由脚手架前两道门禁与链接 / 可解性 / 凭据 / 可达性检查器保障的可玩性。
 
 - Drop the English translations: `docs/README_en.md` and `docs/USAGE_en.md` are removed and the repo's docs become Chinese-only; the language-switcher lines and every `_en` citation in `docs/README.md`, `docs/USAGE.md`, and `AGENTS.md` go with them.
 - 删除英文译版：移除 `docs/README_en.md` 与 `docs/USAGE_en.md`，仓库文档改为纯中文；两份中文文档与 `AGENTS.md` 中的语言切换行及全部 `_en` 引用随之移除。

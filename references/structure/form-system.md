@@ -55,7 +55,7 @@ entry, so `intern + handler-pw` is rejected. **Do not split one login into two f
 
 ```html
 <!-- Single box, two roles. data-grant = static list for the walk; data-grants = runtime account→identity map. -->
-<main x-data="gate" data-grant="intern,handler" data-next="query.html" data-fail-hint="账号或口令有误"
+<main x-data="gate" data-grant="intern,handler" data-next="query.html" data-fail-hint="账号或密码有误"
       data-grants='{"<hash:hz-sy-0042>":{"id":"intern","pw":["<hash:1998>"]},
                     "<hash:lly0219>":{"id":"handler","pw":["<hash:2003>"],"reskin":"secret"}}'>
   <form class="gate" @submit.prevent="submit">
