@@ -16,7 +16,17 @@ Phase 7 lands last because its copy has to describe the game that now exists. Ph
 detail of phases 1–3: a declared emblem / seal / scan / photo that no phase owns is exactly what gets dropped,
 and neither checker catches it (an `<img>` that was never written has no `src` to resolve — references/structure/tooling.md §3 item 9).
 
-Each phase subagent receives: the file paths of `docs/gdd.md`, `docs/registry.md`, `docs/reachability.md`, and `docs/puzzle-audit.md`; the reference files it must load — `references/guardrails.md`, `references/design-playbook.md` §4 for the copy rules, `references/structure/base.md`, `references/structure/components.md`, and the chosen container's form doc (`references/structure/form-website.md` for A, `references/structure/form-system.md` for B/C/D); and the list of pages it owns. It returns the changed file list plus unresolved questions.
+Each phase subagent receives only the artifact sections and references its row names — never a whole file where sections are listed — plus the list of pages it owns. It returns the changed file list plus unresolved questions. Component behavior comes from the project's own `components.js` (written by 6a); `references/structure/components.md` is step-6a reading, not step-7 reading.
+
+| Phase | Artifact sections | References |
+|---|---|---|
+| 1 Public pages and realistic documents | gdd sections 1, 2, 8; `docs/registry.md` | `references/guardrails.md` (R5, R6, R12), `references/design-playbook.md` §4, `references/structure/base.md`, form doc |
+| 2 Search engine and password gates | gdd sections 4, 5; reachability rows for owned pages | project `components.js` (search, gate), `references/guardrails.md` (R3, R4, R8, R9), form doc |
+| 3 Restricted-area pages (+ reskin when M5) | gdd section 4; reachability rows for owned pages | project `components.js` (access, reskin), form doc, `references/guardrails.md` (R10, R12) |
+| 4 Images, seals, scans, photos, mock documents | gdd front matter (asset manifest) | `references/structure/base.md` §2 (image placement) |
+| 5 Staging modules (when M12) | gdd section 5 (sensory rows) | project `components.js` (staging) |
+| 6 Endings and fourth-wall close (when M10) | gdd sections 3, 6 | `references/design-playbook.md` §4, `references/guardrails.md` (R11, R12) |
+| 7 Entry page | gdd sections 3, 6; `docs/system-profile.md` | `references/design-playbook.md` §4, `references/guardrails.md` (R12) |
 
 ## Standing rules for every phase
 

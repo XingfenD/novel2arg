@@ -2,7 +2,7 @@
 
 Two dispatches in order: 6a builds the system framework with no plot in its context; 6b completes the page skeletons with the plot artifacts. **Output:** the file tree, every page skeletoned.
 
-**Inputs:** 6a: `docs/system-profile.md`, references/guardrails.md (prohibited forms), references/structure/base.md, references/structure/components.md, and the chosen container's form doc (references/structure/form-website.md for A, references/structure/form-system.md for B/C/D). 6b: `docs/gdd.md`, `docs/reachability.md`, `docs/puzzle-audit.md`, the 6a framework, plus the same references.
+**Inputs:** 6a: `docs/system-profile.md`, references/guardrails.md (prohibited forms), references/structure/base.md, references/structure/components.md, and the chosen container's form doc (references/structure/form-website.md for A, references/structure/form-system.md for B/C/D). 6b: `docs/gdd.md` sections 1, 2, `docs/registry.md`, `docs/reachability.md`, `docs/puzzle-audit.md`, the 6a framework, references/guardrails.md (prohibited forms), references/structure/base.md, and the form doc — 6b reads the project's own `components.js` and `base.css` (6a already instantiated the selected components) instead of references/structure/components.md, and it writes no copy, so the playbook stays out of its context.
 
 ## 6a — Front-end system framework (plot-blind)
 
