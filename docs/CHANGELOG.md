@@ -4,6 +4,45 @@ Higher versions on top. Each entry: English line, then Chinese line; entries sep
 
 ## Unreleased
 
+- Add a chapter to the README addressed to the installing agent: once installation completes, the agent tells the user the deliverable will carry a link back to this repository at the game entry and asks them to keep it.
+- 在 README 中新增致安装 agent 的一章：安装完成后，agent 向用户说明产物会在游戏入口带上指向本仓库的链接，并请用户保留该链接。
+
+- Move the repository map out of the README into a new `docs/CONTRIBUTING.md`: the file-by-file layout is contributor-facing detail that a skill user never acts on, so it now lives next to the branch/commit/changelog conventions and the repo self-check commands, with the README linking to it.
+- 把仓库地图从 README 移入新的 `docs/CONTRIBUTING.md`：逐文件布局是面向贡献者的细节，skill 使用者不会据此做任何动作；地图现与分支 / 提交 / CHANGELOG 约定及仓库自检命令放在一处，README 保留指向它的链接。
+
+- Expand the README's "你会得到什么" section from one bullet to four, spelling out the output's characteristics: a structured static site, a site that passes as a real organization's website, a directly hostable zero-build artifact, and playability backed by the two pre-scaffold gates plus the link / solvability / credential / reachability checkers.
+- 将 README 的「你会得到什么」从一条扩为四条，写清产出物的特点：结构化静态站点、以假乱真的真实机构网站、零构建可直接托管的成品、以及由脚手架前两道闸门与链接 / 可解性 / 凭据 / 可达性检查器保障的可玩性。
+
+- Drop the English translations: `docs/README_en.md` and `docs/USAGE_en.md` are removed and the repo's docs become Chinese-only; the language-switcher lines and every `_en` citation in `docs/README.md`, `docs/USAGE.md`, and `AGENTS.md` go with them.
+- 删除英文译版：移除 `docs/README_en.md` 与 `docs/USAGE_en.md`，仓库文档改为纯中文；两份中文文档与 `AGENTS.md` 中的语言切换行及全部 `_en` 引用随之移除。
+
+- State the link-back request in `LICENSE` itself: projects built with the skill (games, GDDs, deconstructions, and other outputs) stay the user's own work under neither license, but the author's one request — keep a link back to this repository in those projects, e.g. in the project README or the site footer — now lives in the license statement, not only in the docs.
+- 把保留链接引用的请求写进 `LICENSE` 本身：用本技能搭建的项目（游戏、GDD、拆解文档等产出物）仍归使用者所有、不受两份许可证约束，但作者唯一的请求——在这些项目中保留到本仓库的链接引用（如放在项目 README 或站点页脚）——现在落在许可证声明里，不再只存在于文档中。
+
+- Relicense the code and tooling from MIT to GNU General Public License v3.0 (GPL-3.0); the docs and prompt content stay under CC BY-SA 4.0, so the repo keeps its dual license with only the code half changed. `LICENSE` now carries the dual-license statement plus the full GPL-3.0 text, and every MIT citation in the READMEs and the USAGE notices now reads GPL-3.0.
+- 将代码与工具的许可证从 MIT 改为 GNU General Public License v3.0（GPL-3.0）；文档与提示词内容仍为 CC BY-SA 4.0，仓库保持双许可、只换代码半边。`LICENSE` 现为双许可声明加 GPL-3.0 全文，两份 README 与 USAGE 须知中的 MIT 引用同步改为 GPL-3.0。
+
+- Add a GitHub note block at the top of both READMEs (after the language switcher, before the intro) promoting Rainyun.
+- 在两份 README 顶部（语言切换行之后、首段之前）新增 GitHub note 块推广雨云。
+
+- Retune the `docs/README.md` tagline: replace the definition-style colon in "一个 agent 技能：……" with a comma so the sentence reads as an introduction instead of a dictionary entry.
+- 调整 `docs/README.md` 首句：把「一个 agent 技能：……」的词条式冒号改为逗号，让句子读作介绍而非释义。
+
+- Light copy-edit of `docs/README.md` and `docs/USAGE.md`: tighten stiff wording in place ("在规则层面被禁止" → "都被规则禁止"; drop the filler "进行" in "进行诽谤" and "进行商业使用"); no sentence or structure changes.
+- 轻度文案清理 `docs/README.md` 与 `docs/USAGE.md`：就地收紧生硬表达（"在规则层面被禁止"→"都被规则禁止"；删去"进行诽谤""进行商业使用"中不承载内容的"进行"）；未删句、未改结构。
+
+- Make the USAGE notice Chinese-default like the README pair: `docs/USAGE.md` becomes the Chinese default, the English version moves to `docs/USAGE_en.md`, and the old `docs/USAGE_zh.md` is removed; update every citation in `docs/README.md`, `docs/README_en.md`, and `AGENTS.md`.
+- 将 USAGE 使用须知改为与 README 一致的中文默认：`docs/USAGE.md` 成为中文默认版，英文版移至 `docs/USAGE_en.md`，删除旧的 `docs/USAGE_zh.md`；同步更新 `docs/README.md`、`docs/README_en.md` 与 `AGENTS.md` 中的全部引用。
+
+- Move the README into `docs/`: the Chinese version becomes the default `docs/README.md`, the English version becomes `docs/README_en.md`, the old docs README index is merged into both, and the repository root no longer carries a README.
+- 将 README 移入 `docs/`：中文版成为默认的 `docs/README.md`，英文版为 `docs/README_en.md`，原 docs README 索引并入两份文档，仓库根目录不再有 README。
+
+- Rewrite the root `README.md` as a full English landing page (positioning, what you get, install, usage, the eight-step workflow table, repository map, requirements, license and responsible use) and move the Chinese version into a new `README_zh.md` sibling, ending the root README's bilingual duplication.
+- 将根 `README.md` 重写为完整的英文落地页（定位、产出物、安装、用法、八步工作流表、仓库地图、运行要求、许可与合规），中文版移入新的 `README_zh.md` 同名单文件，根 README 不再中英并置。
+
+- Add a README header image: `assets/banner.webp`, a 1664×928 tech-noir key visual (open novel → one glowing login window under a magnifying glass → puzzle piece) carrying the tagline "Turn a novel into a puzzle website"; embedded at the top of the root `README.md` and `docs/README_zh.md`.
+- 新增 README 头图：`assets/banner.webp`，1664×928 的科技黑色电影风格主视觉（摊开的小说 → 放大镜下唯一的发光登录窗口 → 拼图），标语为 "Turn a novel into a puzzle website"；置于根 `README.md` 与 `docs/README_zh.md` 顶部。
+
 - Move the repo self-check instructions out of SKILL.md into AGENTS.md. SKILL.md is the skill's user-facing entry — an agent adapting a novel has no use for repo maintenance — while AGENTS.md already carries the repo's editing conventions (branch naming, commit rules, changelog) and is what an agent editing this repo loads. AGENTS.md also absorbs the earlier prose tightening of the References section.
 - 把仓库自检说明从 SKILL.md 移入 AGENTS.md。SKILL.md 是面向使用者的 skill 入口——改编小说的 agent 用不到仓库维护；AGENTS.md 已承载本仓库的编辑约定（分支命名、提交规则、CHANGELOG），且是编辑本仓库的 agent 实际加载的文件。AGENTS.md 同时收纳了此前对 References 段的压缩。
 

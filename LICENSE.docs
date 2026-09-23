@@ -3,8 +3,8 @@ Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
 Applies to the documentation and prompt content of this repository
 (e.g. SKILL.md, README.md, docs/, workflow/, references/, examples/).
 
-Code and tooling (all executable files) are licensed under the MIT
-License instead; see LICENSE.
+Code and tooling (all executable files) are licensed under the GNU
+General Public License v3.0 (GPL-3.0) instead; see LICENSE.
 
 See also docs/USAGE.md - a responsible-use notice; it is a policy statement
 and is NOT part of this license.

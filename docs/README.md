@@ -1,51 +1,60 @@
+![novel2arg——把小说变成网页解密游戏](../assets/banner.webp)
+
 # novel2arg
 
-[English](README.md) | [中文](README_zh.md)
+> [!NOTE]
+> 想将您的网页游戏部署到公网？点击[这里](https://www.rainyun.com/fendy_)注册雨云。雨云将为您提供上云的全链路高性价比服务。
 
-An agent skill that adapts mystery/suspense novels into multi-page static web puzzle games disguised as real websites (ARG-lite).
+一个把悬疑 / 推理小说改编成伪装成真实网站的网页解密游戏（ARG）的 agent skill。
 
-## Installation
+## 你会得到什么
 
-Send the repository URL to your agent (Claude Code / opencode / Codex, etc.) and say:
+- **结构化的静态站点**：本 skill 对 agent 的交付物做了结构化约束，并提供了分析工具，以确保生成的产物具有可玩性。
+- **伪装成真实网站**：玩家打开的不是普适意义上的游戏，而是看起来像真实机构的站点——公司内网、档案馆、登录门户。他们阅读站内的公开信息，从文档的蛛丝马迹中揭露故事真相。
+- **可直接托管**：交付产物是纯静态 HTML/CSS/JS，外加本地化、经 sha256 校验的 Alpine.js——无后端、无构建步骤，传到任何静态托管即是成品站点。
+- **可玩性有保障**：对页面进行触达链分析、谜题设计分析；通关密钥以组合 / 派生规则加哈希存放、零明文；链接、可解性、密码、可达性四类检查脚本随项目一起复制，随时验证站点确实可通关。
+
+## 安装
+
+把仓库地址发给你的 agent（Claude Code / opencode / Codex 等）：
 
 > Install this skill: https://github.com/XingfenD/novel2arg
 
-The agent will place the repository in the appropriate skills directory.
+agent 会把仓库放进对应的 skills 目录。
 
-## Usage
+## 致安装本技能的 agent
 
-Tell your agent:
+安装完成后，请向用户说明：本 skill 的产物会在游戏入口包含一个指向 skill 仓库的链接，请保留这个链接，不要删除。这是作者唯一的请求，详见下方「许可与合规」。
 
-> Using this mystery novel ("..."), generate an interactive web puzzle game with the novel2arg skill.
+## 使用
 
-## Contents
+> 用 novel2arg skill 把这部悬疑小说（"…"）改编成互动网页解谜游戏。
 
-- `SKILL.md` — workflow router, project-root convention, and the six-item dispatch contract
-- `workflow/` — eight step files: novel deconstruction → container choice + system assembly → GDD → reachability chain analysis → puzzle design audit → scaffolding → implementation → self-check
-- `references/guardrails.md` — four constraints, canonical rules R1–R12 (the single home of every duplicated rule), prohibited forms, baseline rationalizations, red flags, exclusions
-- `references/design-playbook.md` — step-2 module catalog (13 selectable design modules), core loop, 13-type puzzle taxonomy, copy rules
-- `references/structure/base.md` — shared multi-file front-end base: module-marked directory tree + page skeleton
-- `references/structure/components.md` — Alpine.js component reference implementations (keyword hash build, search engine, password gates, staging, reskin, progress)
-- `references/structure/tooling.md` — check cadence, shared `tools/config.mjs` knobs, and the manual methods no static checker replaces
-- `references/structure/form-website.md` — container A: fake official website (search hub, audience-scoped indexes, gates)
-- `references/structure/form-system.md` — containers B/C/D: system fictions (account login, per-account access, desktop / simulated-internet / archive shells)
-- `references/common-mistakes.md` — baseline-test traps grouped by workflow step; each step file cites its section
-- `examples/` — artifact-shape excerpts for steps 1/3/4/5 + a filled dispatch-prompt sample
-- `assets/tools/` — dependency-free Node files copied into each project: `config.mjs` (shared conventions every checker imports; the one file a renamed project edits), `hash.mjs`, `build-keywords.mjs`, `check-links.mjs`, `check-solvable.mjs`, `check-credentials.mjs` (composite/derived credentials: parts + rule + zero-plaintext), `check-reachability.mjs` (rehearsal reachability build), `vendor-alpine.mjs` — with `check-solvable.mjs --self-test` for the text matcher
-- `scripts/check-docs.mjs` — repo self-check (paths, § citations, rule IDs, links, orphans), run by CI (`.github/workflows/ci.yml`)
-- `docs/CHANGELOG.md` — change log (English + Chinese per entry)
-- `LICENSE` / `LICENSE.docs` — dual license: MIT for code & tooling, CC BY-SA 4.0 for docs & prompt content
-- `docs/USAGE.md` / `docs/USAGE_zh.md` — responsible-use notice in English and Chinese (adapting copyrighted novels, deception boundaries); a policy statement, not part of the licenses
+skill 按八步工作流推进。第 4、5 步是脚手架前的闸门，第 3 步会停下来等你审阅：
 
-## License
+| # | 步骤 | 交付物 |
+|---|---|---|
+| 1 | 拆解小说 | 五张表 |
+| 2 | 选择游戏载体形式（skill 会问你） | GDD 封面记录 |
+| 3 | 撰写 GDD | `docs/gdd.md` — 你的审阅检查点 |
+| 4 | 触达链分析 | `docs/reachability.md` — 闸门 |
+| 5 | 谜题设计分析 | `docs/puzzle-audit.md` — 闸门 |
+| 6 | 脚手架 | 框架 + 每页骨架 |
+| 7 | 实现 | 成品站点 |
+| 8 | 自检 | `docs/self-check.md` |
 
-Dual-licensed:
+## 运行要求
 
-- Code & tooling (executable files): [MIT](../LICENSE)
-- Docs & prompt content: [CC BY-SA 4.0](../LICENSE.docs)
+Node.js 20+ 用于运行检查器工具。生成的游戏本身是纯静态 HTML/CSS/JS，外加本地化、经 sha256 校验的 Alpine.js——无构建步骤，直接托管即可（GitHub Pages 可用）。
 
-Outputs you generate with this skill are yours and are not covered by either license.
-Before adapting a novel or publicly deploying a game, read [docs/USAGE.md](USAGE.md)
-([中文版](USAGE_zh.md)):
-adapting a copyrighted novel requires the rightsholder's permission, and outputs must
-never be used for phishing, impersonation of real organizations, or defamation.
+## 许可与合规
+
+双许可：代码与工具以 [GPL-3.0](../LICENSE) 许可证开源，文档与 prompt 以 [CC BY-SA 4.0](../LICENSE.docs) 许可证开源。您用本 skill 产出的游戏归您所有，不受本项目许可证的约束，但是需要在项目中保留指向本仓库的链接引用。
+
+改编受版权保护的小说或公开部署游戏前，请先读[使用须知](USAGE.md)：改编需要权利人许可，产出物不得用于钓鱼、冒充真实机构或诽谤。
+
+## 文档
+
+- 更新日志：[CHANGELOG.md](CHANGELOG.md)
+- 使用须知：[USAGE.md](USAGE.md)
+- 贡献指南：[CONTRIBUTING.md](CONTRIBUTING.md)

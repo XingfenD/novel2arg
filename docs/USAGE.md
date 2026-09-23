@@ -1,57 +1,34 @@
-# Responsible Use Notice
+# 使用须知
 
-[English](USAGE.md) | [中文](USAGE_zh.md)
+## 1. 改编有版权的小说
 
-> **Status**: This file is a policy statement from the author. It is **not**
-> part of the licenses (MIT / CC BY-SA 4.0) and does not modify them.
+本 skill 用于把小说改编成游戏。此类改编在著作权法下构成**演绎作品**，
+改编权属于小说的版权方，与本 skill 的许可证无关。
 
-Neither license reaches the **outputs** you create with this skill (the games,
-GDDs, deconstructions, etc.): those belong to you. With that freedom comes
-responsibility — the author is not liable for how you use this skill or its
-outputs.
+在改编一部小说之前，你应当至少满足以下条件之一：
 
-## 1. Adapting copyrighted novels
+- 小说已进入**公有领域**；
+- 你本人是**版权方**；
+- 你已获得版权方的**改编授权或书面许可**；
+- 你的使用属于当地法律允许的**个人学习或合理使用**（例如不公开发布的个人实验）——注意：公开发布、直播或商业化该游戏几乎必然超出此范围。
 
-This skill adapts novels into games. Such an adaptation is a **derivative
-work** under copyright law, and the right to create it belongs to the novel's
-copyright holder — not to this skill's license.
+如果你未经许可分发由他人小说改编的游戏，侵权责任由**你本人**承担，与 skill 作者无关。
 
-Before adapting a novel, you should have one of:
+## 2. 欺骗性使用的边界
 
-- The novel is in the **public domain**;
-- You are the **copyright holder**;
-- You hold an **adaptation license or written permission** from the copyright
-  holder;
-- The use qualifies as **private study or fair use** under your local law
-  (e.g. a personal, unpublished experiment) — note that publishing, streaming,
-  or monetizing the game almost always exceeds this scope.
+本 skill 的产出物刻意设计成**看起来像真实网站和真实系统**（假公司官网、假登录
+门户、假档案库）。这种美学必须限定在明确虚构的娱乐范围内：
 
-If you distribute a game adapted from someone else's novel without permission,
-**you** — not the skill author — bear the infringement liability.
+- **禁止**将产出用于钓鱼、诈骗或收集真实凭据；
+- **禁止**以足以误导普通人的方式冒充真实政府、机构、公司或品牌；
+- **禁止**将产出用于散布虚假信息，或对真实个人诽谤、骚扰、跟踪；
+- 不要在模仿真实组织域名的域名上部署产出物。
 
-## 2. Deception boundaries
+保持虚构框架可被发现：对任何公开部署的产出，强烈建议附上"本作品为虚构"
+页脚、ARG 署名页或等效标识。
 
-Outputs of this skill are deliberately designed to **look like real websites
-and real systems** (fake company sites, fake login portals, fake archives).
-That aesthetic must stay inside clearly-fictional entertainment:
+## 3. 通用条款
 
-- **Never** use outputs for phishing, fraud, scamming, or harvesting real
-  credentials;
-- **Never** impersonate real governments, agencies, companies, or brands in a
-  way that could mislead a reasonable person;
-- **Never** use outputs to spread disinformation or to defame, harass, or
-  stalk real individuals;
-- Do not deploy outputs on domains that mimic real organizations' domains.
-
-Keep the fiction frame discoverable: a "this is fiction" footer, an ARG
-credit page, or equivalent labeling is strongly recommended for anything
-publicly deployed.
-
-## 3. General
-
-- Comply with the laws of your jurisdiction, including copyright, privacy,
-  and computer-misuse laws;
-- If you bundle third-party assets (fonts, Alpine.js, images), respect their
-  own licenses;
-- Commercial use of outputs is allowed by the licenses, but the obligations in
-  Sections 1–2 still apply to you.
+- 遵守你所在司法辖区的法律，包括著作权、隐私与计算机滥用相关法律；
+- 如果你打包第三方资源（字体、Alpine.js、图片），遵守它们各自的许可证；
+- 许可证允许以盈利为目的使用产出，但第 1–2 节的义务对你依然适用。
