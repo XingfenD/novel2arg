@@ -1,9 +1,10 @@
 # Step 3 — Write the GDD
 
-Three subagent rounds: **3a `docs/gdd-plan.md` → 3b `docs/gdd.md` → 3c `docs/registry.md`**. A full
-system profile yields 40+ pages, and a single turn that reads the reference stack and then digests the
-inputs and drafts the output inside one reasoning block exhausts its response budget and returns
-nothing. Every round below writes a file, and every round follows the two writing rules.
+Four subagent rounds: **3a `docs/gdd-plan.md` → 3b `docs/gdd.md` → 3c `docs/registry.md` → 3d
+reconcile**. A full system profile yields 40+ pages, and a single turn that reads the reference stack and
+then digests the inputs and drafts the output inside one reasoning block exhausts its response budget and
+returns nothing. Each round has one bounded job, works from the files named in it, and follows the two
+writing rules.
 
 **Writing rules (all rounds).**
 
@@ -55,26 +56,35 @@ saying so. The entity registry is not one of the eight — it ships separately a
 Sections 2–4 are the inputs step 4 audits, and 4–5 the inputs step 5 audits. Writing them thinly guarantees
 both audits fail.
 
+Baseline-test traps for this step: `references/common-mistakes.md` §3 — check them before returning the artifact.
+
 ## Round 3c — Write docs/registry.md
 
-**Input:** `docs/gdd-plan.md` plus `docs/gdd.md` sections 1, 2, 4, 5, 8 (the sections that name
-entities), with the same reference set as 3b.
+**Input:** `docs/gdd-plan.md` (its entity list) plus `references/guardrails.md` and
+`examples/gdd-excerpt.md` — not the GDD; this round only expands the plan's entity rows.
 
 **Output:** `docs/registry.md` — the single source of truth for every shared entity: person names, IDs,
 account strings and their derivation rules, page titles, document numbers, key dates. Every page copies
 it verbatim, and most cross-page contradictions are registry violations. It ships as its own file so a
 step-7 phase can load the registry without loading the whole GDD.
 
-Then reconcile the two files and run the self-consistency scan below before returning.
+## Round 3d — Reconcile
 
-**Self-consistency scan (before the user checkpoint).** Re-read for: a page named two ways (page map vs.
-nav vs. its own title); an entity `docs/registry.md` forbids on a page the same GDD requires it to
-carry; a worked example that violates its own stated rule (sample account `wang00□□` against a "pinyin
-initials" rule); two sections assigning the same fact different values. Fix each in the GDD or the
-contradiction ships.
+**Input:** `docs/registry.md` plus `docs/gdd.md`. No reference files — this round is a mechanical diff
+between two files already on disk.
 
-**User review checkpoint.** When 3c returns, the orchestrator presents the asset manifest,
+**Procedure — four checks in fixed order, one pass each.** Read one section, compare, fix, move on:
+never read ahead, never hold both full files in reasoning at once, and never accumulate findings for a
+later summary. Every fix is applied immediately with `edit`, in whichever file is wrong — the registry
+wins by default, the GDD wins when it carries the more precise value.
+
+1. **Page naming** — `docs/gdd.md` section 1 (page map) against section 2 (IA) and each page's own title: a page named two ways is fixed to the registry spelling.
+2. **Entity usage** — sections 1, 2, 4, 5, 8, one section per response: every person name, ID, account string, page title, document number and key date as written there against its registry row.
+3. **Worked examples** — each worked example against its own stated rule (sample account `wang00□□` against a "pinyin initials" rule).
+4. **One fact, two values** — two sections assigning the same fact different values.
+
+**Output:** the final message lists the fixes applied (file plus what changed) and unresolved questions.
+
+**User review checkpoint.** When 3d returns, the orchestrator presents the asset manifest,
 `docs/registry.md`, page map, IA, register split, access inventory, puzzle allocation, and ending plan to
 the user; steps 4 and 5 start only after approval, and requested changes go back to step 3.
-
-Baseline-test traps for this step: `references/common-mistakes.md` §3 — check them before returning the artifact.
