@@ -14,6 +14,7 @@ Module marks (M1…M13) come from `references/design-playbook.md` §2 and appear
 ```
 <game-name>/
 ├── index.html                    # Entry page (M9): role assignment + start button (rules only where the fiction needs them)
+├── about.html                    # the entry's about page: what this project is and where it came from
 ├── search.html                   # M1 search module
 ├── pages/
 │   ├── home.html  menu.html  news.html …      # public pages, flat until the fiction needs sections
@@ -48,8 +49,9 @@ Module marks (M1…M13) come from `references/design-playbook.md` §2 and appear
 `references/structure/tooling.md` §2), so a generated `docs/site-graph/` tree can never inflate the page count.
 
 The tree is materialized by **`assets/starter/`**, the starting project every game is based on: it ships the
-invariant files — the entry shell, `base.css` + `surface.css`, the `components.js` kernel, the two ignore files
-above, and the project README — so a project starts from a real tree instead of an empty directory. Everything
+invariant files — the entry shell, the entry-linked `about.html`, `base.css` + `surface.css`, the
+`components.js` kernel, the two ignore files above, and the project README — so a project starts from a real
+tree instead of an empty directory. Everything
 module-marked (`search.html`, `data/`, `secret.css`, the restricted area, the ending pages) and the assembled
 infrastructure (`tools/`, `viewer/`) are added at scaffold time per `docs/system-profile.md`
 (`workflow/06-scaffold.md`). The starter therefore ships no `data/*.src.json`: its own `.gitignore` would ignore

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>关于此项目</title>
+  <link rel="stylesheet" href="assets/css/base.css">
+  <link rel="stylesheet" href="assets/css/surface.css">
+  <script defer src="assets/js/components.js"></script>
+  <script defer src="assets/js/vendor/alpine.min.js"></script>
+</head>
+<body>
+  <!-- 入口链接的"关于"页：介绍这个项目从哪来。写在虚构之外，不涉及剧情与答案；
+       不算阅读顺序的一页，因此不带 M7 进度号。 -->
+  <main class="about">
+    <h1>关于此项目</h1>
+
+    <p>《一句话：这是什么》——一个把悬疑小说改编成的多页静态解谜网站。表面是一家再普通不过的机构网站，
+      公告、名录、检索结果都在该在的地方；线索埋在它们里面，答案要从字里行间推出来。</p>
+
+    <h2>它源于什么</h2>
+    <p>本项目由 <b>novel2arg</b> 生成——一个把悬疑 / 推理小说改编成“伪装成真实网站的解谜游戏”（ARG-lite）的
+      agent 技能，工作流八步：小说拆解 → 容器与模块选择 → 游戏设计文档 → 触达链分析 → 谜题设计分析 →
+      脚手架 → 实现 → 自检。技能仓库：<a href="https://github.com/XingfenD/novel2arg">github.com/XingfenD/novel2arg</a>。</p>
+
+    <h2>它是怎么搭起来的</h2>
+    <p>纯静态，没有构建步骤：一篇一页的 HTML、本地 vendored 的 Alpine v3、零依赖的 Node 检查工具。
+      本地运行与检查命令见 <a href="README.md">README.md</a>；设计文档在 <code>docs/</code> 下——
+      <code>system-profile.md</code>、<code>gdd.md</code>、<code>reachability.md</code>、
+      <code>puzzle-audit.md</code>、<code>self-check.md</code>。</p>
+
+    <h2>边界</h2>
+    <p>改编有版权的小说需要权利人授权；本站内容不得用于钓鱼、冒充真实机构或诽谤。</p>
+  </main>
+</body>
+</html>
