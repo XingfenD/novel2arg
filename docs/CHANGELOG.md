@@ -4,6 +4,9 @@ Higher versions on top. Each entry: English line, then Chinese line; entries sep
 
 ## Unreleased
 
+- Cut subagent input cost across the workflow: the dispatch contract grants the novel text per step (step 1 always, step 3 only as a fallback when the deconstruction lacks a needed life trace) and names artifact sections instead of whole files; the entity registry ships as its own `docs/registry.md` so step-7 phases load it without the GDD; step-7 phases read the project's own `components.js` and a per-phase reference table instead of the full reference stack; step 8 fans out into three parallel lanes (structure + reachability / puzzle integrity + consistency / neutrality + copy + presentation) merged by the orchestrator; step 1 gains a chunked-reading convention for novels past roughly 150,000 tokens.
+- 全面压低各步子代理的输入成本：dispatch 契约按步授予小说全文（仅步骤 1 必给、步骤 3 作兜底）并指定 artifact 小节而非整本文件；实体登记表独立为 `docs/registry.md`，步骤 7 各 phase 无需拖整本 GDD；步骤 7 各 phase 改读项目自身的 `components.js` 与按 phase 裁剪的引用表；步骤 8 拆为三条并行 lane（结构+触达 / 谜题+一致性 / 中性度+文案+呈现）由编排器合并；步骤 1 增加约 15 万 token 以上小说的分块读取约定。
+
 - Add a chapter to the README addressed to the installing agent: once installation completes, the agent tells the user the deliverable will carry a link back to this repository at the game entry and asks them to keep it.
 - 在 README 中新增致安装 agent 的一章：安装完成后，agent 向用户说明产物会在游戏入口带上指向本仓库的链接，并请用户保留该链接。
 
