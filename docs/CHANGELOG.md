@@ -6,6 +6,13 @@ All notable changes to this skill should be documented in this file.
 The format loosely follows Keep a Changelog and can be adapted to the team's habits.
 本文档参考了 Keep a Changelog 的思路，也可以根据团队习惯调整。
 
+## [Unreleased]
+
+### Changed / 变更
+
+- Split step 3 into three subagent rounds — 3a writes `docs/gdd-plan.md` (page map, entity list, access inventory, puzzle allocation), 3b writes `docs/gdd.md`, 3c writes `docs/registry.md` and reconciles it against the GDD — after a real project's step-3 turn twice exhausted its response budget: once enumerating a 44-page map inside one think block, once still digesting the reference stack before a single row was written. Every round now follows two writing rules — the file is the only digest (no restating inputs in reasoning) and write incrementally (the first tool call after the last read creates the file, later calls append 5–10 rows or one section) — and round outputs travel as named files, never pasted into the next prompt.
+- 把步骤 3 拆成三个子代理轮次——3a 写 `docs/gdd-plan.md`（页面地图、实体清单、访问清单、谜题分配），3b 写 `docs/gdd.md`，3c 写 `docs/registry.md` 并与 GDD 对齐——此前真实项目的步骤 3 两次耗尽响应预算：一次在单个 think 块里枚举 44 页地图，一次还在消化参考件、一行未写时就被截断。现在每轮遵守两条写作规则——文件即唯一 digest（禁止在推理中复述输入）与增量落笔（最后一条 read 之后的第一个工具调用即建文件，后续每次追加 5–10 行或一节）——轮次产物以指名文件传递，不粘贴进下一个 prompt。
+
 ## [0.1.0] - 2026-09-23
 
 ### Added / 新增

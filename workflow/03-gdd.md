@@ -1,16 +1,48 @@
 # Step 3 — Write the GDD
 
-**Input:** `docs/deconstruction.md` plus `docs/system-profile.md`. **Output:** `docs/gdd.md` and `docs/registry.md`. Required reading
-first: `references/guardrails.md` (canonical rules R1–R12) and `references/design-playbook.md` §2 (module
-catalog) plus `references/design-playbook.md` §4 (copy rules). A sample of the expected artifact shape:
-`examples/gdd-excerpt.md`.
+Three subagent rounds: **3a `docs/gdd-plan.md` → 3b `docs/gdd.md` → 3c `docs/registry.md`**. A full
+system profile yields 40+ pages, and a single turn that reads the reference stack and then digests the
+inputs and drafts the output inside one reasoning block exhausts its response budget and returns
+nothing. Every round below writes a file, and every round follows the two writing rules.
 
-The GDD carries a front-matter block plus eight sections; sections marked *conditional* are written only when
-the system profile selects the module they belong to, else they get one line saying so. The entity registry is
-not one of the eight — it ships separately as `docs/registry.md` (item 0b).
+**Writing rules (all rounds).**
+
+1. **The file is the only digest.** Never restate inputs — the deconstruction, the module matrix, the plan — in reasoning. Replaying the inputs and drafting the output in one response is exactly what truncates a turn.
+2. **Write incrementally.** The first tool call after the last read creates the file (the header plus the first 5 rows, or the front matter plus section 1); every later tool call appends the next 5–10 rows or the next section, continuing from what is already on disk. Never enumerate unwritten content in reasoning before it is written.
+
+Round outputs travel as named files (dispatch contract item 2); artifacts are never pasted into a prompt.
+
+## Round 3a — Plan
+
+**Input:** `docs/deconstruction.md` plus `docs/system-profile.md`. Required reading first:
+`references/guardrails.md` (R1–R12), `references/design-playbook.md` §2 (module catalog),
+`references/design-playbook.md` §3 (puzzle types), `references/design-playbook.md` §4 (copy rules),
+`examples/gdd-excerpt.md`. The novel text is a fallback only (SKILL.md dispatch contract item 1).
+
+**Output:** `docs/gdd-plan.md` — four skeleton tables, one line per row, no prose. The final message
+returns the file path plus unresolved questions.
+
+1. **Page map** — number, path, area (public / restricted / nested system), unlock source; every page the selected modules imply.
+2. **Entity list** — one row per shared entity: kind (person / ID / account / page title / document number / key date), value, derivation rule if any.
+3. **Access inventory** — per gate or protected page: its credential triad (account clue on page A, password clue on page B, gate on page C, R3) or the granting account (`data-access`, granted by `data-grant`, R10); the index carrying each keyword (M1); what an unreadable search hit resolves to (its gate or a plain locked notice, never the document, R8/R9).
+4. **Puzzle allocation** — 5 to 10 gates and puzzles from the 13 types in `references/design-playbook.md` §3; sensory puzzles declare hardware requirements.
+
+Every row traces to a deconstruction row or a selected module — nothing invented. No single page may
+co-locate two components of one credential (a "zero-jump" solve) — split them so the derivation is the
+puzzle.
+
+## Round 3b — Write docs/gdd.md
+
+**Input:** `docs/gdd-plan.md` plus the reference set: `references/guardrails.md`,
+`references/design-playbook.md` §2, `references/design-playbook.md` §3, `references/design-playbook.md`
+§4, `references/common-mistakes.md` §3, `examples/gdd-excerpt.md`.
+
+**Output:** `docs/gdd.md` — a front-matter block plus eight sections; sections marked *conditional*
+are written only when the system profile selects the module they belong to, else they get one line
+saying so. The entity registry is not one of the eight — it ships separately as `docs/registry.md`
+(round 3c), and the GDD names every entity exactly as the plan's entity list spells it.
 
 0. **Front matter — asset manifest.** The manifest lists every non-text asset (emblem, seals, scans, photos, mock documents, audio): filename under `assets/`, referencing page(s), in-world caption. Step 7 phase 4 lands exactly this list; step 8 reconciles it (`references/structure/tooling.md` §3 item 9).
-0b. **`docs/registry.md` — the entity registry.** The single source of truth for every shared entity — person names, IDs, account strings and their derivation rules, page titles, document numbers, key dates; every page copies it verbatim, and most cross-page contradictions are registry violations. It ships as its own file so a step-7 phase can load the registry without loading the whole GDD.
 1. **Numbered page map** — every page, its area (public / restricted / nested system), and its unlock source.
 2. **Site information architecture** — the nav bar, index and listing pages, sitemap, and footer links that organization would really publish, plus the entry points of the selected reach modules (search surface, gates, login). List them explicitly; step 4 audits against this list.
 3. **Register split** — the pages that address the player, normally the entry page and the endings; every other page is in-world only.
@@ -23,13 +55,26 @@ not one of the eight — it ships separately as `docs/registry.md` (item 0b).
 Sections 2–4 are the inputs step 4 audits, and 4–5 the inputs step 5 audits. Writing them thinly guarantees
 both audits fail.
 
-**Self-consistency scan (before the user checkpoint).** Re-read for: a page named two ways (page map vs. nav vs.
-its own title); an entity `docs/registry.md` forbids on a page the same GDD requires it to carry; a worked example
-that violates its own stated rule (sample account `wang00□□` against a "pinyin initials" rule); two sections
-assigning the same fact different values. Fix each in the GDD or the contradiction ships.
+## Round 3c — Write docs/registry.md
 
-**User review checkpoint.** When the subagent returns `docs/gdd.md`, the orchestrator presents the asset
-manifest, `docs/registry.md`, page map, IA, register split, access inventory, puzzle allocation, and ending plan to
+**Input:** `docs/gdd-plan.md` plus `docs/gdd.md` sections 1, 2, 4, 5, 8 (the sections that name
+entities), with the same reference set as 3b.
+
+**Output:** `docs/registry.md` — the single source of truth for every shared entity: person names, IDs,
+account strings and their derivation rules, page titles, document numbers, key dates. Every page copies
+it verbatim, and most cross-page contradictions are registry violations. It ships as its own file so a
+step-7 phase can load the registry without loading the whole GDD.
+
+Then reconcile the two files and run the self-consistency scan below before returning.
+
+**Self-consistency scan (before the user checkpoint).** Re-read for: a page named two ways (page map vs.
+nav vs. its own title); an entity `docs/registry.md` forbids on a page the same GDD requires it to
+carry; a worked example that violates its own stated rule (sample account `wang00□□` against a "pinyin
+initials" rule); two sections assigning the same fact different values. Fix each in the GDD or the
+contradiction ships.
+
+**User review checkpoint.** When 3c returns, the orchestrator presents the asset manifest,
+`docs/registry.md`, page map, IA, register split, access inventory, puzzle allocation, and ending plan to
 the user; steps 4 and 5 start only after approval, and requested changes go back to step 3.
 
 Baseline-test traps for this step: `references/common-mistakes.md` §3 — check them before returning the artifact.

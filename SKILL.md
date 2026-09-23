@@ -24,14 +24,16 @@ The Example column names the artifact-shape anchor included in that step's dispa
 |---|---|---|---|---|
 | 1 Deconstruct the novel | workflow/01-deconstruct.md | five tables | examples/deconstruction-excerpt.md | subagent |
 | 2 Choose the container + assemble the system | workflow/02-container.md | `docs/system-profile.md` (modules selected with the user) | — | orchestrator (asks the user) |
-| 3 Write the GDD | workflow/03-gdd.md | `docs/gdd.md` (asset manifest + eight sections) + `docs/registry.md` (entity registry) | examples/gdd-excerpt.md | subagent → user review checkpoint |
+| 3 Write the GDD | workflow/03-gdd.md | `docs/gdd.md` (asset manifest + eight sections) + `docs/registry.md` (entity registry) | examples/gdd-excerpt.md | 3a docs/gdd-plan.md → 3b gdd → 3c registry (subagents) → user review checkpoint |
 | 4 Reachability chain analysis 触达链分析 | workflow/04-reachability.md | `docs/reachability.md` | examples/reachability-excerpt.md | subagent |
 | 5 Puzzle design audit 谜题设计分析 | workflow/05-puzzle-audit.md | `docs/puzzle-audit.md` with dispositions | examples/puzzle-audit-excerpt.md | subagent |
 | 6 Scaffold | workflow/06-scaffold.md | framework + every page skeletoned | — | 6a framework (plot-blind) → 6b skeletons (plot-aware) |
 | 7 Implementation | workflow/07-implementation.md | finished site | — | one subagent per phase |
 | 8 Self-check | workflow/08-self-check.md | `docs/self-check.md`, pass/fail per item | — | 3 parallel subagents (lanes A/B/C) + merge |
 
-Step 3 ends with a user review checkpoint: when the subagent returns `docs/gdd.md` and `docs/registry.md`, the orchestrator presents them to the user and asks for review before dispatching steps 4 and 5. Approval is required; requested changes go back to step 3.
+Step 3 ends with a user review checkpoint: after round 3c returns, the orchestrator presents the
+artifacts to the user and asks for review before dispatching steps 4 and 5. Approval is required;
+requested changes go back to step 3.
 
 Steps 4 and 5 are gates. A GDD that fails either returns to step 3 before scaffolding starts.
 
@@ -48,3 +50,6 @@ Every subagent prompt carries all six items below (a filled sample: examples/dis
 
 The one exception is step 6a: its prompt carries `docs/system-profile.md` and the infrastructure references
 only — no novel text, no plot-bearing artifacts.
+
+Step 3 dispatches the six items three times, once per round; which files each round's prompt names is
+specified in `workflow/03-gdd.md`.
