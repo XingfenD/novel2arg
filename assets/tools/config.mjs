@@ -8,7 +8,7 @@ const CONFIG = {
   pagesDir: 'pages',            // keyword-table urls are relative to this
   entry: 'index.html',          // BFS root for the solvability walk; rehearsal-injection page for check-reachability
   surfaceTable: /surface/i,     // tables matching this name are the public index
-  secretUrl: /^secret\//,       // a url in a public index matching this is a layer leak
+  secretUrl: /^internal\//,     // a url in a public index matching this is a layer leak (name the restricted dir the fiction's own way)
   gateHashAttr: 'data-expect-hash',                               // per-input accepted hashes (comma = synonyms)
   indexAttr: 'data-index',                                        // optional per-search-page keyword table
   grantAttr: 'data-grant',                                        // Shape C: identities a login gate authenticates
@@ -24,7 +24,7 @@ const CONFIG = {
   credTable: 'data/credentials.src.json',                         // dev-only provenance manifest (plaintext values; not deployed)
   derivedKinds: ['account', 'secret'],                            // kinds that must be assembled: no component may equal the whole value
   zeroPlaintextKinds: ['account'],                                // kinds whose full string must appear on no page (short numeric secrets collide with dates)
-  credSkipDirs: ['.git', 'node_modules', 'docs', 'tools', 'deploy'],  // dev/ops dirs never hold page text
+  skipDirs: ['.git', 'node_modules', 'tools', 'viewer', 'docs', 'deploy'],  // dev/ops dirs: never site pages, never page text
   solver: 'tools/check-solvable.mjs',                             // the walk check-reachability runs inside the rehearsal copy
 };
 

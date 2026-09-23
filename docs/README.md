@@ -21,13 +21,13 @@ Tell your agent:
 ## Contents
 
 - `SKILL.md` — workflow router, project-root convention, and the six-item dispatch contract
-- `workflow/` — eight step files: novel deconstruction → world container selection → GDD → reachability chain analysis → puzzle design audit → scaffolding → implementation → self-check
+- `workflow/` — eight step files: novel deconstruction → container choice + system assembly → GDD → reachability chain analysis → puzzle design audit → scaffolding → implementation → self-check
 - `references/guardrails.md` — four constraints, canonical rules R1–R12 (the single home of every duplicated rule), prohibited forms, baseline rationalizations, red flags, exclusions
-- `references/design-playbook.md` — six-dimension design paradigm (flow / puzzles / copy / typography / conflict / interaction) + 13-type puzzle taxonomy
-- `references/structure/base.md` — shared multi-file front-end base: directory tree + page skeleton
-- `references/structure/components.md` — Alpine.js component reference implementations (keyword hash build, search engine, password gates, staging, skins, progress)
+- `references/design-playbook.md` — step-2 module catalog (13 selectable design modules), core loop, 13-type puzzle taxonomy, copy rules
+- `references/structure/base.md` — shared multi-file front-end base: module-marked directory tree + page skeleton
+- `references/structure/components.md` — Alpine.js component reference implementations (keyword hash build, search engine, password gates, staging, reskin, progress)
 - `references/structure/tooling.md` — check cadence, shared `tools/config.mjs` knobs, and the manual methods no static checker replaces
-- `references/structure/form-website.md` — container A: fake official website (search hub, layer-scoped indexes, gates)
+- `references/structure/form-website.md` — container A: fake official website (search hub, audience-scoped indexes, gates)
 - `references/structure/form-system.md` — containers B/C/D: system fictions (account login, per-account access, desktop / simulated-internet / archive shells)
 - `references/common-mistakes.md` — baseline-test traps grouped by workflow step; each step file cites its section
 - `examples/` — artifact-shape excerpts for steps 1/3/4/5 + a filled dispatch-prompt sample

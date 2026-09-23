@@ -1,12 +1,12 @@
 # Alpine Component Reference Implementations
 
-> Companion to `references/structure/base.md` (tree + skeleton). This file carries the copy-adaptable
-> implementations: keyword hash build (§1), search (§2), gates (§3), staging (§4), skins (§5), progress (§6).
-> Required reading at steps 6 and 7. Rule IDs `(Rn)` cite references/guardrails.md.
+> Companion to `references/structure/base.md` (tree + skeleton). Copy-adaptable implementations for the
+> selected modules: keyword hash build (§1), search M1 (§2), gates M2 (§3), staging M12 (§4), reskin M5 (§5),
+> progress M7 (§6). Required reading at steps 6 and 7. Rule IDs `(Rn)` cite references/guardrails.md.
 
 ## 1. Keyword Hash Build (tools/build-keywords.mjs)
 
-One plaintext source per layer, hashed to one table per layer (R3). The surface table is fetched by surface/platform pages and **must never contain a `pages/secret/` URL** (R8); the secret table is fetched only by secret-layer pages. A `title` is the catalog entry the archive would print (issuing body + document type + number/date) — never a summary of the document's content (R9). This is the website form's convention (references/structure/form-website.md); a system form keeps a single index and lets the account matrix decide what a hit opens (references/structure/form-system.md §1) — access is never maintained in the JSON (R10).
+One plaintext source per audience, hashed to one table per audience (R3). The public table is fetched by public pages and **must never contain a restricted-area URL** (default `internal/`; R8); the deep table is fetched only by deep pages. A `title` is the catalog entry the archive would print (issuing body + document type + number/date) — never a summary of the document's content (R9). This is the website form's convention (references/structure/form-website.md); a system form keeps a single index and lets the account matrix decide what a hit opens (references/structure/form-system.md §1) — access is never maintained in the JSON (R10).
 
 The canonical implementation ships as **`assets/tools/build-keywords.mjs`** (copy it to `tools/`). Its contract:
 
@@ -19,16 +19,16 @@ Example source shape:
 
 ```json
 {
-  "前台|营业时间": ["surface/news.html|焰溪镇供销社 营业时间公告"],
-  "Margaret Holt": ["secret/s23-file.html|刑事侦查卷宗 087-J-03 · 询问笔录"]
+  "前台|营业时间": ["news.html|焰溪镇供销社 营业时间公告"],
+  "Margaret Holt": ["internal/s23-file.html|刑事侦查卷宗 087-J-03 · 询问笔录"]
 }
 ```
 
-At deployment, **do not ship the `.src.json` files** (add `data/*.src.json` to .gitignore or delete them after the build) (R3). `tools/check-links.mjs` also fails the deploy if a table whose name marks it as the surface index (`data/keywords.surface*.json`) carries a `secret/` url (R8).
+At deployment, **do not ship the `.src.json` files** (add `data/*.src.json` to .gitignore or delete them after the build) (R3). `tools/check-links.mjs` also fails the deploy if a table whose name marks it as the public index (`data/keywords.surface*.json`) carries a restricted-area url (default `internal/`; R8).
 
 ## 2. Search Engine (`search` Component) — Three-State Feedback
 
-Registered in `components.js`; mounted by search.html as `<main x-data="search" data-index="data/keywords.surface.json">` (secret-layer search pages point `data-index` at the secret table).
+Registered in `components.js`; mounted by search.html as `<main x-data="search" data-index="data/keywords.surface.json">` (a deep-page search points `data-index` at the deep table).
 
 ```js
 // Shared hash helper — must mirror tools/build-keywords.mjs exactly (same trim/lowercase normalization,
@@ -64,10 +64,10 @@ Alpine.data('search', () => ({
 }));
 ```
 
-**Layer scoping (required, R8).** The component queries the index of the layer whose page mounts it: surface and platform pages carry `data-index="data/keywords.surface.json"`; secret-layer pages carry `data-index="data/keywords.secret.json"`. A surface keyword routes to a surface or platform page, or to a gate — never straight into a secret document. If the container's fiction exposes classified entries in results (container D's archive list), each one either shows `[Access denied]` or resolves to its clearance gate; it never opens the document. Result titles are catalog entries, written the way the issuing body files the document (R9). System forms do not split indexes by layer; they keep one index and resolve each hit through the account matrix (references/structure/form-system.md §1, R10).
+**Layer scoping (required when the search module splits indexes, R8).** The component queries the index of the audience whose page mounts it: public pages carry `data-index="data/keywords.surface.json"`; deep pages carry `data-index="data/keywords.secret.json"`. A public keyword routes to a public page or to a gate — never straight into a restricted document. When the fiction lists entries the visitor may not open (container D's archive list), each one shows a plain locked notice or resolves to its gate; it never opens the document. Result titles are catalog entries, written the way the issuing body files the document (R9). System forms do not split indexes by audience; they keep one index and resolve each hit through the account matrix (`references/structure/form-system.md` §1, R10).
 
 ```html
-<!-- search.html (a secret-layer search page carries data/keywords.secret.json instead) -->
+<!-- search.html (a deep-page search carries data/keywords.secret.json instead) -->
 <main id="results" x-data="search" data-index="data/keywords.surface.json" x-cloak>
   <template x-if="state === 'forbidden'">
     <span :class="forbidden.hidden ? 'hidden-text' : 'visible-text'" x-text="forbidden.text"></span>
@@ -98,7 +98,7 @@ configuration sits on the **component root** (`<main>`), not on the `<form>`.
 
 ```js
 // Shape A — navigate away on success:
-// <main x-data="gate" data-next="../secret/s22.html" data-fail-hint="Login failed 🎂">
+// <main x-data="gate" data-next="../internal/s22.html" data-fail-hint="Login failed 🎂">
 //   <form class="gate" @submit.prevent="submit">
 //     <label for="u">Account</label>
 //     <input id="u" type="text" placeholder="Employee ID" data-expect-hash="…">
@@ -124,8 +124,8 @@ configuration sits on the **component root** (`<main>`), not on the `<form>`.
 //
 // Cross-tab session store. Access state MUST survive a result opened in a new tab (target="_blank", §2);
 // per-tab sessionStorage does not, so hold it in a session cookie (no max-age/expires → cleared when the
-// browser closes, matching the "signed out after this session" honor agreement). sessionStorage is the
-// fallback for private mode where cookies are blocked. Rename ACCESS_KEY per project.
+// browser closes). sessionStorage is the fallback for private mode where cookies are blocked. Rename
+// ACCESS_KEY per project.
 const ACCESS_KEY = 'access', SKIN_KEY = 'skin';
 const session = {
   _read(key) {
@@ -140,7 +140,7 @@ const session = {
   },
   access() { return this._read(ACCESS_KEY) || []; },
   grant(ids) { this._write(ACCESS_KEY, [...new Set([...this.access(), ...ids])]); },
-  reskin(name) { if (name) this._write(SKIN_KEY, name); },            // optional: a skin token secret/system pages apply
+  reskin(name) { if (name) this._write(SKIN_KEY, name); },            // optional: a skin token deep pages apply
   skin() { return this._read(SKIN_KEY); },
 };
 Alpine.data('gate', () => ({
@@ -193,23 +193,10 @@ A credential may be **derived/composite** — an account assembled from parts (p
 
 Gate design rules:
 
-- **Failure hints point at the source obliquely and stop (R4).** `密码错误 🎂` passes; anything naming a page,
-  restating the derivation rule, or spelling the field's content fails. The hint is a copy slot, not an
-  error string — a bare "error" is prohibited.
-- **Inputs name the field only (R4).** `placeholder="Employee ID"` / `工号` / `就诊年份` pass; `placeholder="e.g. 1977"`
-  leaks. The derivation rule stays off the gate page — posting the *account format* on a gate page is fine
-  and realistic, but the password rule lives only in the source document's own copy.
-- **Multi-field gates** (four-tuple / two-factor) are just several `data-expect-hash` inputs; all must match.
-- **A gate page's own body is unreadable until the gate passes.** Do not park a clue inside the page's own
-  `x-show="unlocked"` block and expect check-solvable to count it before unlock — that is exactly the
-  boundary the check models.
-- **Keep the entry page's honor agreement honest.** It may claim the source hides nothing only if the keyword
-  tables and gate hashes really are hashed (R3); system containers keep the authenticated accounts in a
-  **session cookie** (cross-tab, cleared when the browser closes — not per-tab `sessionStorage`, which a
-  `target="_blank"` result leaves behind) and say exactly that — no unlock state or progress is persisted
-  across sessions (references/structure/form-system.md §6).
-
-The honor agreement on the entry page carries the rest.
+- **Failure hints point at the source obliquely and stop (R4).** `密码错误 🎂` passes; naming a page, restating the derivation, or spelling the field's content fails; a bare "error" is prohibited.
+- **Inputs name the field only (R4).** `placeholder="Employee ID"` / `工号` pass; `placeholder="e.g. 1977"` leaks. The derivation rule stays off the gate page; the *account format* may be posted there.
+- **Multi-field gates** are several `data-expect-hash` inputs; all must match. A gate page's own body is unreadable until the gate passes — a clue parked in its own `x-show="unlocked"` block is not counted before unlock, exactly the boundary the check models.
+- **Session state is technical, not copy.** Accounts live in a **session cookie** (cross-tab, cleared on browser close; never per-tab `sessionStorage` behind `target="_blank"` results), and the site does not explain its storage to the player (`references/structure/form-system.md` §6).
 
 ## 4. Staging Components (Lifecycle-Managed)
 
@@ -267,14 +254,14 @@ Alpine.data('reveal', () => ({
 // <div class="reveal" :class="{ shown }" x-data="reveal">…</div>  .reveal{opacity:0;transition:opacity .6s}.reveal.shown{opacity:1}
 ```
 
-## 5. Skin Switching (base.css Conventions)
+## 5. Optional: Layer Reskin (M5; base.css Conventions)
 
 ```css
 /* Top bar: fixed to the viewport top, does not scroll with the page; background must be opaque so body text does not show through */
 header { position:sticky; top:0; z-index:10; background:inherit; }
 [x-cloak] { display:none !important; }                           /* hide Alpine components until they initialize */
 /* Surface */ body { background:#f9ebde; color:#555; }  a { color:#d15c20; }
-/* Secret: secret/ pages link secret.css directly */
+/* M5 deep skin: deep pages link secret.css directly */
 body.secret { background:#1a1a1c; color:#9e9e9e; } body.secret h2 { color:#db1400; }
 .handwrite { font-family:'Caveat',cursive; color:#d20a0a; }      /* hand-copied red text */
 .spacer { height:180px; }                                        /* whitespace as pacing */

@@ -1,26 +1,33 @@
 # Step 3 — Write the GDD
 
-**Input:** `docs/deconstruction.md` plus the container record. **Output:** `docs/gdd.md`. Required reading first: references/guardrails.md (canonical rules R1–R12) and references/design-playbook.md. A sample of the expected artifact shape: examples/gdd-excerpt.md.
+**Input:** `docs/deconstruction.md` plus `docs/system-profile.md`. **Output:** `docs/gdd.md`. Required reading
+first: `references/guardrails.md` (canonical rules R1–R12) and `references/design-playbook.md` §2 (module
+catalog) plus `references/design-playbook.md` §4 (copy rules). A sample of the expected artifact shape:
+`examples/gdd-excerpt.md`.
 
-The GDD carries a front-matter block plus eight sections.
+The GDD carries a front-matter block plus eight sections; sections marked *conditional* are written only when
+the system profile selects the module they belong to, else they get one line saying so.
 
-0. **Front matter — asset manifest + entity registry.**
-   - **Asset manifest:** every non-text asset the site needs — emblem, seals, scans, photos, mock documents (pdf/xlsx), audio. One row each: filename under `assets/`, the page(s) that reference it, and its in-world caption. Step 7 phase 4 lands exactly this list; step 8 reconciles it (a declared asset that no phase owns is what gets dropped, and neither checker catches an `<img>` that was never written — references/structure/tooling.md §3 item 9).
-   - **Entity registry:** the single source of truth for every shared entity — person names, IDs / license numbers, account strings and their derivation rules, page titles and nav labels, document numbers, and key dates. Each appears once here; every page and every other GDD section copies it verbatim, never re-types it. Most cross-page contradictions (a roster missing a person, a page answering to two titles, a date printed where the same GDD forbids it) are registry violations.
+0. **Front matter — asset manifest + entity registry.** The manifest lists every non-text asset (emblem, seals, scans, photos, mock documents, audio): filename under `assets/`, referencing page(s), in-world caption. Step 7 phase 4 lands exactly this list; step 8 reconciles it (`references/structure/tooling.md` §3 item 9). The registry is the single source of truth for every shared entity — person names, IDs, account strings and their derivation rules, page titles, document numbers, key dates; every page copies it verbatim. Most cross-page contradictions are registry violations.
+1. **Numbered page map** — every page, its area (public / restricted / nested system), and its unlock source.
+2. **Site information architecture** — the nav bar, index and listing pages, sitemap, and footer links that organization would really publish, plus the entry points of the selected reach modules (search surface, gates, login). List them explicitly; step 4 audits against this list.
+3. **Register split** — the pages that address the player, normally the entry page and the endings; every other page is in-world only.
+4. **Access inventory** — per gate or protected page: its credential triad (account clue on page A, password clue on page B, gate on page C, R3) or the account that opens it (`data-access`, granted by `data-grant`, R10); what an unreadable search hit resolves to (its gate or a plain locked notice, never the document, R8/R9); which index carries each keyword (M1). System containers record the access matrix and, per account, the inference chain that yields the login string — only the initial account may be printed. A **derived/composite** credential records its rule and public-page components here; prove it with `tools/check-credentials.mjs`, never by printing it (`references/structure/components.md` §3).
+5. **Puzzle allocation table** — 5 to 10 gates and puzzles from the 13 types in `references/design-playbook.md` §3; sensory puzzles declare hardware requirements. No single page may co-locate two components of one credential (a "zero-jump" solve) — split them so the derivation is the puzzle.
+6. **Ending plan** *(M10)* — ending copy reuses documents the player has just read; dual moral choices when selected.
+7. **World-texture list** *(M11)* — atmosphere pages off the critical path, epigraph, easter eggs; no non-progression labelling is needed.
+8. **Document format specs** — per announcement, notice, contract, certificate: issuing body, document number, date, addressee, signature and seal, distribution list.
 
-1. **Numbered page map** — every page gets an `NN/total` progress number and an unlock source.
-2. **Site information architecture** — the nav bar, index and listing pages, sitemap, and footer links that organization would really publish. Clue delivery rides these plus search. List them explicitly; step 4 audits against this list.
-3. **Register split** — the pages that address the player, normally the entry ritual page and the two endings. Every other page is in-world only.
-4. **Gate inventory** — each gate follows the credential triad (R3): account on page A, password clue on page B, gate on page C. Record which layer's search index carries each keyword and what a classified search hit resolves to (gate or `[Access denied]`, never the document) (R8/R9). System containers also record the access matrix: which account opens which page (`data-access`), which login gate grants it (`data-grant`), and per account the inference chain that yields the login string — only the initial account may be printed (R10; references/structure/form-system.md §1). A **derived/composite** credential (account = initials + license-year) records its rule and its public-page components here; it is proved by `tools/check-credentials.mjs`, never by printing the string (references/structure/components.md §3).
-5. **Puzzle allocation table** — 5 to 10 gates and puzzles chosen from the 13 types in references/design-playbook.md §2. Sensory puzzles declare hardware requirements here. No single page may co-locate two components of one credential — if the 工号 and the year sit on the same page, the player copies both with zero inference (a "zero-jump" solve); split them across pages so the derivation is the puzzle.
-6. **Dual-ending plan** — ending copy reuses knowledge from documents the player has just read.
-7. **Extra atmosphere page list** — explicitly marked non-progression.
-8. **Document format specs** — for each announcement, notice, contract, and certificate: issuing body, document number, date, addressee, signature and seal, distribution list.
+Sections 2–4 are the inputs step 4 audits, and 4–5 the inputs step 5 audits. Writing them thinly guarantees
+both audits fail.
 
-Sections 2 and 3 are the inputs step 4 audits, and sections 4 and 5 are the inputs step 5 audits. Writing them thinly guarantees both audits fail.
+**Self-consistency scan (before the user checkpoint).** Re-read for: a page named two ways (page map vs. nav vs.
+its own title); an entity the registry forbids on a page the same GDD requires it to carry; a worked example
+that violates its own stated rule (sample account `wang00□□` against a "pinyin initials" rule); two sections
+assigning the same fact different values. Fix each in the GDD or the contradiction ships.
 
-**Self-consistency scan (before the user checkpoint).** The GDD is large enough to contradict itself, and a contradiction propagates into the pages. Before presenting it, re-read it for: a page named two ways (page map vs. nav spec vs. the page's own title); an entity the registry forbids on a page that the same GDD then requires to carry it (e.g. "no `1994` here" plus "this is the 1994 annual edition"); a worked example that violates its own stated rule (sample account `wang00□□` against a rule of "pinyin initials"); and any two sections that assign the same fact different values. Fix each in the GDD or the contradiction ships.
+**User review checkpoint.** When the subagent returns `docs/gdd.md`, the orchestrator presents the asset
+manifest, entity registry, page map, IA, register split, access inventory, puzzle allocation, and ending plan to
+the user; steps 4 and 5 start only after approval, and requested changes go back to step 3.
 
-**User review checkpoint.** When the subagent returns `docs/gdd.md`, the orchestrator presents the asset manifest, entity registry, page map, IA, register split, gate inventory, and ending plan to the user and asks for review. Steps 4 and 5 start only after the user approves; requested changes are dispatched back to step 3.
-
-Baseline-test traps for this step: references/common-mistakes.md §3 — check them before returning the artifact.
+Baseline-test traps for this step: `references/common-mistakes.md` §3 — check them before returning the artifact.

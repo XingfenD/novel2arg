@@ -26,7 +26,7 @@ import { readFileSync, readdirSync, statSync, existsSync } from 'node:fs';
 import { join, relative, resolve } from 'node:path';
 import { createHash } from 'node:crypto';
 
-import CONFIG from './config.mjs';   // shared conventions (credTable / gateHashAttr / derivedKinds / zeroPlaintextKinds / credSkipDirs)
+import CONFIG from './config.mjs';   // shared conventions (credTable / gateHashAttr / derivedKinds / zeroPlaintextKinds / skipDirs)
 
 const ROOT = process.cwd();
 // Must be byte-identical to hash.mjs / build-keywords.mjs / the in-page helper: trim → lowercase → md5 → base64.
@@ -50,7 +50,7 @@ const visible = (html) => decodeEntities(html
 
 function walk(dir, acc = []) {
   for (const name of readdirSync(dir)) {
-    if (CONFIG.credSkipDirs.includes(name) || name.startsWith('.')) continue;
+    if (CONFIG.skipDirs.includes(name) || name.startsWith('.')) continue;
     const p = join(dir, name);
     if (statSync(p).isDirectory()) walk(p, acc);
     else if (name.endsWith('.html')) acc.push(p);

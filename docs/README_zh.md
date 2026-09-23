@@ -21,13 +21,13 @@ agent 会把仓库放进对应的 skills 目录。
 ## 目录结构
 
 - `SKILL.md` — 工作流路由、项目根目录约定与六项派发契约
-- `workflow/` — 八个步骤文件：小说拆解 → 世界容器选择 → GDD → 触达链分析 → 谜题设计分析 → 脚手架 → 实现 → 自检
+- `workflow/` — 八个步骤文件：小说拆解 → 容器选择与系统组装 → GDD → 触达链分析 → 谜题设计分析 → 脚手架 → 实现 → 自检
 - `references/guardrails.md` — 四条约束、权威规则 R1–R12（所有重复规则的唯一出处）、禁止形态、基线理性化对照、红旗信号、不适用场景
-- `references/design-playbook.md` — 六维设计范式（流程 / 谜题 / 文案 / 排版 / 冲突 / 交互）+ 13 类谜题分类
-- `references/structure/base.md` — 共用的多页前端基底：目录树 + 页面骨架
-- `references/structure/components.md` — Alpine.js 组件参考实现（关键词哈希构建、搜索引擎、密码门、分阶段组件、皮肤、进度）
+- `references/design-playbook.md` — 步骤 2 的模块目录（13 个可选设计模块）、核心循环、13 类谜题分类、文案规则
+- `references/structure/base.md` — 共用的多页前端基底：带模块标注的目录树 + 页面骨架
+- `references/structure/components.md` — Alpine.js 组件参考实现（关键词哈希构建、搜索引擎、密码门、分阶段组件、换肤、进度）
 - `references/structure/tooling.md` — 检查节奏、共享 `tools/config.mjs` 旋钮、静态检查无法替代的人工方法
-- `references/structure/form-website.md` — 容器 A：假官方网站（搜索中枢、分层索引、密码门）
+- `references/structure/form-website.md` — 容器 A：假官方网站（搜索中枢、按受众分索引、密码门）
 - `references/structure/form-system.md` — 容器 B/C/D：系统类虚构（账号登录、按账号授权、桌面 / 模拟互联网 / 档案系统外壳）
 - `references/common-mistakes.md` — 按工作流步骤分组的基线测试陷阱；各步骤文件引用对应小节
 - `examples/` — 步骤 1/3/4/5 的产物形状示例 + 一份填好的派发 prompt 样例

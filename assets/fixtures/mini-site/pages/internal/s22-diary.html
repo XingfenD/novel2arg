@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta charset="UTF-8"><title>值班日记 — 焰溪镇供销社</title></head>
+<body data-page="10" data-total="12" data-access="chen">
+<header><nav><a href="../home.html">首页</a> <a href="../news.html">新闻动态</a> <a href="../staff.html">员工名录</a> <a href="../../search.html">搜索</a></nav></header>
+<main x-data="gate" data-success-text="正在解密…" data-success-hold="2400">
+  <div class="sheet" x-show="!unlocked">
+    <h1>值班日记</h1>
+    <input id="a" type="text" placeholder="Account" data-expect-hash="WnMIBjpobBs85FkEx/TEAw==">
+  </div>
+  <div>
+    <h2>档案检索</h2>
+    <div x-data="search" data-index="data/keywords.secret.json" x-cloak>
+      <input type="search" placeholder="Search...">
+    </div>
+  </div>
+  <div x-show="unlocked" x-cloak>
+    <p>（门后文档）丙午年正月，库房夜半有光，疑为猫。翌日查无收获。</p>
+    <p><a href="s21-ledger.html">查看相关台账</a></p>
+  </div>
+</main>
+<footer><small>© 焰溪镇供销社 <a href="../login.html">员工入口</a> <span class="progress">10/12</span></small></footer>
+</body>
+</html>

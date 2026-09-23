@@ -1,32 +1,24 @@
 // Dead-link checker. Walks every <a href>/<img src>/<form action>/data-next gate target plus every url in
-// the keyword tables and resolves them against the file tree.
+// the keyword tables and resolves them against the file tree. The file walk is the shared one
+// (site-model.mjs walkFiles), so tools/ viewer/ docs/ and the other CONFIG.skipDirs never count as pages.
 // Usage: node tools/check-links.mjs     (run from the project root; expect "0 dead")
 //
-// Also enforces the layer-scoping rule (R8) from references/structure/components.md §1: a table whose name
-// marks it as the surface index must never carry a layer-leak url (by default a secret-layer url) — otherwise
-// a public search hands the player a direct route into the secret layer, bypassing the gate.
+// Also enforces the audience-scoping rule (R8) from references/structure/components.md §1: a table whose name
+// marks it as the public index must never carry a restricted-area url (default `internal/`; the CONFIG.secretUrl
+// knob) — otherwise a public search hands the player a direct route past the gate.
 //
 // Project conventions live in the shared tools/config.mjs; a project that renames dirs or layer names edits
 // that one file instead of rewriting the checker (references/structure/tooling.md §2 lists the knobs,
 // §3 what stays manual).
-import { readFileSync, existsSync, readdirSync, statSync } from 'node:fs';
+import { readFileSync, existsSync, readdirSync } from 'node:fs';
 import { dirname, resolve, relative, join } from 'node:path';
 import CONFIG from './config.mjs';
+import { walkFiles } from './site-model.mjs';   // same page walk as check-solvable / site-graph, same CONFIG.skipDirs
 
 const ROOT = process.cwd();
 const DATA = join(ROOT, CONFIG.dataDir);
 
-function walk(dir, acc = []) {
-  for (const name of readdirSync(dir)) {
-    if (name === 'node_modules' || name.startsWith('.')) continue;
-    const p = join(dir, name);
-    if (statSync(p).isDirectory()) walk(p, acc);
-    else acc.push(p);
-  }
-  return acc;
-}
-
-const html = walk(ROOT).filter((f) => f.endsWith('.html'));
+const html = walkFiles(ROOT).filter((f) => f.endsWith('.html'));
 const external = /^(https?:|mailto:|tel:|javascript:|data:|#)/i;
 let dead = 0;
 let layerLeaks = 0;

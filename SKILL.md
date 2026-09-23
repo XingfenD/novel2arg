@@ -16,13 +16,14 @@ relative to that project root, not to this skill directory.
 
 ## Workflow
 
-Eight steps in order. Each step body lives in `workflow/`; this section routes. The Example column names the
-artifact-shape anchor included in that step's dispatch prompt, when one exists.
+Eight steps in order. Each step body lives in `workflow/`; this section routes. Step 2 assembles the system
+from the module catalog (`references/design-playbook.md` §2); steps 3–5 fill that system with game content.
+The Example column names the artifact-shape anchor included in that step's dispatch prompt, when one exists.
 
 | Step | File | Deliverable | Example | Dispatch |
 |---|---|---|---|---|
 | 1 Deconstruct the novel | workflow/01-deconstruct.md | five tables | examples/deconstruction-excerpt.md | subagent |
-| 2 Select the world container | workflow/02-container.md | GDD cover-page record | — | orchestrator (asks the user) |
+| 2 Choose the container + assemble the system | workflow/02-container.md | `docs/system-profile.md` (modules selected with the user) | — | orchestrator (asks the user) |
 | 3 Write the GDD | workflow/03-gdd.md | `docs/gdd.md`, front matter (asset manifest + entity registry) + eight sections | examples/gdd-excerpt.md | subagent → user review checkpoint |
 | 4 Reachability chain analysis 触达链分析 | workflow/04-reachability.md | `docs/reachability.md` | examples/reachability-excerpt.md | subagent |
 | 5 Puzzle design audit 谜题设计分析 | workflow/05-puzzle-audit.md | `docs/puzzle-audit.md` with dispositions | examples/puzzle-audit-excerpt.md | subagent |
@@ -50,20 +51,15 @@ only — no novel text, no plot-bearing artifacts.
 
 ## References
 
-- **references/guardrails.md**: four constraints, canonical rules R1–R12 (the single home of every rule more than one file states; `(Rn)` citations elsewhere point here), prohibited forms, baseline rationalizations, red flags, when not to use.
-- **references/design-playbook.md**: six-dimension design paradigm (flow / puzzles / copy / typography / conflict / interaction) + 13-type puzzle taxonomy. Required reading at step 3.
-- **references/structure/base.md**: shared multi-file front-end base — directory tree + page skeleton. Required reading at step 6.
-- **references/structure/components.md**: Alpine component reference implementations — keyword hash build, search engine, password gates, staging, skins, progress. Required reading at steps 6 and 7.
-- **references/structure/form-website.md**: container A — fake official website: search hub, layer-scoped indexes, gates as the only access. Required reading at steps 3 and 6 when container A is chosen.
-- **references/structure/form-system.md**: containers B/C/D — system fictions: account login, per-account access (RBAC-style), desktop / simulated-internet / archive shells, checker conventions. Required reading at steps 3 and 6 when a system container is chosen.
-- **references/structure/tooling.md**: check cadence, the shared `tools/config.mjs` knobs, and the nine manual methods no static checker replaces. Required reading at step 8.
-- **references/common-mistakes.md**: baseline-test traps grouped by workflow step; each step file cites its section.
-- **examples/**: artifact excerpts anchoring the expected shape of steps 1/3/4/5, plus a filled dispatch-prompt sample for the orchestrator.
-- **assets/tools/**: dependency-free Node files copied into every project at step 6 — `config.mjs` (shared conventions every checker imports; the one file a renamed project edits), `hash.mjs` (design-time gate hashes, steps 3/5), `build-keywords.mjs` (plaintext tables → hash tables; re-run after every src edit), `check-links.mjs` (dead links + surface-index layer leaks), `check-solvable.mjs` (cold-start walk: reachable + solvable + search earned), `check-credentials.mjs` (composite/derived credentials: parts + rule + zero-plaintext — the half `check-solvable` cannot model), `check-reachability.mjs` (rehearsal build: inject the credentials into a throwaway copy, then prove gates unlock + pages reachable), and `vendor-alpine.mjs` (downloads the pinned Alpine runtime, sha256-verified, step 6). Steps 7 and 8 run build-keywords, check-links, and check-solvable; a project with derived credentials or a system container also runs check-credentials and check-reachability. The canonical pass/fail checklist is workflow/08-self-check.md.
-
-## Repo self-checks
-
-`scripts/check-docs.mjs` validates this skill's own docs: file paths, `§N` / `§N.M` citations, rule IDs,
-markdown links, and orphan documents. CI (`.github/workflows/ci.yml`) runs it together with
-`node assets/tools/check-solvable.mjs --self-test`. Run `node scripts/check-docs.mjs` after editing any
-file in this repo.
+- **references/guardrails.md**: four constraints, canonical rules R1–R12 (single home of every rule stated in more than one file — `(Rn)` citations elsewhere point here), prohibited forms, rationalizations, red flags, when not to use.
+- **references/design-playbook.md**: step-2 module catalog (13 selectable modules), core loop, 13-type puzzle taxonomy, copy rules. Read at steps 2 and 3.
+- **references/structure/base.md**: shared front-end base — module-marked directory tree + page skeleton. Step 6.
+- **references/structure/components.md**: Alpine reference components — keyword hash build, search engine, password gates, staging, reskin, progress. Steps 6 and 7.
+- **references/structure/form-website.md**: container A, the fake official website — search hub, audience-scoped indexes, gates as the only access. Steps 3 and 6 when A is chosen.
+- **references/structure/form-system.md**: containers B/C/D, system fictions — account login, per-account access (RBAC-style), desktop / simulated-internet / archive shells, checker conventions. Steps 3 and 6 when a system container is chosen.
+- **references/structure/tooling.md**: check cadence, shared `tools/config.mjs` knobs, the nine manual methods no static checker replaces. Step 8.
+- **references/common-mistakes.md**: baseline-test traps by workflow step; each step file cites its section.
+- **examples/**: artifact excerpts for the expected shape of steps 1/3/4/5, plus a filled dispatch-prompt sample.
+- **assets/tools/**: dependency-free Node files copied into every project at step 6 — `config.mjs` (shared conventions every checker imports; the one file a renamed project edits), `hash.mjs` (design-time gate hashes, steps 3/5), `build-keywords.mjs` (plaintext tables → hash tables; re-run after every src edit), `check-links.mjs` (dead links + public-index leaks), `check-solvable.mjs` (cold-start walk: reachable + solvable + search earned), `check-credentials.mjs` (composite/derived credentials: parts + rule + zero-plaintext — the half `check-solvable` cannot model), `check-reachability.mjs` (rehearsal build: inject credentials into a throwaway copy, prove gates unlock + pages reachable), `vendor-alpine.mjs` (pinned Alpine runtime download, sha256-verified, step 6). `site-model.mjs` is the shared parsing + walk core every site-reading tool imports. `site-graph.mjs` builds `docs/site-graph.json` (vertices are pages, edges carry guard and credential provenance), injects it into the `assets/viewer/` renderer tree, emits the self-contained `docs/site-graph/` folder — a reporting tool, not a gate. Steps 7 and 8 run build-keywords, check-links, check-solvable; derived credentials or a system container also run check-credentials and check-reachability. Canonical pass/fail checklist: workflow/08-self-check.md.
+- **assets/viewer/**: `graph-viewer.html` — dependency-free SVG renderer framework `site-graph.mjs` injects the graph JSON into; copied to each project's `viewer/` at step 6 (resolved at `../viewer/graph-viewer.html`).
+- **assets/fixtures/**: `mini-site/` — the miniature site `site-graph.mjs --self-test` builds from: reachable pages, one stuck gate, one orphan, both credential kinds. Stays in the skill repo, never copied into a project.
