@@ -24,4 +24,4 @@ You are executing step 4 (Reachability chain analysis) of the novel2arg skill.
 ```
 
 Step 7 prompts differ in two ways only: item 3 carries the phase's page-ownership list from
-workflow/07-implementation.md, and item 4 carries the full reference set that file names.
+workflow/07-implementation.md, and item 4 carries that phase's reference set from that file.

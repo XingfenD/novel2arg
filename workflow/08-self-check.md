@@ -8,7 +8,7 @@ One subagent per lane, dispatched together; the orchestrator merges the three re
 
 | Lane | Checklist sections | Reads |
 |---|---|---|
-| A Structure + reachability | Structure; Reachability | the built tree via the checkers; gdd sections 1, 2, 4; `docs/reachability.md`; both keyword tables |
+| A Structure + reachability | Structure; Reachability | the built tree via the checkers; gdd sections 1, 2, 4; gdd front matter (asset manifest); `docs/system-profile.md`; `docs/reachability.md`; both keyword tables |
 | B Puzzle integrity + consistency | Puzzle integrity; Consistency | gate and inference-chain pages; gdd sections 4, 5; `docs/registry.md`; `docs/puzzle-audit.md` |
 | C Neutrality + copy + presentation | Diegetic neutrality; Copy register; Presentation | public pages, the entry page, endings; `references/design-playbook.md` §4; `references/guardrails.md` |
 

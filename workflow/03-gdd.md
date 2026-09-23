@@ -1,6 +1,6 @@
 # Step 3 — Write the GDD
 
-**Input:** `docs/deconstruction.md` plus `docs/system-profile.md`. **Output:** `docs/gdd.md`. Required reading
+**Input:** `docs/deconstruction.md` plus `docs/system-profile.md`. **Output:** `docs/gdd.md` and `docs/registry.md`. Required reading
 first: `references/guardrails.md` (canonical rules R1–R12) and `references/design-playbook.md` §2 (module
 catalog) plus `references/design-playbook.md` §4 (copy rules). A sample of the expected artifact shape:
 `examples/gdd-excerpt.md`.
