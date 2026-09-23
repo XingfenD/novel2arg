@@ -48,22 +48,3 @@ Every subagent prompt carries all six items below (a filled sample: examples/dis
 
 The one exception is step 6a: its prompt carries `docs/system-profile.md` and the infrastructure references
 only — no novel text, no plot-bearing artifacts.
-
-## References
-
-- **references/guardrails.md**: four constraints, canonical rules R1–R12 (the single home of every rule more than one file states; `(Rn)` citations elsewhere point here), prohibited forms, baseline rationalizations, red flags, when not to use.
-- **references/design-playbook.md**: the step-2 module catalog (13 selectable design modules), the core loop, the 13-type puzzle taxonomy, and the copy rules. Required reading at steps 2 and 3.
-- **references/structure/base.md**: shared multi-file front-end base — module-marked directory tree + page skeleton. Required reading at step 6.
-- **references/structure/components.md**: Alpine component reference implementations — keyword hash build, search engine, password gates, staging, reskin, progress. Required reading at steps 6 and 7.
-- **references/structure/form-website.md**: container A — fake official website: search hub, audience-scoped indexes, gates as the only access. Required reading at steps 3 and 6 when container A is chosen.
-- **references/structure/form-system.md**: containers B/C/D — system fictions: account login, per-account access (RBAC-style), desktop / simulated-internet / archive shells, checker conventions. Required reading at steps 3 and 6 when a system container is chosen.
-- **references/structure/tooling.md**: check cadence, the shared `tools/config.mjs` knobs, and the nine manual methods no static checker replaces. Required reading at step 8.
-- **references/common-mistakes.md**: baseline-test traps grouped by workflow step; each step file cites its section.
-- **examples/**: artifact excerpts anchoring the expected shape of steps 1/3/4/5, plus a filled dispatch-prompt sample for the orchestrator.
-
-## Repo self-checks
-
-`scripts/check-docs.mjs` validates this skill's own docs: file paths, `§N` / `§N.M` citations, rule IDs,
-markdown links, and orphan documents. CI (`.github/workflows/ci.yml`) runs it together with
-`node assets/tools/check-solvable.mjs --self-test`. Run `node scripts/check-docs.mjs` after editing any
-file in this repo.

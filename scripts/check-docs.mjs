@@ -1,13 +1,16 @@
-// Docs self-check for this skill repo. Validates, across every *.md file:
+// Docs self-check for this skill repo. Validates across every git-visible *.md file (tracked or
+// untracked; .gitignore respected, so ignored scratch docs such as docs/superpowers/ are skipped):
 //   1. file-path references resolve (references/…, workflow/…, examples/…, scripts/…, assets/…, SKILL.md);
 //   2. section citations — "file.md §N" and "§N.M" (M = numbered list item inside section N) — point at
 //      sections that exist. A section is a "## " heading whose text starts with a number ("## 4. …") or
 //      "Step <number>" ("## Step 4 — …");
 //   3. rule-ID citations (Rn) are defined in the canonical table of references/guardrails.md;
 //   4. relative markdown links [text](path) resolve;
-//   5. no orphan docs: every workflow/, references/, examples/ file is reachable by name from SKILL.md.
+//   5. no orphan docs: every workflow/, references/, examples/ file is reachable by name from SKILL.md
+//      or from a workflow/ step file (the dispatch chain SKILL.md → step file → references/examples);
 // Usage: node scripts/check-docs.mjs   (run from the repo root; also wired into .github/workflows/ci.yml)
 import { readFileSync, readdirSync, statSync, existsSync } from 'node:fs';
+import { execSync } from 'node:child_process';
 import { dirname, join, relative, resolve } from 'node:path';
 
 const ROOT = process.cwd();
@@ -23,8 +26,20 @@ function walk(dir, acc = []) {
   return acc;
 }
 
-const mdFiles = walk(ROOT).filter((f) => f.endsWith('.md'));
-const text = new Map(mdFiles.map((f) => [rel(f), readFileSync(f, 'utf8')]));
+/* File scope: what git would add — tracked + untracked, .gitignore respected (run from the repo root).
+   Falls back to a full walk when git is unavailable or the directory is not a repo. */
+function listMdFiles() {
+  try {
+    const out = execSync('git ls-files --cached --others --exclude-standard', { cwd: ROOT, encoding: 'utf8' });
+    const files = out.split('\n').map((s) => s.trim())
+      .filter((f) => f.endsWith('.md') && !f.split('/').includes('node_modules'));
+    if (files.length) return files;
+  } catch { /* not a git repo / no git binary — check everything */ }
+  return walk(ROOT).filter((f) => f.endsWith('.md')).map(rel);
+}
+
+const mdFiles = listMdFiles();
+const text = new Map(mdFiles.map((f) => [f, readFileSync(join(ROOT, f), 'utf8')]));
 
 /* ── Section numbers per file: "## 4. …" or "## Step 4 — …" → 4; plus each section's list-item numbers ── */
 const sections = new Map();   // file → Map(n → Set of list-item numbers)
@@ -84,11 +99,13 @@ for (const [file, t] of text) {
   }
 }
 
-/* 5. orphan docs: every workflow/, references/, examples/ file must be named in SKILL.md */
+/* 5. orphan docs: every workflow/, references/, examples/ file must be named in SKILL.md or in a
+   workflow/ step file — SKILL.md routes to the step files, and each step file names its own reading */
 const skill = text.get('SKILL.md') ?? '';
+const routed = [skill, ...[...text].filter(([f]) => f.startsWith('workflow/')).map(([, t]) => t)].join('\n');
 for (const file of text.keys()) {
   if (!/^(workflow|references|examples)\//.test(file)) continue;
-  if (!skill.includes(file)) fail('SKILL.md', `orphan doc (never routed): ${file}`);
+  if (!routed.includes(file)) fail('SKILL.md', `orphan doc (never routed): ${file}`);
 }
 
 if (fails.length) {
