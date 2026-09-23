@@ -2,6 +2,8 @@
 
 **Input:** novel text path. **Output:** `docs/deconstruction.md`, five tables. A sample of the expected artifact shape: examples/deconstruction-excerpt.md.
 
+**Large novels.** When the novel runs past roughly 150,000 tokens, do not read it in one pass: read it in chunks at chapter boundaries, append each chunk's rows to the working tables, and run the cross-chunk passes — merge the character network, order the timeline, de-duplicate the evidence inventory — only after the last chunk. Chunk rows are provisional until the merge; the deliverable is still the five finished tables, never per-chunk fragments. The threshold exists because the exhaustive extraction below is the point of this step, and it needs headroom in the same context that holds the novel.
+
 | Table | Contents |
 |---|---|
 | Character network | Per character: surface identity, secret identity, and life traces — every date, number, nickname, habit, license plate, employee ID, and document they appear in. |
