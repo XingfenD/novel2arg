@@ -2,7 +2,9 @@
 
 A gate step. A GDD that fails here goes back to step 3 before any scaffolding starts.
 
-**Input:** `docs/gdd.md` sections 4 and 5, plus `docs/reachability.md`. **Output:** `docs/puzzle-audit.md`. A sample of the expected artifact shape: examples/puzzle-audit-excerpt.md.
+**Input:** `docs/gdd.md` sections 4 and 5. **Output:** `docs/puzzle-audit.md`. A sample of the expected artifact shape: examples/puzzle-audit-excerpt.md.
+
+**Dispatched together with step 4.** `docs/reachability.md` is not an input. The orchestrator cross-checks this audit's source-page column against the pages step 4 cuts — a chain depending on a cut page fails the gate.
 
 Four questions per puzzle, one row per puzzle, a written verdict on each.
 

@@ -16,29 +16,38 @@ relative to that project root, not to this skill directory.
 
 ## Workflow
 
-Eight steps in order. Each step body lives in `workflow/`; this section routes. Step 2 assembles the system
+Eight steps. Each step body lives in `workflow/`; this section routes. Step 2 assembles the system
 from the module catalog (`references/design-playbook.md` §2); steps 3–5 fill that system with game content.
-The Example column names the artifact-shape anchor included in that step's dispatch prompt, when one exists.
+Most of the sequence is strict, but four dispatches overlap: 3b∥3c, 4∥5, 6a alongside 3–5, and inside step 7
+(4a with 1–3, 5 with 3). The Example column names the artifact-shape
+anchor included in that step's dispatch prompt, when one exists.
 
 | Step | File | Deliverable | Example | Dispatch |
 |---|---|---|---|---|
-| 1 Deconstruct the novel | workflow/01-deconstruct.md | five tables | examples/deconstruction-excerpt.md | subagent |
+| 1 Deconstruct the novel | workflow/01-deconstruct.md | five tables | examples/deconstruction-excerpt.md | one subagent per chapter-chunk → 1 merge (novels past ~150k tokens); single subagent below |
 | 2 Choose the container + assemble the system | workflow/02-container.md | `docs/system-profile.md` (modules selected with the user) | — | orchestrator (asks the user) |
-| 3 Write the GDD | workflow/03-gdd.md | `docs/gdd.md` (asset manifest + eight sections) + `docs/registry.md` (entity registry) | examples/gdd-excerpt.md | 3a docs/gdd-plan.md → 3b gdd → 3c registry → 3d reconcile (subagents) → user review checkpoint |
-| 4 Reachability chain analysis 触达链分析 | workflow/04-reachability.md | `docs/reachability.md` | examples/reachability-excerpt.md | subagent |
-| 5 Puzzle design audit 谜题设计分析 | workflow/05-puzzle-audit.md | `docs/puzzle-audit.md` with dispositions | examples/puzzle-audit-excerpt.md | subagent |
-| 6 Scaffold | workflow/06-scaffold.md | framework + every page skeletoned | — | 6a framework (plot-blind) → 6b skeletons (plot-aware) |
-| 7 Implementation | workflow/07-implementation.md | finished site | — | one subagent per phase |
+| 3 Write the GDD | workflow/03-gdd.md | `docs/gdd.md` (asset manifest + eight sections) + `docs/registry.md` (entity registry) | examples/gdd-excerpt.md | 3a gdd-plan → (3b gdd ∥ 3c registry) → 3d reconcile (subagents) → user review checkpoint |
+| 4 Reachability chain analysis 触达链分析 | workflow/04-reachability.md | `docs/reachability.md` | examples/reachability-excerpt.md | subagent — dispatched together with step 5 |
+| 5 Puzzle design audit 谜题设计分析 | workflow/05-puzzle-audit.md | `docs/puzzle-audit.md` with dispositions | examples/puzzle-audit-excerpt.md | subagent — dispatched together with step 4 |
+| 6 Scaffold | workflow/06-scaffold.md | framework + every page skeletoned | — | 6a framework (plot-blind; after step 2, parallel to 3–5) → 6b skeletons (plot-aware; after 6a and the gates) |
+| 7 Implementation | workflow/07-implementation.md | finished site | — | one subagent per phase; 1→2→3 chained, 4a ∥ 1, 4b after 3, 5 ∥ 3, 6 after 3, 7 last |
 | 8 Self-check | workflow/08-self-check.md | `docs/self-check.md`, pass/fail per item | — | 3 parallel subagents (lanes A/B/C) + merge |
 
 Step 3 ends with a user review checkpoint: after round 3d returns, the orchestrator presents the
-artifacts to the user and asks for review before dispatching steps 4 and 5. Approval is required;
+artifacts to the user and asks for review before dispatching the gates. Approval is required;
 requested changes go back to step 3.
 
-Steps 4 and 5 are gates. A GDD that fails either returns to step 3 before scaffolding starts.
+Steps 4 and 5 are gates. A GDD that fails either returns to step 3 before scaffolding starts. They
+dispatch together in one message; the orchestrator cross-checks the pages step 4 cuts against the
+source-page column step 5's audit cites.
+
+Step 6a dispatches the moment step 2 returns, in parallel with steps 3–5; only 6b waits for both it
+and the gates.
 
 **Dispatch contract.** The orchestrator writes the prompt, reads the returned artifact, then dispatches the
 next step. It performs step 2 itself and delegates the rest. Subagents hold no conversation with the user.
+Where a step file marks rounds parallel, their prompts go out together in one message and the orchestrator
+merges the returns.
 Every subagent prompt carries all six items below (a filled sample: examples/dispatch-prompt.md):
 
 1. the novel text path — step 1 always; step 3 only as a fallback when `docs/deconstruction.md` lacks a life trace the GDD needs (the prompt says so explicitly); no other step receives it, and their prompts state that the novel must not be read;
@@ -56,5 +65,4 @@ added at dispatch time).
 The one exception is step 6a: its prompt carries `docs/system-profile.md` and the infrastructure references
 only — no novel text, no plot-bearing artifacts.
 
-Step 3 dispatches the six items four times, once per round; which files each round's prompt names is
-specified in `workflow/03-gdd.md`.
+Step 3 dispatches the six items four times, once per round (3b and 3c together in one message); which files each round's prompt names is specified in `workflow/03-gdd.md`.

@@ -4,6 +4,8 @@ A gate step. A GDD that fails here goes back to step 3 before any scaffolding st
 
 **Input:** `docs/gdd.md` sections 1, 2, 4, plus the keyword table. **Output:** `docs/reachability.md`. A sample of the expected artifact shape: examples/reachability-excerpt.md.
 
+**Dispatched together with step 5.** When this step cuts a page (fix 4 below), name it in the return so the orchestrator can cross-check it against the source-page column of `docs/puzzle-audit.md` — a cut page that some puzzle's inference chain depends on fails the gate.
+
 Build a directed graph: nodes are pages, edges are inbound routes, root is `index.html`. Walk it breadth-first. Every page the walk misses is an orphan.
 
 ## Legitimate inbound routes (closed list)

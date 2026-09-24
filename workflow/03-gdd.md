@@ -1,10 +1,10 @@
 # Step 3 — Write the GDD
 
-Four subagent rounds: **3a `docs/gdd-plan.md` → 3b `docs/gdd.md` → 3c `docs/registry.md` → 3d
+Four subagent rounds: **3a `docs/gdd-plan.md` → (3b `docs/gdd.md` ∥ 3c `docs/registry.md`) → 3d
 reconcile**. A full system profile yields 40+ pages, and a turn that reads the reference stack and then
 digests the inputs and drafts the output inside one reasoning block exhausts its response budget and
 returns nothing. Each round therefore runs as an explicit sequence of small steps and follows the rules
-below.
+below. Rounds 3b and 3c dispatch together in one message; 3d settles what they disagree on.
 
 **Rules (all rounds).**
 

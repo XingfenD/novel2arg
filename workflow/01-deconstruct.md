@@ -2,7 +2,15 @@
 
 **Input:** novel text path. **Output:** `docs/deconstruction.md`, five tables. A sample of the expected artifact shape: examples/deconstruction-excerpt.md.
 
-**Large novels.** When the novel runs past roughly 150,000 tokens, do not read it in one pass: read it in chunks at chapter boundaries, append each chunk's rows to the working tables, and run the cross-chunk passes — merge the character network, order the timeline, de-duplicate the evidence inventory — only after the last chunk. Chunk rows are provisional until the merge; the deliverable is still the five finished tables, never per-chunk fragments. The threshold exists because the exhaustive extraction below is the point of this step, and it needs headroom in the same context that holds the novel.
+**Large novels.** When the novel runs past roughly 150,000 tokens, split it at chapter boundaries and dispatch
+one subagent per chunk — the chunk reads run in parallel. Each reads only its slice and writes provisional
+rows (all five tables' rows for that chunk, against the definitions below) to `docs/deconstruction.chunk-N.md`.
+When the last chunk returns, one merge round consolidates the chunk files into `docs/deconstruction.md`: merge
+the character network, order the timeline, de-duplicate the evidence inventory, fold in the contrast-matrix
+and twist-ordering rows. Chunk rows are provisional until the merge; the deliverable is still the five finished
+tables in one file, never per-chunk fragments. The threshold exists because the exhaustive extraction below is
+the point of this step, and it needs headroom in the same context that holds the novel. Below the threshold a
+single subagent reads the novel in one pass and writes `docs/deconstruction.md` directly.
 
 | Table | Contents |
 |---|---|
