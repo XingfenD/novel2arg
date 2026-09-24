@@ -48,6 +48,11 @@ Every subagent prompt carries all six items below (a filled sample: examples/dis
 5. the realism-priority line — references/guardrails.md R12: realism outranks any check, and a conflict goes to the user through the orchestrator;
 6. the closing line: "return the artifact plus unresolved questions; route questions back through the orchestrator."
 
+A prompt carries paths and the round definition — nothing else: never an inline digest of an artifact the
+round is about to read (the file is the input; a prompt summary is input the round has to hold twice), and
+never required reading beyond what the step file cites (the step file's list is complete — nothing gets
+added at dispatch time).
+
 The one exception is step 6a: its prompt carries `docs/system-profile.md` and the infrastructure references
 only — no novel text, no plot-bearing artifacts.
 
