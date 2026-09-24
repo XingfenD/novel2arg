@@ -10,6 +10,9 @@ The format loosely follows Keep a Changelog and can be adapted to the team's hab
 
 ### Changed / 变更
 
+- Drop the starter's `about.html`: the entry shell now carries the link back to the skill repo directly, in the same quiet `entry-meta` slot under the start button, so the entry stays the only threshold page and the reference survives with nothing else around it. The base tree (`references/structure/base.md` §1), scaffold step 6a, and the starter README lose the about page accordingly.
+- 起点项目去掉 `about.html`：入口外壳直接带上指向 skill 仓库的链接，挂在进入按钮下方同一个不起眼的 `entry-meta` 位——入口仍是唯一的阈值页，引用链接保留而周围什么都不放。目录树（`references/structure/base.md` §1）、脚手架步骤 6a 与起点项目 README 中的关于页随之移除。
+
 - Parallelize the workflow wherever the inputs allow it: rounds 3b and 3c dispatch together (both read only `docs/gdd-plan.md`, and 3d already exists to settle their disagreements); steps 4 and 5 dispatch together as gates over disjoint GDD sections (5 drops its `docs/reachability.md` input — the orchestrator cross-checks the pages 4 cuts against 5's source-page column); step 6a dispatches the moment step 2 returns and runs beside steps 3–5 (its prompt was already plot-blind); large novels split at chapter boundaries into one subagent per chunk plus a merge round; and inside step 7 phase 4 splits into 4a (generate assets with phase 1 — they depend on the manifest alone) and 4b (wire after phase 3), with phase 5 beside phase 3. The serial spine — 1→2→3a→3d→review→6b→7.1→7.2→7.3 — and both human gates are unchanged.
 - 在输入允许的范围内并行化工作流：3b 与 3c 同派（两者都只读 `docs/gdd-plan.md`，3d 本来就是为弥合分歧而存在）；步骤 4 与 5 作为双 gate 同派，各审互不相交的 GDD 小节（5 去掉 `docs/reachability.md` 输入——由 orchestrator 把 4 砍掉的页与 5 的来源页列对一次）；6a 在步骤 2 一返回即派发，与 3–5 并行（它的 prompt 本来就是 plot-blind）；大长篇按章节边界拆成每 chunk 一个 subagent 加一个合并轮；步骤 7 内阶段 4 拆为 4a（随阶段 1 生成资产——资产只依赖 manifest）与 4b（阶段 3 后接线），阶段 5 与阶段 3 并行。串行主干——1→2→3a→3d→review→6b→7.1→7.2→7.3——与两处人工 gate 不变。
 
