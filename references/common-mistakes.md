@@ -5,7 +5,7 @@ Each step file cites its section; when a step cites this file, the orchestrator 
 subagent's dispatch prompt. Check the section before returning the step's artifact. Section numbers
 follow the workflow steps; rule IDs `(Rn)` cite the canonical table in `references/guardrails.md`.
 
-## Step 1 — Deconstruct
+## Step 1 — Story Intake
 
 | Mistake | Correct approach |
 |---|---|
@@ -59,7 +59,7 @@ follow the workflow steps; rule IDs `(Rn)` cite the canonical table in `referenc
 | A module drift: the framework ships machinery the profile did not select, or misses one it did | Build exactly the selected modules — no unused skins, search tables, gate components, or account furniture (`workflow/06-scaffold.md`) |
 | Keywords stored in plaintext JSON | Build script hashes them into a table, preventing "read the source to win" (R3) |
 | Rewriting a checker to fit a renamed project | The shared `tools/config.mjs` absorbs renamed dirs, layer names, markers, and the search mount for both checkers; `references/structure/tooling.md` §2 lists the knobs and §3 the steps no static check replaces |
-| (6a) The prompt carries the novel, GDD, or other plot-bearing artifacts | 6a reads only `docs/system-profile.md` plus the infrastructure references; keeping plot out of its context is the point of the split |
+| (6a) The prompt carries the raw story source, GDD, or other plot-bearing artifacts | 6a reads only `docs/system-profile.md` plus the infrastructure references; keeping plot out of its context is the point of the split |
 | (6a) Plot copy written into base pages to fill empty bodies | Base pages carry the system's own words; empty or placeholder bodies are correct at this stage |
 | (6b/7) Rebuilding or restyling the framework 6a produced | The shell, skins, components, and tools are fixed at 6a; 6b adds skeletons, step 7 fills content |
 
