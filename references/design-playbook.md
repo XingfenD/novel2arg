@@ -12,7 +12,7 @@
   crack → staged escalation into the secret layer → central twist page → finale → ending.
 - **Five-stage escalation**: (1) in the name of service → (2) systemic evil → (3) human gray → (4) the player's
   guilt → (5) the cycle points at the player.
-- **Order by discovery**: twist points follow player discovery order, not story chronology (`workflow/01-deconstruct.md`);
+- **Order by discovery**: twist points follow player discovery order, not story chronology (`workflow/01-story-intake.md`);
   motive documents come last, reframing "defeat the monster" as "understand the monster".
 - **The page can be a character** (highest-order device): the site is built in-world by a character (the
   killer's own official website / the missing person's final task) — browsing is itself plot.

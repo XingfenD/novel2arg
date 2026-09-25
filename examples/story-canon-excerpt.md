@@ -1,7 +1,8 @@
-# Example — Deconstruction Excerpt (Step 1)
+# Example — Story Canon Excerpt (Step 1)
 
-Shape anchor for `docs/deconstruction.md`. Rows are illustrative, from a hypothetical restaurant novel;
-the real artifact extracts exhaustively from the novel text (workflow/01-deconstruct.md).
+Shape anchor for `docs/story-canon.md`. Rows are illustrative, from a hypothetical restaurant story
+premise; the real artifact extracts exhaustively from the source — or, for the user's own idea, expands
+it and marks every invented row (workflow/01-story-intake.md).
 
 ## Character network (one row per character)
 
@@ -19,9 +20,9 @@ the real artifact extracts exhaustively from the novel text (workflow/01-deconst
 
 ## Evidence document inventory
 
-| 文档 | 小说依据 | 可 mock 格式 |
+| 文档 | 设定依据 | 可 mock 格式 |
 |---|---|---|
-| 劳动合规检查结论 | 第 14 章 检查组进驻 | 公告：发文单位+文号+日期+主送+印章 |
+| 劳动合规检查结论 | 来源片段：检查组进驻（长篇注明章/场；创意扩写行标 `invented`） | 公告：发文单位+文号+日期+主送+印章 |
 
 ## Surface/secret contrast matrix
 

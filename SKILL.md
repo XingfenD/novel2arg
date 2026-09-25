@@ -24,7 +24,7 @@ anchor included in that step's dispatch prompt, when one exists.
 
 | Step | File | Deliverable | Example | Dispatch |
 |---|---|---|---|---|
-| 1 Deconstruct the novel | workflow/01-deconstruct.md | five tables | examples/deconstruction-excerpt.md | one subagent per chapter-chunk → 1 merge (novels past ~150k tokens); single subagent below |
+| 1 Story intake | workflow/01-story-intake.md | five tables | examples/story-canon-excerpt.md | long-form source: one subagent per chunk → 1 merge (past ~150k tokens), single subagent below; structured material / original idea: orchestrator; user checkpoint after the tables when any row is invented |
 | 2 Choose the container + assemble the system | workflow/02-container.md | `docs/system-profile.md` (modules selected with the user) | — | orchestrator (asks the user) |
 | 3 Write the GDD | workflow/03-gdd.md | `docs/gdd.md` (asset manifest + eight sections) + `docs/registry.md` (entity registry) | examples/gdd-excerpt.md | 3a gdd-plan → (3b gdd ∥ 3c registry) → 3d reconcile (subagents) → user review checkpoint |
 | 4 Reachability chain analysis 触达链分析 | workflow/04-reachability.md | `docs/reachability.md` | examples/reachability-excerpt.md | subagent — dispatched together with step 5 |
