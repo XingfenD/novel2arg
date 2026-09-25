@@ -2,7 +2,7 @@
 
 Two dispatches in order: 6a builds the system framework with no plot in its context; 6b completes the page skeletons with the plot artifacts. **Output:** the file tree, every page skeletoned.
 
-**6a does not wait for the gates.** It dispatches the moment step 2 returns, in parallel with steps 3–5; 6b waits for both 6a and the gates. The copy may land before the step 3–5 artifacts exist: `docs/` is created if absent, never overwritten — `docs/deconstruction.md` and the later artifacts land there as their rounds return.
+**6a does not wait for the gates.** It dispatches the moment step 2 returns, in parallel with steps 3–5; 6b waits for both 6a and the gates. The copy may land before the step 3–5 artifacts exist: `docs/` is created if absent, never overwritten — `docs/story-canon.md` and the later artifacts land there as their rounds return.
 
 **Inputs:** 6a: `docs/system-profile.md`, references/guardrails.md (prohibited forms), references/structure/base.md, references/structure/components.md, and the chosen container's form doc (references/structure/form-website.md for A, references/structure/form-system.md for B/C/D). 6b: `docs/gdd.md` sections 1, 2, `docs/registry.md`, `docs/reachability.md`, `docs/puzzle-audit.md`, the 6a framework, references/guardrails.md (prohibited forms), references/structure/base.md, and the form doc — 6b reads the project's own `components.js` and `base.css` (6a already instantiated the selected components) instead of references/structure/components.md, and it writes no copy, so the playbook stays out of its context.
 
@@ -12,7 +12,7 @@ Step 2 wrote `docs/system-profile.md` with the user; 6a consumes it. The profile
 container and form doc; system identity (type, organization, era, register, language); selected modules; shell
 IA (top bar, directory layout, page root, site roots for C); base pages; infrastructure (base.md sections,
 components.js, vendored Alpine, tools/, CONFIG knobs); index/access convention; numbering choice. It carries no
-characters, plot, secrets, clue design, endings, novel text, or prior artifacts.
+characters, plot, secrets, clue design, endings, raw story source, or prior artifacts.
 
 Build the framework strictly per `references/structure/base.md` §1, using the page skeleton in
 `references/structure/base.md` §2 for every page, and the form doc:
