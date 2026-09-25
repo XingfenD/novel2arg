@@ -1,17 +1,18 @@
 ---
-name: novel2arg
-description: Use when adapting a mystery/suspense novel into an interactive web puzzle game (ARG-lite), or when the user asks for a web puzzle site, an interactive novel adaptation, a puzzle website, or a mystery-novel game adaptation. Also use when such a project drifts toward a single-file SPA, canvas scene engine, inventory-based adventure UI, generic puzzle framework, or random passwords, even when told to "keep it simple" or that an engine was already scaffolded.
+name: make-my-arg
+description: Use when generating a multi-page static web puzzle game (ARG-lite) from any story source — a novel, a screenplay, setting material, or the user's own idea — or when the user asks for a web puzzle site, an interactive story adaptation, a puzzle website, or a mystery game disguised as a real website. Also use when such a project drifts toward a single-file SPA, canvas scene engine, inventory-based adventure UI, generic puzzle framework, or random passwords, even when told to "keep it simple" or that an engine was already scaffolded.
 ---
 
-# novel2arg: Mystery Novel → Interactive Web Puzzle Game
+# make-my-arg: Story Source → Interactive Web Puzzle Game
 
-Adapt a mystery/suspense novel into a multi-page static puzzle game disguised as a real website (ARG-lite);
-success means the player feels they are infiltrating a real site. The guardrails — four constraints,
+Build a multi-page static puzzle game disguised as a real website (ARG-lite) from any story source — a novel,
+a screenplay, setting material, or the user's own idea; success means the player feels they are infiltrating
+a real site. The guardrails — four constraints,
 canonical rules R1–R12, prohibited forms, baseline rationalizations, red flags, and exclusions — live in
 `references/guardrails.md`: read it before step 1 and when reviewing any artifact.
 
 **Project-root convention.** The generated game lives in `<cwd>/<game-name>/` (kebab-case, named after the
-novel) unless the user specifies another location. Every `docs/*.md` artifact path in the workflow files is
+story) unless the user specifies another location. Every `docs/*.md` artifact path in the workflow files is
 relative to that project root, not to this skill directory.
 
 ## Workflow
@@ -33,6 +34,10 @@ anchor included in that step's dispatch prompt, when one exists.
 | 7 Implementation | workflow/07-implementation.md | finished site | — | one subagent per phase; 1→2→3 chained, 4a ∥ 1, 4b after 3, 5 ∥ 3, 6 after 3, 7 last |
 | 8 Self-check | workflow/08-self-check.md | `docs/self-check.md`, pass/fail per item | — | 3 parallel subagents (lanes A/B/C) + merge |
 
+Step 1 ends with a user confirmation checkpoint when the canon tables carry `invented` rows — always for
+an original idea, only on delegated gap-fills otherwise: the orchestrator presents the five tables, and
+step 2 starts only after approval; requested changes go back to step 1.
+
 Step 3 ends with a user review checkpoint: after round 3d returns, the orchestrator presents the
 artifacts to the user and asks for review before dispatching the gates. Approval is required;
 requested changes go back to step 3.
@@ -50,7 +55,7 @@ Where a step file marks rounds parallel, their prompts go out together in one me
 merges the returns.
 Every subagent prompt carries all six items below (a filled sample: examples/dispatch-prompt.md):
 
-1. the novel text path — step 1 always; step 3 only as a fallback when `docs/deconstruction.md` lacks a life trace the GDD needs (the prompt says so explicitly); no other step receives it, and their prompts state that the novel must not be read;
+1. the story source path — step 1 always; step 3 only as a fallback when `docs/story-canon.md` lacks a life trace the GDD needs (the prompt says so explicitly); no other step receives it, and their prompts state that the raw source material must not be read;
 2. the project root (convention above) and the file paths of prior artifacts — naming the sections the step file specifies (e.g. `docs/gdd.md` sections 1, 2, 4), never a whole file where a section list exists;
 3. that step's deliverable definition, copied from its workflow file;
 4. the reference file paths that step cites, plus that step's example file from the table above when one exists;
@@ -63,6 +68,6 @@ never required reading beyond what the step file cites (the step file's list is 
 added at dispatch time).
 
 The one exception is step 6a: its prompt carries `docs/system-profile.md` and the infrastructure references
-only — no novel text, no plot-bearing artifacts.
+only — no raw story source, no plot-bearing artifacts.
 
 Step 3 dispatches the six items four times, once per round (3b and 3c together in one message); which files each round's prompt names is specified in `workflow/03-gdd.md`.
