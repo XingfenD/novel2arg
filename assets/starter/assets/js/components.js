@@ -1,4 +1,4 @@
-// components.js — the shared kernel every page of a novel2arg project loads.
+// components.js — the shared kernel every page of a make-my-arg project loads.
 //
 // Loaded by every page BEFORE the vendored Alpine runtime (script order: base.md §2). It carries
 // only what never changes between projects: the md5 primitive, the hash helper, and the session

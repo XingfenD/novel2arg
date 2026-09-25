@@ -1,4 +1,4 @@
-# .gitignore for a novel2arg game. It ships inside assets/starter/, so it lands in the project
+# .gitignore for a make-my-arg game. It ships inside assets/starter/, so it lands in the project
 # root when the starter tree is copied at scaffold time (step 6) — no rename, no second copy step.
 # It keeps development by-products out of the repository while everything the deploy needs
 # (index.html, pages/, assets/, data/*.json, tools/, viewer/) stays tracked.
@@ -16,8 +16,8 @@ memory/
 review_comments.md
 *.log
 
-# ── Novel text (copyright material; keep it locally, do not publish it) ──
-docs/novel.txt
+# ── Story source material (may be copyright-protected; keep it locally, do not publish it) ──
+docs/source-material/
 
 # ── OS files ──
 .DS_Store
