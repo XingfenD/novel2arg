@@ -8,7 +8,8 @@ shape: examples/story-canon-excerpt.md.
 Route by source type: Adapters A and B extract and normalize, Adapter C expands. All three end at the same
 five-table contract — the canon every later step reads. **Gap rule (A/B):** a row the source does not carry
 is listed as an open question routed to the user through the orchestrator, never silently invented; the
-agent fills a gap by invention only when the user explicitly delegates it, and marks the row `invented`.
+agent fills a gap by invention only when the user explicitly delegates it, and marks the row by appending
+`〔invented〕` to its first cell — the one marker convention across all five tables.
 From step 2 on the raw source material is never read again (SKILL.md dispatch contract item 1).
 
 ## Adapter A — Long-form narrative text
@@ -34,7 +35,8 @@ chunking convention.
 
 The orchestrator runs this adapter directly. Expand the idea into a five-table draft: the agent invents
 whatever the premise does not fix — characters, life traces, documents, twists — and marks every invented
-row `invented` in its 依据 cell; facts the premise itself carries stay unmarked. Expansion serves the same
+row by appending `〔invented〕` to its first cell (the marker convention above); facts the premise itself
+carries stay unmarked. Expansion serves the same
 downstream needs as extraction: life traces exhaustive enough to build puzzles from (R3), and a surface
 layer and a secret layer that contrast (`references/guardrails.md` Constraint 2).
 
@@ -57,9 +59,9 @@ would legitimately publish about each. Step 3 needs this to keep public pages ne
 
 ## User confirmation checkpoint
 
-Whenever the tables carry any `invented` row — always in Adapter C, only on delegated gap-fills in A/B —
-the orchestrator presents the five tables to the user before step 2 starts; requested changes go back to
-this step. Approved `invented` rows become canon; the marker stays as a record of provenance. A pure
-extraction run (no `invented` rows) has no table-level checkpoint — the step-3 GDD review covers it.
+Whenever the tables carry any row marked `〔invented〕` — always in Adapter C, only on delegated gap-fills
+in A/B — the orchestrator presents the five tables to the user before step 2 starts; requested changes go
+back to this step. Approved `〔invented〕` rows become canon; the marker stays as a record of provenance.
+A pure extraction run (no marked rows) has no table-level checkpoint — the step-3 GDD review covers it.
 
 Baseline-test traps for this step: references/common-mistakes.md §1 — check them before returning the artifact.

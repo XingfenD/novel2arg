@@ -2,7 +2,7 @@
 
 Shape anchor for `docs/story-canon.md`. Rows are illustrative, from a hypothetical restaurant story
 premise; the real artifact extracts exhaustively from the source — or, for the user's own idea, expands
-it and marks every invented row (workflow/01-story-intake.md).
+it and marks every invented row with `〔invented〕` in its first cell (workflow/01-story-intake.md).
 
 ## Character network (one row per character)
 
@@ -22,7 +22,7 @@ it and marks every invented row (workflow/01-story-intake.md).
 
 | 文档 | 设定依据 | 可 mock 格式 |
 |---|---|---|
-| 劳动合规检查结论 | 来源片段：检查组进驻（长篇注明章/场；创意扩写行标 `invented`） | 公告：发文单位+文号+日期+主送+印章 |
+| 劳动合规检查结论 | 来源片段：检查组进驻（长篇注明章/场） | 公告：发文单位+文号+日期+主送+印章 |
 
 ## Surface/secret contrast matrix
 
@@ -35,6 +35,7 @@ it and marks every invented row (workflow/01-story-intake.md).
 | # | 反转 | 是否核心反转页 |
 |---|---|---|
 | 4 | 失踪者仍在站内发帖 | ★ 核心（一页放出 ≥3 个支线钩子） |
+| 5〔invented〕 | 账本附言指向一名未出场的持有人 | 否 |
 
 Public-page appearances: 陈国栋 appears on the staff roster (name, title, tenure, duties only) and in
 one 2013 forum post — step 3 keeps both neutral (R5).

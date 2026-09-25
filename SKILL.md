@@ -34,9 +34,9 @@ anchor included in that step's dispatch prompt, when one exists.
 | 7 Implementation | workflow/07-implementation.md | finished site | — | one subagent per phase; 1→2→3 chained, 4a ∥ 1, 4b after 3, 5 ∥ 3, 6 after 3, 7 last |
 | 8 Self-check | workflow/08-self-check.md | `docs/self-check.md`, pass/fail per item | — | 3 parallel subagents (lanes A/B/C) + merge |
 
-Step 1 ends with a user confirmation checkpoint when the canon tables carry `invented` rows — always for
-an original idea, only on delegated gap-fills otherwise: the orchestrator presents the five tables, and
-step 2 starts only after approval; requested changes go back to step 1.
+Step 1 ends with a user confirmation checkpoint when the canon tables carry rows marked `〔invented〕` —
+always for an original idea, only on delegated gap-fills otherwise: the orchestrator presents the five
+tables, and step 2 starts only after approval; requested changes go back to step 1.
 
 Step 3 ends with a user review checkpoint: after round 3d returns, the orchestrator presents the
 artifacts to the user and asks for review before dispatching the gates. Approval is required;
