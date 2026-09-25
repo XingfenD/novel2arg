@@ -1,7 +1,7 @@
 # Example — GDD Excerpt (Step 3)
 
 Shape anchor for `docs/gdd.md` and `docs/registry.md` (workflow/03-gdd.md defines both). Rows are
-illustrative, from the same hypothetical restaurant novel as the other examples.
+illustrative, from the same hypothetical restaurant story premise as the other examples.
 
 ## 0. Front matter + `docs/registry.md` (shape)
 

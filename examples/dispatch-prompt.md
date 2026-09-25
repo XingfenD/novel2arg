@@ -4,9 +4,9 @@ A sample of the orchestrator's prompt for one subagent, showing all six contract
 Slot values in «guillemets» change per project; everything else is copied verbatim.
 
 ```text
-You are executing step 4 (Reachability chain analysis) of the novel2arg skill.
+You are executing step 4 (Reachability chain analysis) of the make-my-arg skill.
 
-1. Novel text: none — step 4 works from docs/gdd.md; do not read the novel.
+1. Story source: none — step 4 works from docs/gdd.md; do not read the raw source material.
 2. Project root: «/path/to/chunshui-lou-arg/» (all docs/ paths below are relative to it).
    Prior artifacts: docs/gdd.md sections 1, 2, 4 (approved by the user).
 3. Deliverable: docs/reachability.md — one row per page:
