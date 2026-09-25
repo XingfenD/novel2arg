@@ -6,9 +6,15 @@ All notable changes to this skill should be documented in this file.
 The format loosely follows Keep a Changelog and can be adapted to the team's habits.
 本文档参考了 Keep a Changelog 的思路，也可以根据团队习惯调整。
 
-## [Unreleased]
+## [0.2.0] - 2026-09-26
 
 ### Changed / 变更
+
+- Rename the skill to make-my-arg and decouple it from novel input: step 1 becomes Story intake with three adapters — long-form narrative text (novel / screenplay / transcript; chunked past ~150k tokens, extract never invent), structured setting material (normalize; gaps go to the user as questions, never silent invention), and the user's own idea (the agent expands it and marks every invented row `invented`) — all landing on the same five-table contract, now `docs/story-canon.md`. Tables carrying `invented` rows pass a user confirmation checkpoint before step 2; approved rows become canon with the marker kept as provenance.
+- skill 改名 make-my-arg，与小说输入解耦：步骤 1 变为「故事源接入」，含三个适配器——长篇叙事文本（小说/剧本/文字实录；超 ~150k token 分块，只抽取不发明）、结构化设定材料（以规整为主，缺口作为问题向用户补问、不静默发明）、用户原创创意（agent 扩写，发明行逐条标记 `invented`）——统一落到同一份五张表契约，产物更名 `docs/story-canon.md`。含 `invented` 行的五张表须过用户确认 checkpoint 才进步骤 2；确认后的行成为 canon，标记保留作为来源记录。
+
+- Generalize the novel-specific wording to story wording across the workflow, references, examples, starter and user docs; rename the brand strings and the site-graph schema ID to `make-my-arg/site-graph/v1`; the starter's `docs/novel.txt` ignore entry becomes `docs/source-material/`; `docs/USAGE.md` §1 becomes a conditional clause covering any pre-existing narrative work; the GitHub repository URL stays unchanged pending a repository rename.
+- 全仓措辞通用化：workflow、references、examples、起点项目与用户文档中的小说专属表述改为故事表述；品牌字符串与 site-graph schema ID 改为 `make-my-arg/site-graph/v1`；起点项目 `.gitignore` 的 `docs/novel.txt` 改为 `docs/source-material/`；`docs/USAGE.md` §1 改为覆盖任何既有叙事作品的条件性条款；GitHub 仓库 URL 在仓库改名前保持不变。
 
 - Drop the starter's `about.html`: the entry shell now carries the link back to the skill repo directly, in the same quiet `entry-meta` slot under the start button, so the entry stays the only threshold page and the reference survives with nothing else around it. The base tree (`references/structure/base.md` §1), scaffold step 6a, and the starter README lose the about page accordingly.
 - 起点项目去掉 `about.html`：入口外壳直接带上指向 skill 仓库的链接，挂在进入按钮下方同一个不起眼的 `entry-meta` 位——入口仍是唯一的阈值页，引用链接保留而周围什么都不放。目录树（`references/structure/base.md` §1）、脚手架步骤 6a 与起点项目 README 中的关于页随之移除。
