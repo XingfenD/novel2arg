@@ -1,4 +1,4 @@
-# .dockerignore for a novel2arg game. It ships inside assets/starter/, so it lands in the project
+# .dockerignore for a make-my-arg game. It ships inside assets/starter/, so it lands in the project
 # root when the starter tree is copied at scaffold time (step 6) — no rename, no second copy step.
 # Deploying the static tree is a COPY, so this is the second half of the .gitignore job: what Git keeps
 # out of history, the image must keep out of the visitor's hands.

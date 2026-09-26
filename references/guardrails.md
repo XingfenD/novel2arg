@@ -1,6 +1,7 @@
-# Guardrails — Mystery Novel → Interactive Web Puzzle Game
+# Guardrails — Story Source → Interactive Web Puzzle Game
 
-Adapt a mystery/suspense novel into a multi-page static puzzle game disguised as a real system (ARG-lite).
+Build a multi-page static puzzle game disguised as a real system (ARG-lite) from any story source — a novel,
+a screenplay, setting material, or an original idea.
 Success criterion: the player feels they are inside a real site, uncovering material meant to stay private.
 
 **Priority — realism outranks the checks (R12).** The simulated system behaves the way the real one would, even

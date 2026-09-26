@@ -8,7 +8,7 @@ below. Rounds 3b and 3c dispatch together in one message; 3d settles what they d
 
 **Rules (all rounds).**
 
-1. **The file is the only digest.** Never restate inputs — the deconstruction, the module matrix, the plan — in reasoning. Replaying the inputs and drafting the output in one response is exactly what truncates a turn.
+1. **The file is the only digest.** Never restate inputs — the story canon, the module matrix, the plan — in reasoning. Replaying the inputs and drafting the output in one response is exactly what truncates a turn.
 2. **Run the round's sequence; never batch.** After every read, the very next tool call is the write that read unblocks — never a second content read, never a planning pass in between. Reading everything before writing anything is the failure this rule exists to prevent. The only reads that may share a step are a content block plus the one small reference that governs it (a rules table, a shape example).
 3. **Read slices, never whole files.** A cited `file.md §N` is its own call, reading that section's lines. A runtime artifact is read by its named tables or headings — one or two per call, never the whole file.
 
@@ -24,16 +24,16 @@ numbering, so later rounds read one block at a time: `## 0 assets`, `## 1 page m
 Run this exact sequence:
 
 1. Read `docs/system-profile.md`. → `write` creating `docs/gdd-plan.md`: the `## 1 page map` block with the public-area rows the selected modules imply — the shell pages plus every page a module switches on.
-2. Read `docs/deconstruction.md`'s character-network and timeline tables. → append page-map rows for the restricted and nested areas, each with its unlock source.
-3. Read `docs/deconstruction.md`'s evidence-inventory and contrast-matrix tables. → append the remaining page-map rows, then the `## registry seed` block (persons, IDs, key dates) and the `## 0 assets` block (every non-text asset: filename under `assets/`, referencing page(s), in-world caption).
-4. Read `docs/deconstruction.md`'s twist-ordering table. → append the `## 6 endings` block, the `## 7 world texture` block, and `## 8 document specs` rows (per announcement, notice, contract, certificate: issuing body, document number, date, addressee, signature and seal, distribution list — R6).
+2. Read `docs/story-canon.md`'s character-network and timeline tables. → append page-map rows for the restricted and nested areas, each with its unlock source.
+3. Read `docs/story-canon.md`'s evidence-inventory and contrast-matrix tables. → append the remaining page-map rows, then the `## registry seed` block (persons, IDs, key dates) and the `## 0 assets` block (every non-text asset: filename under `assets/`, referencing page(s), in-world caption).
+4. Read `docs/story-canon.md`'s twist-ordering table. → append the `## 6 endings` block, the `## 7 world texture` block, and `## 8 document specs` rows (per announcement, notice, contract, certificate: issuing body, document number, date, addressee, signature and seal, distribution list — R6).
 5. Read `references/design-playbook.md` §2. → append the `## 2 IA` block (nav bar, index and listing pages, sitemap, footer links, plus the entry points of the selected reach modules — search surface, gates, login) and the `## 3 register split` block (the pages that address the player vs. in-world only).
 6. Read `references/design-playbook.md` §3. → append the `## 5 puzzle allocation` block — 5 to 10 gates and puzzles from the 13 types; sensory puzzles declare hardware requirements.
 7. Read `references/guardrails.md`'s Canonical rules (R1–R12) table. → append the `## 4 access inventory` block — per gate or protected page: its credential triad (account clue on page A, password clue on page B, gate on page C, R3) or the granting account (`data-access`, granted by `data-grant`, R10); the index carrying each keyword (M1); what an unreadable search hit resolves to (its gate or a plain locked notice, never the document, R8/R9). Then fix in place any earlier row that breaks a rule.
 
-Every row traces to a deconstruction row or a selected module — nothing invented. No single page may
+Every row traces to a story-canon row or a selected module — nothing invented. No single page may
 co-locate two components of one credential (a "zero-jump" solve) — split them so the derivation is the
-puzzle. The novel text is a fallback only (SKILL.md dispatch contract item 1). The final message returns
+puzzle. The raw story source is a fallback only (SKILL.md dispatch contract item 1). The final message returns
 the file path plus unresolved questions.
 
 ## Round 3b — Write docs/gdd.md

@@ -1,14 +1,14 @@
 # 《游戏名》
 
-novel2arg 的起点项目：每个生成的项目都把这棵树复制为起点，再按 `docs/system-profile.md` 组装、删改、填充。
+make-my-arg 的起点项目：每个生成的项目都把这棵树复制为起点，再按 `docs/system-profile.md` 组装、删改、填充。
 纯静态、无构建步骤——HTML + CSS + 本地 vendored 的 Alpine v3 + 零依赖 Node 工具，任何静态托管都能跑。
 
 ## 模板说明（成稿时改写或删除本节）
 
 - `《》` 是占位符：组织名、页面标题、正文文案，全部换成虚构自己的话。本页随项目一起改写。
 - 模板里的 `<!-- -->` 注释是写作指引，不是给玩家看的内容：填充页面时逐条删除。step 8 的 chrome 扫描会把残留提示当泄漏处理（R4）。
-- `<html lang>` 随小说正文的语言设置。
-- 入口页带一个指向 novel2arg 技能仓库的 GitHub 链接（对技能的引用，请勿删除）；入口除此之外只有进入按钮，没有“关于”页。
+- `<html lang>` 随故事的语言设置。
+- 入口页带一个指向 make-my-arg 技能仓库的 GitHub 链接（对技能的引用，请勿删除）；入口除此之外只有进入按钮，没有“关于”页。
 - 这棵树只放**不随模块变化**的那部分：入口外壳、共用 css/js、两份忽略文件、README。带模块标记的文件——`search.html`（M1）、`data/`（M1/M2/M6）、`secret.css`（M5）、`pages/` 与受限区域、结局页（M10）——由 step 6a 按 `docs/system-profile.md` 的选择创建；profile 没选的机制一个都不出现。`tools/` 和 `viewer/` 由 step 6a 从 skill 的 `assets/` 拼装进来，它们各有唯一出处，不要在项目里分叉维护。
 - 起点项目里没有 `data/*.src.json`：它自带的 `.gitignore` 会把这些明文表忽略掉，而明文表只应在 6a 选中对应模块时才创建。
 
@@ -16,7 +16,7 @@ novel2arg 的起点项目：每个生成的项目都把这棵树复制为起点�
 
 | 路径 | 说明 |
 |---|---|
-| `index.html` | 入口外壳（M9）：身份赋予 + 进入按钮；底部带指向 novel2arg 仓库的引用链接；规则说明只在虚构确有必要时出现 |
+| `index.html` | 入口外壳（M9）：身份赋予 + 进入按钮；底部带指向 make-my-arg 仓库的引用链接；规则说明只在虚构确有必要时出现 |
 | `pages/` | 站点页面，一篇一文档；受限区域用虚构自己的词命名（`internal/` `staff/` `archive/`），绝不叫 `secret/`，文件名不许剧透 |
 | `assets/css/base.css` | 共用骨架：常驻顶栏、页面栏宽、文档套件、门禁表单、`x-cloak`、M11 纹理 |
 | `assets/css/surface.css` | 公开层皮肤：色板与字体，唯一随虚构气质改动的地方 |
@@ -32,7 +32,7 @@ novel2arg 的起点项目：每个生成的项目都把这棵树复制为起点�
 | `data/credentials.src.json` | M2 派生凭据的出处登记（部件 + 规则），开发专用 |
 | `tools/` | step 6a 从 `assets/tools/` 复制：检查器与 `config.mjs` |
 | `viewer/` | step 6a 从 `assets/viewer/` 复制：站点图渲染树，不是站点页面 |
-| `docs/` | step 1–5 的产物：拆解、system-profile、GDD、触达链、谜题分析 |
+| `docs/` | step 1–5 的产物：story canon（五张表）、system-profile、GDD、触达链、谜题分析 |
 | `deploy/` | 部署脚本与清单，用到才建 |
 
 `tools/`、`viewer/`、`docs/`、`deploy/` 里没有站点页面：走图工具按 `CONFIG.skipDirs` 跳过它们，所以生成的站点图永远不会把页数撑大。

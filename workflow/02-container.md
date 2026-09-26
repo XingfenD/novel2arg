@@ -2,22 +2,22 @@
 
 Stays with the orchestrator: this step asks the user, then writes `docs/system-profile.md`.
 
-**Input:** `docs/deconstruction.md`. **Output:** `docs/system-profile.md` — the assembly record every later
+**Input:** `docs/story-canon.md`. **Output:** `docs/system-profile.md` — the assembly record every later
 step reads. It carries no plot.
 
 ## 1. Pick the primary container
 
 Unless the user has already specified a format, guide them through the four containers below plus a
-recommendation based on the novel's traits, listed first and marked "(recommended)". If a question tool is
+recommendation based on the story's traits, listed first and marked "(recommended)". If a question tool is
 available, ask once and wait for the decision; otherwise proceed with the recommendation and mark the profile
 "container is a recommendation pending confirmation."
 
-| Container | Player fantasy | Central interaction | Routing conditions (novel traits) |
+| Container | Player fantasy | Central interaction | Routing conditions (story traits) |
 |---|---|---|---|
 | **A Fake official website** | "I'm hacking into an organization's website." | The site's own IA plus the modules selected below | A single organization is the stage (restaurant / company / school / church); the secret hides in pages that should stay private; a missing-person or cover-up investigation |
 | **B Fake computer desktop** | "I've obtained someone else's computer." | Desktop icons + app pages (chat / email / cloud drive / calendar) | A viewpoint character can plausibly access someone's device; clues scatter across multiple "apps"; progression depends on dense password gates |
 | **C Simulated internet** | "I'm doing internet archaeology on a vanished person." | Multiple independent "websites" (forum / blog / Wayback Machine / intranet) cross-linked, with hand-typed URLs | A long time span (years of diaries / yearly blogs); clues spread across platforms; the fiction can break the fourth wall |
-| **D Archive system** | "I'm opening a sealed case file." | Query form (name / ID / date) → archive list → detail pages, each opening only to the account it names | The novel is primarily document-driven (case files / medical records / interrogation transcripts / household registry); cold bureaucratic narration; the investigator is a police officer / journalist / lawyer |
+| **D Archive system** | "I'm opening a sealed case file." | Query form (name / ID / date) → archive list → detail pages, each opening only to the account it names | The story is primarily document-driven (case files / medical records / interrogation transcripts / household registry); cold bureaucratic narration; the investigator is a police officer / journalist / lawyer |
 
 **Routing order.** Primary information carrier: chat logs and files → B; documents and archives → D; website
 pages → A; cross-platform fragments → C. The player's narrative role must plausibly access the container — if

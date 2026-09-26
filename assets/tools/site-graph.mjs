@@ -21,7 +21,7 @@ const HERE = dirname(fileURLToPath(import.meta.url));
 const VIEWER_DIR = join(HERE, '..', 'viewer');
 const TEMPLATE_PATH = join(VIEWER_DIR, 'graph-viewer.html');
 const FIXTURE = join(HERE, '..', 'fixtures', 'mini-site');
-const SCHEMA = 'novel2arg/site-graph/v1';
+const SCHEMA = 'make-my-arg/site-graph/v1';
 
 const BREADCRUMB_RE = /^\s*(返回|back to|«|←|‹)/i;
 const BLOCKED_KINDS = new Set(['gate-next', 'post-unlock']);

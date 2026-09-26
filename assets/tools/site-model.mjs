@@ -1,4 +1,4 @@
-// Shared site-parsing and walk core for the novel2arg tools. Extracted verbatim from
+// Shared site-parsing and walk core for the make-my-arg tools. Extracted verbatim from
 // check-solvable.mjs (behavior-preserving); consumed by check-solvable.mjs (reporter) and
 // site-graph.mjs (graph builder). Every function takes `root` explicitly — no process.cwd()
 // inside. Project conventions come from the shared config.mjs.

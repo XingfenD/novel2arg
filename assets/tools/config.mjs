@@ -1,4 +1,4 @@
-// Shared project conventions for the novel2arg tools.
+// Shared project conventions for the make-my-arg tools.
 // The ONE file to edit when a project renames directories, layer names, markers, or the search mount —
 // check-links.mjs, check-solvable.mjs, check-credentials.mjs, and check-reachability.mjs all import it
 // (knob table: references/structure/tooling.md §2).
